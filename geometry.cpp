@@ -1,7 +1,7 @@
 #include "geometry.h"
 
 bool Box2::inBox(const Vector2 & p){
-    if((p.y < pmax.y) && (p.y > pmin.y) && (p.x < pmax.x) && (p.x > pmin.x)) return true;
+    if((p.y < b.y) && (p.y > a.y) && (p.x < b.x) && (p.x > a.x)) return true;
     return false;
 }
 

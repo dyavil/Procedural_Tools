@@ -55,11 +55,12 @@ inline static Vector3 normalize(const Vector3 & v){Vector3 r = (v/v.length()); r
 
 class Box2{
 public:
-    Box2(Vector2 pmi, Vector2 pma): pmin(pmi), pmax(pma){}
+    Box2(){};
+    Box2(Vector2 pmi, Vector2 pma): a(pmi), b(pma){}
     bool inBox(const Vector2 & p);
 
-    Vector2 pmin;
-    Vector2 pmax;
+    Vector2 a;
+    Vector2 b;
 };
 
 class Box3{

@@ -2,7 +2,7 @@
 #define DISPLAY_H
 
 #include <QMainWindow>
-#include "heightfield.h"
+#include "scalarfiled2.h"
 
 namespace Ui {
 class Display;
@@ -15,7 +15,7 @@ class Display : public QMainWindow
 public:
     explicit Display(QWidget *parent = 0);
     ~Display();
-    void drawHFBase(HeightField hf);
+    void drawHFBase(ScalarField2 hf);
 
 private:
     Ui::Display *ui;

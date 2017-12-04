@@ -8,7 +8,7 @@ Display::Display(QWidget *parent) :
     ui->setupUi(this);
 }
 
-void Display::drawHFBase(HeightField hf){
+void Display::drawHFBase(ScalarField2 hf){
     ui->glview->setHFBase(hf);
 }
 

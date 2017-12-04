@@ -1,6 +1,6 @@
 #include "display.h"
 #include <QApplication>
-#include "heightfield.h"
+#include "scalarfiled2.h"
 
 int main(int argc, char *argv[])
 {
@@ -8,9 +8,17 @@ int main(int argc, char *argv[])
     Display w;
     w.show();
 
-    HeightField hg = HeightField(Vector2(1, 0), Vector2(0, 1), 10, 10, 0.0);
+    ScalarField2 hg = ScalarField2(Vector2(1, 0), Vector2(0, 1), 10, 10, 0.0);
     QImage im = QImage("/home/dyavil/Images/map1.png");
-    hg.load(im, Vector2(1, 0), Vector2(0, 1), 0, 1);
+    hg.load(im, Vector2(-1, -1), Vector2(1, 1), 0.3, 0.6);
+    hg.inside(Vector3(0.95, 0.095, 0.0));
     w.drawHFBase(hg);
     return a.exec();
 }
+
+
+/*
+v2, v3
+box2 : v2 a, b
+
+*/

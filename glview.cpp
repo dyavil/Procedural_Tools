@@ -10,7 +10,7 @@ GLView::GLView(QWidget *parent) :
 {
 }
 
-void GLView::setHFBase(HeightField hf){
+void GLView::setHFBase(ScalarField2 hf){
     hg = hf;
 }
 
@@ -27,7 +27,7 @@ void GLView::drawHFBase(){
             pos = pos + Vector2(-0.5, -0.5);
             glColor3f(hg.field[i], hg.field[i], hg.field[i]);
             glBegin(GL_POINTS);
-            glVertex3f(pos.x, pos.y, hg.field[i]/10.0);
+            glVertex3f(pos.x, pos.y, hg.field[i]);
             //std::cout << pos << std::endl;
 
 
@@ -36,68 +36,43 @@ void GLView::drawHFBase(){
 
     for (int i = 0; i < hg.h-1; i++) {
         for (int j = 0; j < hg.w-1; j++) {
-            int v1 = i*hg.w+j;
-            int v2 = (i+1)*hg.w+j;
-            int v3 = i*hg.w+j+1;
-
-            int id1 = v1%hg.w;
-            int id2 = v1/hg.h;
 
 
-            Vector2 pos = Vector2(((float)id1/(float)hg.w), ((float)id2/(float)hg.h));
-            pos = pos.x*hg.getU()+pos.y*hg.getV();
-            pos = pos + Vector2(-0.5, -0.5);
-            glColor3f(hg.field[v1], hg.field[v1], hg.field[v1]);
+            Vector2 pos = hg.get(i, j);
+            //pos = pos + Vector2(-0.5, -0.5);
+            glColor3f(hg.field[hg.pos(i, j)], hg.field[hg.pos(i, j)], hg.field[hg.pos(i, j)]);
             glBegin(GL_TRIANGLES);
-            glVertex3f(pos.x, pos.y, hg.field[v1]/10.0);
+            glVertex3f(pos.x, pos.y, hg.field[hg.pos(i, j)]);
 
 
-            id1 = v3%hg.w;
-            id2 = v3/hg.h;
-            pos = Vector2(((float)id1/(float)hg.w), ((float)id2/(float)hg.h));
-            pos = pos.x*hg.getU()+pos.y*hg.getV();
-            pos = pos + Vector2(-0.5, -0.5);
-            glColor3f(hg.field[v3], hg.field[v3], hg.field[v3]);
-            glVertex3f(pos.x, pos.y, hg.field[v3]/10.0);
-            id1 = v2%hg.w;
-            id2 = v2/hg.h;
-            pos = Vector2(((float)id1/(float)hg.w), ((float)id2/(float)hg.h));
-            pos = pos.x*hg.getU()+pos.y*hg.getV();
-            pos = pos + Vector2(-0.5, -0.5);
-            glColor3f(hg.field[v2], hg.field[v2], hg.field[v2]);
-            glVertex3f(pos.x, pos.y, hg.field[v2]/10.0);
+            pos = hg.get(i, j+1);
+            //pos = pos + Vector2(-0.5, -0.5);
+            glColor3f(hg.field[hg.pos(i, j+1)], hg.field[hg.pos(i, j+1)], hg.field[hg.pos(i, j+1)]);
+            glVertex3f(pos.x, pos.y, hg.field[hg.pos(i, j+1)]);
 
+            pos = hg.get(i+1, j);
+            //pos = pos + Vector2(-0.5, -0.5);
+            glColor3f(hg.field[hg.pos(i+1, j)], hg.field[hg.pos(i+1, j)], hg.field[hg.pos(i+1, j)]);
+            glVertex3f(pos.x, pos.y, hg.field[hg.pos(i+1, j)]);
 
-            v1 = i*hg.w+j+1;
-            v2 = (i+1)*hg.w+j;
-            v3 = (i+1)*hg.w+j+1;
+            ////////////////////////////////////////
 
+            pos = hg.get(i+1, j);
+            //pos = pos + Vector2(-0.5, -0.5);
+            glColor3f(hg.field[hg.pos(i+1, j)], hg.field[hg.pos(i+1, j)], hg.field[hg.pos(i+1, j)]);
+            glVertex3f(pos.x, pos.y, hg.field[hg.pos(i+1, j)]);
 
-            id1 = v2%hg.w;
-            id2 = v2/hg.h;
-            pos = Vector2(((float)id1/(float)hg.w), ((float)id2/(float)hg.h));
-            pos = pos.x*hg.getU()+pos.y*hg.getV();
-            pos = pos + Vector2(-0.5, -0.5);
-            glColor3f(hg.field[v2], hg.field[v2], hg.field[v2]);
-            glVertex3f(pos.x, pos.y, hg.field[v2]/10.0);
-
-
-            id1 = v1%hg.w;
-            id2 = v1/hg.h;
-            pos = Vector2(((float)id1/(float)hg.w), ((float)id2/(float)hg.h));
-            pos = pos.x*hg.getU()+pos.y*hg.getV();
-            pos = pos + Vector2(-0.5, -0.5);
-            glColor3f(hg.field[v1], hg.field[v1], hg.field[v1]);
+            pos = hg.get(i, j+1);
+            //pos = pos + Vector2(-0.5, -0.5);
+            glColor3f(hg.field[hg.pos(i, j+1)], hg.field[hg.pos(i, j+1)], hg.field[hg.pos(i, j+1)]);
             glBegin(GL_TRIANGLES);
-            glVertex3f(pos.x, pos.y, hg.field[v1]/10.0);
+            glVertex3f(pos.x, pos.y, hg.field[hg.pos(i, j+1)]);
 
-            id1 = v3%hg.w;
-            id2 = v3/hg.h;
-            pos = Vector2(((float)id1/(float)hg.w), ((float)id2/(float)hg.h));
-            pos = pos.x*hg.getU()+pos.y*hg.getV();
-            pos = pos + Vector2(-0.5, -0.5);
-            glColor3f(hg.field[v3], hg.field[v3], hg.field[v3]);
-            glVertex3f(pos.x, pos.y, hg.field[v3]/10.0);
+
+            pos = hg.get(i+1, j+1);
+            //pos = pos + Vector2(-0.5, -0.5);
+            glColor3f(hg.field[hg.pos(i+1, j+1)], hg.field[hg.pos(i+1, j+1)], hg.field[hg.pos(i+1, j+1)]);
+            glVertex3f(pos.x, pos.y, hg.field[hg.pos(i+1, j+1)]);
             glEnd();
         }
     }
@@ -123,6 +98,7 @@ void GLView::paintGL()
 
     glLoadIdentity();
 
+    //glScaled(2.0, 2.0, 2.0);
 
     glRotatef(angle, 0.0f, 1.0f, 0.0f);
 
