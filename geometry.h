@@ -32,6 +32,7 @@ class Vector3 {
 public:
     Vector3(VAR_TYPE _x = 0, VAR_TYPE _y = 0, VAR_TYPE _z = 0) : x(_x), y(_y), z(_z) {}
     Vector3(const Vector3 & p):x(p.x), y(p.y), z(p.z){}
+    Vector3(const Vector2 &p, float nz):x(p.x), y(p.y), z(nz){}
 
     float length() const{return float(sqrt(x*x + y*y + z*z));}
     static Vector3 abss(const Vector3 & other){ Vector3 r; r.x =abs(other.x); r.y=abs(other.y); r.z=abs(other.z); return r; }

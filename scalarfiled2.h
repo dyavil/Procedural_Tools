@@ -1,5 +1,5 @@
-#ifndef HEIGHTFIELD_H
-#define HEIGHTFIELD_H
+#ifndef SCALARFIELD_H
+#define SCALARFIELD_H
 
 #include "array2.h"
 #include <vector>
@@ -10,11 +10,10 @@ class ScalarField2 : public Array2
 public:
     ScalarField2(){};
     ScalarField2(Vector2 a, Vector2 b, int ii, int jj, float defaut=0.0);
-    bool load(QImage & im, Vector2 a, Vector2 b, float za, float zb);
-    int inside(const Vector3 & v3);
+    bool load(QImage & im, Vector2 a, Vector2 b, double za, double zb);
 
-    std::vector<float> field;
+    std::vector<double> field;
 
 };
 
-#endif // HEIGHTFIELD_H
+#endif // SCALARFIELD_H
