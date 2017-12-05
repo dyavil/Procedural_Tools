@@ -26,21 +26,23 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         display.cpp \
-    geometry.cpp \
-    glview.cpp \
-    array2.cpp \
-    scalarfield2.cpp \
-    heightfield.cpp \
-    drawfield.cpp
+        geometry.cpp \
+        glview.cpp \
+        array2.cpp \
+        scalarfield2.cpp \
+        heightfield.cpp \
+        drawfield.cpp \
+        layerfield.cpp
 
 HEADERS += \
         display.h \
-    geometry.h \
-    glview.h \
-    array2.h \
-    heightfield.h \
-    drawfield.h \
-    scalarfield2.h
+        geometry.h \
+        glview.h \
+        array2.h \
+        heightfield.h \
+        drawfield.h \
+        scalarfield2.h \
+        layerfield.h
 
 FORMS += \
         display.ui
