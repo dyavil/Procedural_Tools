@@ -58,48 +58,59 @@ void DrawField::draw()
 
 }
 
-
-void DrawField::drawInterpol(int size, int idf){
-    double pasX = (fields[idf].b.x - fields[idf].a.x)/(float)size;
-    double pasY = (fields[idf].b.y - fields[idf].a.y)/(float)size;
+void DrawField::prepareInterpol(int size1, int idf){
+    double pasX = (fields[idf].b.x - fields[idf].a.x)/(float)size1;
+    double pasY = (fields[idf].b.y - fields[idf].a.y)/(float)size1;
     //glBegin(GL_POINTS);
-    for (int i = 0; i < size-1; ++i) {
-        for (int j = 0; j < size-1; ++j) {
+    triangles.clear();
+    int size = size1;
+    HeightField & hf = static_cast<HeightField&>(fields[idf]);
+    for (int i = 0; i < size1; ++i) {
+        for (int j = 0; j < size1; ++j) {
             double z = 0;
-            glBegin(GL_TRIANGLES);
-            HeightField & hf = static_cast<HeightField&>(fields[idf]);
+            bool ok = true;
             Vector2 p = fields[idf].a + Vector2(i*pasX, j*pasY);
             Vector2 p1 = fields[idf].a + Vector2((i+1)*pasX, j*pasY);
             Vector2 p2 = fields[idf].a + Vector2(i*pasX, (j+1)*pasY);
             Vector2 p3 = fields[idf].a + Vector2((i+1)*pasX, (j+1)*pasY);
+            //std::cout << "test" <<std::endl;
             hf.Bilineaire(p, z);
-            glColor3f(z, z, z);
-            glVertex3f(p.x, p.y, z);
-            hf.Bilineaire(p1, z);
-            glColor3f(z, z, z);
-            glVertex3f(p1.x, p1.y, z);
-            hf.Bilineaire(p2, z);
-            glColor3f(z, z, z);
-            glVertex3f(p2.x, p2.y, z);
+            vertices.push_back(Vector3(p, z));
 
-            glEnd();
+            if(p.x == fields[idf].a.x || p.y == fields[idf].a.y || p.x == fields[idf].b.x || p.y == fields[idf].b.y) ok = false;
+            if(p1.x == fields[idf].a.x || p1.y == fields[idf].a.y || p1.x == fields[idf].b.x || p1.y == fields[idf].b.y) ok = false;
+            if(p2.x == fields[idf].a.x || p2.y == fields[idf].a.y || p2.x == fields[idf].b.x || p2.y == fields[idf].b.y) ok = false;
+            if(ok) triangles.push_back(Triangle((i*size+j), ((i+1)*size+j), (i*size+(j+1))));
 
-            glBegin(GL_TRIANGLES);
-            hf.Bilineaire(p2, z);
-            glColor3f(z, z, z);
-            glVertex3f(p2.x, p2.y, z);
+            ok = true;
 
-            hf.Bilineaire(p1, z);
-            glColor3f(z, z, z);
-            glVertex3f(p1.x, p1.y, z);
-            hf.Bilineaire(p3, z);
-            glColor3f(z, z, z);
-            glVertex3f(p3.x, p3.y, z);
+            if(p3.x == fields[idf].a.x || p3.y == fields[idf].a.y || p3.x == fields[idf].b.x || p3.y == fields[idf].b.y) ok = false;
+            if(p1.x == fields[idf].a.x || p1.y == fields[idf].a.y || p1.x == fields[idf].b.x || p1.y == fields[idf].b.y) ok = false;
+            if(p2.x == fields[idf].a.x || p2.y == fields[idf].a.y || p2.x == fields[idf].b.x || p2.y == fields[idf].b.y) ok = false;
+            if(ok) triangles.push_back(Triangle((i*size+(j+1)), ((i+1)*size+j), ((i+1)*size+(j+1))));
 
-            glEnd();
         }
 
     }
-    //glEnd();
+    std::cout << triangles.size() << std::endl;
+}
+
+
+void DrawField::drawInterpol(){
+
+    for (int i = 0; i < triangles.size(); ++i) {
+        glBegin(GL_TRIANGLES);
+        double z = vertices[triangles[i].vertices[0]].z;
+        glColor3f(z, z, z);
+        glVertex3f(vertices[triangles[i].vertices[0]].x, vertices[triangles[i].vertices[0]].y, z);
+        z = vertices[triangles[i].vertices[1]].z;
+        glColor3f(z, z, z);
+        glVertex3f(vertices[triangles[i].vertices[1]].x, vertices[triangles[i].vertices[1]].y, z);
+
+        z = vertices[triangles[i].vertices[2]].z;
+        glColor3f(z, z, z);
+        glVertex3f(vertices[triangles[i].vertices[2]].x, vertices[triangles[i].vertices[2]].y, z);
+        glEnd();
+    }
 
 }

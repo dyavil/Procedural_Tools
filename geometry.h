@@ -74,4 +74,12 @@ public:
     Vector3 pmax;
 };
 
+
+class Triangle{
+public:
+    Triangle(){}
+    Triangle(int a, int b, int c):vertices{a, b, c}{}
+    int vertices[3];
+};
+
 #endif // GEOMETRY_H
