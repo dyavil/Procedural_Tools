@@ -4,7 +4,7 @@
 #include <QGLWidget>
 #include <QMouseEvent>
 #include <QApplication>
-#include "scalarfiled2.h"
+#include "drawfield.h"
 
 class GLView : public QGLWidget
 {
@@ -18,16 +18,14 @@ public:
 
     virtual void resizeGL(int w, int h);
 
-    virtual void drawHFBase();
-
-    virtual void setHFBase(ScalarField2 hf);
+    virtual void setHFBase(DrawField hf);
 
 protected:
     virtual void mouseMoveEvent ( QMouseEvent * event );
     virtual void mousePressEvent ( QMouseEvent * event );
 
 private:
-    ScalarField2 hg;
+    DrawField hg;
     float angle;
     QPoint position;
 

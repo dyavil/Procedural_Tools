@@ -1,7 +1,7 @@
 #ifndef HEIGHTFIELD_H
 #define HEIGHTFIELD_H
 
-#include "scalarfiled2.h"
+#include "scalarfield2.h"
 #include "vector"
 
 class HeightField : public ScalarField2

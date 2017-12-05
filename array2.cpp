@@ -15,7 +15,8 @@ Vector2 Array2::get(int i, int j){
 
 std::pair<int, int> Array2::inside(const Vector3 &v3){
     if(v3.x < a.x || v3.x > b.x || v3.y < a.y || v3.y > b.y ) return std::make_pair(-1, -1);
-    int j = floor((v3.x)/((b.x-a.x)/w));
-    int i = floor((v3.y)/((b.y-a.y)/h));
+    Vector3 tt= v3 - Vector3(a, 0.0);
+    int j = floor((tt.x)/((b.x-a.x)/w));
+    int i = floor((tt.y)/((b.y-a.y)/h));
     return std::make_pair(i, j);
 }

@@ -1,4 +1,4 @@
-#include "scalarfiled2.h"
+#include "scalarfield2.h"
 
 ScalarField2::ScalarField2(Vector2 a, Vector2 b, int ii, int jj, float defaut) : Array2(a, b, ii, jj)
 {

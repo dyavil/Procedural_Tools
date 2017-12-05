@@ -41,7 +41,9 @@ void HeightField::Bilineaire(const Vector2 &p, double &res){
     int xi, yi;
     float u, v;
     CalcUV(p, xi, yi, u, v);
+    if(xi < 0) std::cout << "bug " << p << ", " << xi << std::endl;
     res = 0;
-    res = (1-u)*(1-v)*field[pos(yi, xi)] + (1-u)*v*field[pos(yi+1, xi)] + u*(1-v)*field[pos(yi, xi+1)] + u*v*field[pos(yi+1, xi+1)];
+    if(pos(yi+1, xi) >= field.size() || pos(yi, xi+1) >= field.size() || pos(yi+1, xi+1) >= field.size()) res = field[pos(yi, xi)];
+    else res = (1-u)*(1-v)*field[pos(yi, xi)] + (1-u)*v*field[pos(yi+1, xi)] + u*(1-v)*field[pos(yi, xi+1)] + u*v*field[pos(yi+1, xi+1)];
 
 }

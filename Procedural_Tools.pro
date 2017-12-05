@@ -30,15 +30,17 @@ SOURCES += \
     glview.cpp \
     array2.cpp \
     scalarfield2.cpp \
-    heightfield.cpp
+    heightfield.cpp \
+    drawfield.cpp
 
 HEADERS += \
         display.h \
     geometry.h \
     glview.h \
     array2.h \
-    scalarfiled2.h \
-    heightfield.h
+    heightfield.h \
+    drawfield.h \
+    scalarfield2.h
 
 FORMS += \
         display.ui
