@@ -10,9 +10,12 @@ class DrawField
 public:
     DrawField();
     void draw();
-    void drawInterpol(int rapport, int idf=0);
+    void drawInterpol();
+    void prepareInterpol(int size, int idf=0);
     void addField(ScalarField2 & sf){fields.push_back(sf);}
     std::vector<ScalarField2> fields;
+    std::vector<Vector3> vertices;
+    std::vector<Triangle> triangles;
 };
 
 #endif // DRAWFIELD_H
