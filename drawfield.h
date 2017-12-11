@@ -16,6 +16,9 @@ public:
     std::vector<ScalarField2> fields;
     std::vector<Vector3> vertices;
     std::vector<Triangle> triangles;
+
+private:
+    bool testPoint(const Vector3 & v3, int size, int idf);
 };
 
 #endif // DRAWFIELD_H

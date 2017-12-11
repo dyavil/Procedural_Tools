@@ -24,6 +24,8 @@ inline Vector2 operator +(const Vector2 & v, const Vector2 & u){Vector2 res; res
 inline Vector2 operator *(const Vector2 & v, const Vector2 & u){Vector2 res; res.x = v.x*u.x; res.y = v.y*u.y; return res;}
 inline Vector2 operator *(const Vector2 & u, const float other){Vector2 r; r.x=other*u.x; r.y=other*u.y;  return r;}
 inline Vector2 operator *(const float other, const Vector2 & u){Vector2 r; r.x=other*u.x; r.y=other*u.y;  return r;}
+
+inline static float distance(const Vector2 & u, const Vector2 & v){return (u-v).length();}
 inline Vector2 operator /(const Vector2 & u, float other){Vector2 r; r.x=u.x/other; r.y=u.y/other;  return r;}
 
 inline static Vector2 normalize(const Vector2 & v){Vector2 r = (v/v.length()); return r;}
@@ -51,9 +53,10 @@ inline Vector3 operator *(float other, const Vector3 & u){Vector3 r; r.x=other*u
 inline Vector3 operator /(const Vector3 & u, float other){Vector3 r; r.x=u.x/other; r.y=u.y/other; r.z=u.z/other;  return r;}
 inline bool operator ==(Vector3 const& vec1, Vector3 const& vec2) { if(vec1.x == vec2.x && vec1.y == vec2.y && vec1.z == vec2.z) return true; return false; }
 
+inline static float distance(const Vector3 & u, const Vector3 & v){return (u-v).length();}
+inline static float area(const Vector3 & p, const Vector3 & a, const Vector3 & b){Vector3 u = (a-p); u.z =0.0; Vector3 v = (b-p); v.z=0.0; return cross(u, v).z;}
 
 inline static Vector3 normalize(const Vector3 & v){Vector3 r = (v/v.length()); return r;}
-
 
 
 class Box2{
@@ -65,6 +68,7 @@ public:
     Vector2 a;
     Vector2 b;
 };
+
 
 class Box3{
 public:

@@ -48,6 +48,39 @@ void HeightField::Bilineaire(const Vector2 &p, double &res){
 
 }
 
+void HeightField::Barycentrique(const Vector2 &p, double &res) {
+    int xi, yi;
+    float u, v;
+    CalcUV(p, xi, yi, u, v);
+    if(xi < 0) std::cout << "bug " << p << ", " << xi << std::endl;
+    res = 0;
+    bool oppose = false;
+    if(distance(p, get(yi, xi)) > distance(p, get(yi+1, xi+1))) oppose = true;
+    if(pos(yi+1, xi) >= (int)field.size() || pos(yi, xi+1) >= (int)field.size() || pos(yi+1, xi+1) >= (int)field.size()) res = field[pos(yi, xi)];
+    else if(!oppose) {
+
+        float ar = area(Vector3(get(yi, xi), field[pos(yi, xi)]), Vector3(get(yi, xi+1), field[pos(yi, xi+1)]), Vector3(get(yi+1, xi), field[pos(yi+1, xi)]));
+        float a1 = area(Vector3(p, 0.0), Vector3(get(yi, xi), field[pos(yi, xi)]), Vector3(get(yi, xi+1), field[pos(yi, xi+1)]));
+        float a2 = area(Vector3(p, 0.0), Vector3(get(yi, xi+1), field[pos(yi, xi+1)]), Vector3(get(yi+1, xi), field[pos(yi+1, xi)]));
+        float a3 = area(Vector3(p, 0.0), Vector3(get(yi+1, xi), field[pos(yi+1, xi)]), Vector3(get(yi, xi), field[pos(yi, xi)]));
+        a1 = a1/ar;
+        a2 = a2/ar;
+        a3 = a3/ar;
+        res = a1*field[pos(yi+1, xi)] + a2*field[pos(yi, xi)] + a3*field[pos(yi, xi+1)];
+    }
+    else{
+        float ar = area(Vector3(get(yi+1, xi), field[pos(yi+1, xi)]), Vector3(get(yi, xi+1), field[pos(yi, xi+1)]), Vector3(get(yi+1, xi+1), field[pos(yi+1, xi+1)]));
+        float a1 = area(Vector3(p, 0.0), Vector3(get(yi+1, xi), field[pos(yi+1, xi)]), Vector3(get(yi, xi+1), field[pos(yi, xi+1)]));
+        float a2 = area(Vector3(p, 0.0), Vector3(get(yi, xi+1), field[pos(yi, xi+1)]), Vector3(get(yi+1, xi+1), field[pos(yi+1, xi+1)]));
+        float a3 = area(Vector3(p, 0.0), Vector3(get(yi+1, xi+1), field[pos(yi+1, xi+1)]), Vector3(get(yi+1, xi), field[pos(yi+1, xi)]));
+        a1 = a1/ar;
+        a2 = a2/ar;
+        a3 = a3/ar;
+        res = a1*field[pos(yi+1, xi+1)] + a2*field[pos(yi+1, xi)] + a3*field[pos(yi, xi+1)];
+    }
+
+}
+
 void HeightField::exportOBJ(const std::string & filename, bool importNormals) {
 
     std::vector<Vector3> vecNormales;
