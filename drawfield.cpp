@@ -74,25 +74,30 @@ void DrawField::prepareInterpol(int size1, int idf){
             Vector2 p2 = fields[idf].a + Vector2(i*pasX, (j+1)*pasY);
             Vector2 p3 = fields[idf].a + Vector2((i+1)*pasX, (j+1)*pasY);
             //std::cout << "test" <<std::endl;
-            hf.Bilineaire(p, z);
+            //hf.Bilineaire(p, z);
+            hf.Barycentrique(p, z);
             vertices.push_back(Vector3(p, z));
 
-            if(p.x == fields[idf].a.x || p.y == fields[idf].a.y || p.x == fields[idf].b.x || p.y == fields[idf].b.y) ok = false;
-            if(p1.x == fields[idf].a.x || p1.y == fields[idf].a.y || p1.x == fields[idf].b.x || p1.y == fields[idf].b.y) ok = false;
-            if(p2.x == fields[idf].a.x || p2.y == fields[idf].a.y || p2.x == fields[idf].b.x || p2.y == fields[idf].b.y) ok = false;
+            if(!testPoint(Vector3(p, 0), size1, idf)) ok = false;
+            if(!testPoint(Vector3(p1, 0), size1, idf)) ok = false;
+            if(!testPoint(Vector3(p2, 0), size1, idf)) ok = false;
             if(ok) triangles.push_back(Triangle((i*size+j), ((i+1)*size+j), (i*size+(j+1))));
 
-            ok = true;
-
-            if(p3.x == fields[idf].a.x || p3.y == fields[idf].a.y || p3.x == fields[idf].b.x || p3.y == fields[idf].b.y) ok = false;
-            if(p1.x == fields[idf].a.x || p1.y == fields[idf].a.y || p1.x == fields[idf].b.x || p1.y == fields[idf].b.y) ok = false;
-            if(p2.x == fields[idf].a.x || p2.y == fields[idf].a.y || p2.x == fields[idf].b.x || p2.y == fields[idf].b.y) ok = false;
+            if(!testPoint(Vector3(p3, 0), size1, idf)) ok = false;
             if(ok) triangles.push_back(Triangle((i*size+(j+1)), ((i+1)*size+j), ((i+1)*size+(j+1))));
 
         }
 
     }
     std::cout << triangles.size() << std::endl;
+}
+
+
+bool DrawField::testPoint(const Vector3 &v3, int size, int idf){
+    double marginx = (fields[idf].b.x - fields[idf].a.x)/(float)size;
+    double marginy = (fields[idf].b.y - fields[idf].a.y)/(float)size;
+    if((v3.x <= fields[idf].a.x+marginx) || v3.y <= fields[idf].a.y+marginy || v3.x >= fields[idf].b.x-marginx || v3.y >= fields[idf].b.y-marginy) return false;
+    return true;
 }
 
 

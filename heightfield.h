@@ -12,6 +12,7 @@ public:
     Vector3 normal(int i, int j);
     void CalcUV(const Vector2 & p , int & xi, int & yi, float & u, float & v);
     void Bilineaire(const Vector2 & p, double & res);
+    void Barycentrique(const Vector2 & p, double & res);
 };
 
 #endif // HEIGHTFIELD_H
