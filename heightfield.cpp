@@ -47,3 +47,63 @@ void HeightField::Bilineaire(const Vector2 &p, double &res){
     else res = (1-u)*(1-v)*field[pos(yi, xi)] + (1-u)*v*field[pos(yi+1, xi)] + u*(1-v)*field[pos(yi, xi+1)] + u*v*field[pos(yi+1, xi+1)];
 
 }
+
+void HeightField::exportOBJ(const std::string & filename, bool importNormals) {
+
+    std::vector<Vector3> vecNormales;
+    std::ofstream file(filename);
+
+    // Vertexes
+    for(int i = 0; i < h; ++i) {
+        for(int j = 0; j < w; ++j) {
+            Vector2 coord = get(i, j);
+            file << "v " << coord.x << " " << coord.y << " " << field[pos(i, j)] << std::endl;
+        }
+    }
+    file << std::endl;
+
+    // Normales
+    if(importNormals) {
+        for(int i = 0; i < h; ++i) {
+            for(int j = 0; j < w; ++j) {
+                Vector3 norm = normal(i, j);
+                if(std::find(vecNormales.begin(), vecNormales.end(), norm) == vecNormales.end()) {
+                    vecNormales.push_back(norm);
+                    file << "vn " << norm.x << " " << norm.y << " " << norm.z << std::endl;
+                }
+            }
+        }
+        file << std::endl;
+    }
+
+    // Faces
+    for(int i = 0; i < h - 1; ++i) {
+        for(int j = 0; j < w - 1; ++j) {
+            int pos1 = pos(i, j) + 1;
+            Vector3 n1 = normal(i, j);
+            int norm1 = std::find(vecNormales.begin(), vecNormales.end(), n1) - vecNormales.begin() + 1;
+
+            int pos2 = pos(i+1, j) + 1 ;
+            Vector3 n2  = normal(i+1, j);
+            int norm2 = std::find(vecNormales.begin(), vecNormales.end(), n2) - vecNormales.begin() + 1;
+
+            int pos3 = pos(i, j+1) + 1;
+            Vector3 n3 = normal(i, j+1);
+            int norm3 = std::find(vecNormales.begin(), vecNormales.end(), n3) - vecNormales.begin() + 1;
+
+            int pos4 = pos(i+1, j+1) + 1;
+            Vector3 n4 = normal(i+1, j+1);
+            int norm4 = std::find(vecNormales.begin(), vecNormales.end(), n4) - vecNormales.begin() + 1;
+
+            if(importNormals) {
+                file << "f " << pos1 << "//" << norm1 << " " << pos2 << "//" << norm2 << " " << pos3 << "//" << norm3 << std::endl;
+                file << "f " << pos3 << "//" << norm3 << " " << pos2 << "//" << norm2 << " " << pos4 << "//" << norm4 << std::endl;
+            } else {
+                file << "f " << pos1 << " " << pos2 << " " << pos3 << std::endl;
+                file << "f " << pos3 << " " << pos2 << " " << pos4 << std::endl;
+            }
+        }
+    }
+
+    file.close();
+}
