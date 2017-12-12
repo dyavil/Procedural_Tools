@@ -11,9 +11,7 @@ public:
     HeightField();
     HeightField(Vector2 a, Vector2 b, int ii, int jj, double defaut=0.0);
     Vector3 normal(int i, int j);
-    void CalcUV(const Vector2 & p , int & xi, int & yi, double & u, double & v);
-    void Bilineaire(const Vector2 & p, double & res);
-    void Barycentrique(const Vector2 & p, double & res);
+
 
     void exportOBJ(const std::string & filename, bool importNormals = true);
 };

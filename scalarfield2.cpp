@@ -57,3 +57,71 @@ Vector2 ScalarField2::gradient(int i, int j){
     else dy = (field[pos(i+1, j)] - field[pos(i-1, j)])/aa;
     return Vector2(dx, dy);
 }
+
+
+
+void ScalarField2::CalcUV(const Vector2 &p, int &xi, int &yi, double &u, double &v){
+    std::pair<int, int> xy= inside(Vector3(p, 0));
+    xi=xy.second;
+    yi=xy.first;
+    u = (p-get(yi, xi)).x;
+    v = (p-get(yi, xi)).y;
+}
+
+
+void ScalarField2::Bilineaire(const Vector2 &p, double &res){
+    int xi, yi;
+    double u, v;
+    CalcUV(p, xi, yi, u, v);
+    if(xi < 0) std::cout << "bug " << p << ", " << xi << std::endl;
+    res = 0;
+    if(pos(yi+1, xi) >= (int)field.size() || pos(yi, xi+1) >= (int)field.size() || pos(yi+1, xi+1) >= (int)field.size()) res = field[pos(yi, xi)];
+    else res = (1-u)*(1-v)*field[pos(yi, xi)] + (1-u)*v*field[pos(yi+1, xi)] + u*(1-v)*field[pos(yi, xi+1)] + u*v*field[pos(yi+1, xi+1)];
+
+}
+
+void ScalarField2::Barycentrique(const Vector2 &p, double &res) {
+    int xi, yi;
+    double u, v;
+    CalcUV(p, xi, yi, u, v);
+    if(xi < 0) std::cout << "bug " << p << ", " << xi << std::endl;
+    res = 0;
+    bool oppose = false;
+    static int count = 0;
+    if(distance(p, get(yi, xi)) >= distance(p, get(yi+1, xi+1))) {
+        oppose = true;
+        count++;
+    }
+    //std::cout << p << ", " << distance(p, get(yi, xi)) << ", " << get(yi, xi) << ", " << distance(p, get(yi+1, xi+1)) << std::endl;
+    if(pos(yi+1, xi) >= (int)field.size() || pos(yi, xi+1) >= (int)field.size() || pos(yi+1, xi+1) >= (int)field.size()) res = field[pos(yi, xi)];
+    else if(!oppose) {
+
+        double ar = area(Vector3(get(yi, xi), field[pos(yi, xi)]), Vector3(get(yi, xi+1), field[pos(yi, xi+1)]), Vector3(get(yi+1, xi), field[pos(yi+1, xi)]));
+        double a1 = area(Vector3(p, 0.0), Vector3(get(yi, xi), field[pos(yi, xi)]), Vector3(get(yi, xi+1), field[pos(yi, xi+1)]));
+        double a2 = area(Vector3(p, 0.0), Vector3(get(yi, xi+1), field[pos(yi, xi+1)]), Vector3(get(yi+1, xi), field[pos(yi+1, xi)]));
+        double a3 = area(Vector3(p, 0.0), Vector3(get(yi+1, xi), field[pos(yi+1, xi)]), Vector3(get(yi, xi), field[pos(yi, xi)]));
+        a1 = a1/ar;
+        a2 = a2/ar;
+        a3 = a3/ar;
+        res = a1*field[pos(yi+1, xi)] + a2*field[pos(yi, xi)] + a3*field[pos(yi, xi+1)];
+        /*if(a1 < 0) std::cout << "1 1 " << a1 << std::endl;
+        if(a2 < 0) std::cout << "1 2 " << a2 << std::endl;
+        if(a3 < 0) std::cout << "1 3 " << a3 << std::endl;*/
+    }
+    else{
+        double ar = area(Vector3(get(yi+1, xi), field[pos(yi+1, xi)]), Vector3(get(yi, xi+1), field[pos(yi, xi+1)]), Vector3(get(yi+1, xi+1), field[pos(yi+1, xi+1)]));
+        double a1 = area(Vector3(p, 0.0), Vector3(get(yi+1, xi), field[pos(yi+1, xi)]), Vector3(get(yi, xi+1), field[pos(yi, xi+1)]));
+        double a2 = area(Vector3(p, 0.0), Vector3(get(yi, xi+1), field[pos(yi, xi+1)]), Vector3(get(yi+1, xi+1), field[pos(yi+1, xi+1)]));
+        double a3 = area(Vector3(p, 0.0), Vector3(get(yi+1, xi+1), field[pos(yi+1, xi+1)]), Vector3(get(yi+1, xi), field[pos(yi+1, xi)]));
+        a1 = a1/ar;
+        a2 = a2/ar;
+        a3 = a3/ar;
+        res = a1*field[pos(yi+1, xi+1)] + a2*field[pos(yi+1, xi)] + a3*field[pos(yi, xi+1)];
+
+        /*if(a1 < 0) std::cout << "2 1 " << a1 << std::endl;
+        if(a2 < 0) std::cout << "2 2 " << a2 << std::endl;
+        if(a3 < 0) std::cout << "2 3 " << a3 << std::endl;*/
+    }
+    //std::cout << count << std::endl;
+}
+
