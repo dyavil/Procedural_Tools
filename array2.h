@@ -7,7 +7,7 @@ class Array2 : public Box2
 {
 public:
     Array2(){}
-    Array2(Vector2 a, Vector2 b, int ii, int jj);
+    Array2(Vector2 a, Vector2 b, int ww, int hh);
 
     int pos(int i, int j){return (i*w+j);}
     Vector2 get(int i, int j);

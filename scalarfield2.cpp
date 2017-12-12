@@ -1,9 +1,9 @@
 #include "scalarfield2.h"
 
-ScalarField2::ScalarField2(Vector2 a, Vector2 b, int ii, int jj, double defaut) : Array2(a, b, ii, jj)
+ScalarField2::ScalarField2(Vector2 a, Vector2 b, int ww, int hh, double defaut) : Array2(a, b, ww, hh)
 {
-    field.resize(ii*jj);
-    for (int i = 0; i < jj*ii; ++i) {
+    field.resize(ww*hh);
+    for (int i = 0; i < ww*hh; ++i) {
              field[i] = defaut;
     }
 
@@ -30,12 +30,17 @@ bool ScalarField2::load(QImage & im, Vector2 a, Vector2 b, double za, double zb)
 
 
 QImage ScalarField2::render(){
+    std::vector<double>::iterator result;
+    result = std::max_element(field.begin(), field.end());
+    double zm = *result;
+
     QImage res = QImage(w, h, QImage::Format_RGB32);
     QRgb val;
     for (int i = 0; i < h; ++i) {
         for (int j = 0; j < w; ++j) {
             int ii = h-i-1;
-            int v = floor(field[pos(i, j)] * 255);
+            double vt = ((field[pos(i, j)])/(zm));
+            int v = floor(vt * 255.0);
             val = qRgb(v, v, v);
             res.setPixel(j, ii, val);
         }
@@ -45,15 +50,15 @@ QImage ScalarField2::render(){
 
 
 Vector2 ScalarField2::gradient(int i, int j){
-    double aa = 2.0*((b.x-a.x)/w);
+    double aa = 2.0*((b.x-a.x)/(double)w);
     double dx;
     if(j+1 >= w) dx = (field[pos(i, j)] - field[pos(i, j-1)])/(aa/2.0);
-    if(j-1 < 0) dx = (field[pos(i, j+1)] - field[pos(i, j)])/(aa/2.0);
+    else if(j-1 < 0) dx = (field[pos(i, j+1)] - field[pos(i, j)])/(aa/2.0);
     else dx = (field[pos(i, j+1)] - field[pos(i, j-1)])/aa;
-    aa = 2*((b.y-a.y)/h);
+    aa = 2.0*((b.y-a.y)/h);
     double dy;
     if(i+1 >= h) dy = (field[pos(i, j)] - field[pos(i-1, j)])/(aa/2.0);
-    if(i-1 < 0) dy = (field[pos(i+1, j)] - field[pos(i, j)])/(aa/2.0);
+    else if(i-1 < 0) dy = (field[pos(i+1, j)] - field[pos(i, j)])/(aa/2.0);
     else dy = (field[pos(i+1, j)] - field[pos(i-1, j)])/aa;
     return Vector2(dx, dy);
 }

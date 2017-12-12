@@ -17,16 +17,16 @@ int main(int argc, char *argv[])
     hf.setVal(1, 1, 0.8);
     QImage im = QImage("/home/dyavil/Images/map1.png");
     //hg.load(im, Vector2(-1, -1), Vector2(1, 1), 0.3, 0.6);
-    hf.load(im, Vector2(-1, -1), Vector2(1, 1), 0.1, 0.5);
+    hf.load(im, Vector2(-1, -1), Vector2(1, 1), 0.1, 0.7);
     std::cout << hf.normal(1, 1) << std::endl;
+    hg = hf.generateSlopeField();
+
     d.addField(hf);
-    im = hf.render();
-    /*QImageWriter writer("/home/dyavil/Images/rest.jpg", "jpg");
-    writer.write(im);*/
     //hf.exportOBJ("/home/dyavil/Images/map1.obj", false);
     //d.prepareInterpol(600, 0);
     d.prepare();
     w.drawHFBase(d);
+    w.setSlopeField(hg.render());
     return a.exec();
 }
 

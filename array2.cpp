@@ -1,9 +1,9 @@
 #include "array2.h"
 
-Array2::Array2(Vector2 a, Vector2 b, int ii, int jj) : Box2(a, b)
+Array2::Array2(Vector2 a, Vector2 b, int ww, int hh) : Box2(a, b)
 {  
-    h=jj;
-    w=ii;
+    h=hh;
+    w=ww;
 }
 
 

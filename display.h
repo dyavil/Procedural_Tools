@@ -16,6 +16,7 @@ public:
     explicit Display(QWidget *parent = 0);
     ~Display();
     void drawHFBase(DrawField hf);
+    void setSlopeField(QImage im);
 
 private:
     Ui::Display *ui;

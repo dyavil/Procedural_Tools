@@ -6,7 +6,7 @@ HeightField::HeightField()
 }
 
 
-HeightField::HeightField(Vector2 a, Vector2 b, int ii, int jj, double defaut) : ScalarField2(a, b, ii, jj, defaut){}
+HeightField::HeightField(Vector2 a, Vector2 b, int ww, int hh, double defaut) : ScalarField2(a, b, ww, hh, defaut){}
 
 Vector3 HeightField::normal(int i, int j){
     Vector3 va, vb, vc, vd;
@@ -27,6 +27,25 @@ Vector3 HeightField::normal(int i, int j){
     return normalize((r+r2+r3+r4)/n);
 }
 
+
+double HeightField::slope(int i, int j){
+    Vector2 tmp = gradient(i, j);
+    return sqrt(tmp.x*tmp.x + tmp.y*tmp.y);
+}
+
+ScalarField2 HeightField::generateSlopeField(){
+    ScalarField2 res = ScalarField2(a, b, w, h);
+    int t, tt;
+    for (int i = 0; i < h; ++i) {
+        for (int j = 0; j < w; ++j) {
+            res.field[pos(i, j)] = slope(i, j)/20;
+            t = j;
+        }
+        tt = i;
+    }
+    std::cout << pos(t, tt)  << ", " << field.size() << std::endl;
+    return res;
+}
 
 
 void HeightField::exportOBJ(const std::string & filename, bool importNormals) {

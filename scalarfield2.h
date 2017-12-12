@@ -9,7 +9,7 @@ class ScalarField2 : public Array2
 {
 public:
     ScalarField2(){};
-    ScalarField2(Vector2 a, Vector2 b, int ii, int jj, double defaut=0.0);
+    ScalarField2(Vector2 a, Vector2 b, int ww, int hh, double defaut=0.0);
     bool load(QImage & im, Vector2 a, Vector2 b, double za, double zb);
     QImage render();
     Vector2 gradient(int i, int j);
