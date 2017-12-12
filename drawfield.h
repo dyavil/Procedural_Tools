@@ -9,8 +9,8 @@ class DrawField
 {
 public:
     DrawField();
+    void prepare();
     void draw();
-    void drawInterpol();
     void prepareInterpol(int size, int idf=0);
     void addField(ScalarField2 & sf){fields.push_back(sf);}
     std::vector<ScalarField2> fields;

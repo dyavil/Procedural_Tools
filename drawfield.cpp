@@ -6,51 +6,21 @@ DrawField::DrawField()
 }
 
 
-void DrawField::draw()
+void DrawField::prepare()
 {
 
     for (unsigned int var = 0; var < fields.size(); ++var) {
         ScalarField2 & hg = fields[var];
-        for (int i = 0; i < hg.h-1; i++) {
-            for (int j = 0; j < hg.w-1; j++) {
+        for (int i = 0; i < hg.h; i++) {
+            for (int j = 0; j < hg.w; j++) {
 
 
                 Vector2 pos = hg.get(i, j);
-                //pos = pos + Vector2(-0.5, -0.5);
-                glColor3f(hg.field[hg.pos(i, j)], hg.field[hg.pos(i, j)], hg.field[hg.pos(i, j)]);
-                glBegin(GL_TRIANGLES);
-                glVertex3f(pos.x, pos.y, hg.field[hg.pos(i, j)]);
+                vertices.push_back(Vector3(pos, hg.field[hg.pos(i, j)]));
 
+                if((j+1) < hg.w && (i+1)<hg.h) triangles.push_back(Triangle((i*hg.w+j), (i*hg.w+(j+1)), ((i+1)*hg.w+j)));
+                if((j+1) < hg.w && (i+1)<hg.h) triangles.push_back(Triangle((i*hg.w+(j+1)), ((i+1)*hg.w+(j+1)), ((i+1)*hg.w+j)));
 
-                pos = hg.get(i, j+1);
-                //pos = pos + Vector2(-0.5, -0.5);
-                glColor3f(hg.field[hg.pos(i, j+1)], hg.field[hg.pos(i, j+1)], hg.field[hg.pos(i, j+1)]);
-                glVertex3f(pos.x, pos.y, hg.field[hg.pos(i, j+1)]);
-
-                pos = hg.get(i+1, j);
-                //pos = pos + Vector2(-0.5, -0.5);
-                glColor3f(hg.field[hg.pos(i+1, j)], hg.field[hg.pos(i+1, j)], hg.field[hg.pos(i+1, j)]);
-                glVertex3f(pos.x, pos.y, hg.field[hg.pos(i+1, j)]);
-
-                ////////////////////////////////////////
-
-                pos = hg.get(i+1, j);
-                //pos = pos + Vector2(-0.5, -0.5);
-                glColor3f(hg.field[hg.pos(i+1, j)], hg.field[hg.pos(i+1, j)], hg.field[hg.pos(i+1, j)]);
-                glVertex3f(pos.x, pos.y, hg.field[hg.pos(i+1, j)]);
-
-                pos = hg.get(i, j+1);
-                //pos = pos + Vector2(-0.5, -0.5);
-                glColor3f(hg.field[hg.pos(i, j+1)], hg.field[hg.pos(i, j+1)], hg.field[hg.pos(i, j+1)]);
-                glBegin(GL_TRIANGLES);
-                glVertex3f(pos.x, pos.y, hg.field[hg.pos(i, j+1)]);
-
-
-                pos = hg.get(i+1, j+1);
-                //pos = pos + Vector2(-0.5, -0.5);
-                glColor3f(hg.field[hg.pos(i+1, j+1)], hg.field[hg.pos(i+1, j+1)], hg.field[hg.pos(i+1, j+1)]);
-                glVertex3f(pos.x, pos.y, hg.field[hg.pos(i+1, j+1)]);
-                glEnd();
             }
         }
 
@@ -101,9 +71,9 @@ bool DrawField::testPoint(const Vector3 &v3, int size, int idf){
 }
 
 
-void DrawField::drawInterpol(){
+void DrawField::draw(){
 
-    for (int i = 0; i < triangles.size(); ++i) {
+    for (unsigned int i = 0; i < triangles.size(); ++i) {
         glBegin(GL_TRIANGLES);
         double z = vertices[triangles[i].vertices[0]].z;
         glColor3f(z, z, z);

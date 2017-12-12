@@ -37,7 +37,7 @@ void GLView::paintGL()
     glRotatef(angle, 0.0f, 1.0f, 0.0f);
 
     //hg.draw();
-    hg.drawInterpol();
+    hg.draw();
 }
 
 void GLView::resizeGL(int w, int h)
