@@ -11,6 +11,8 @@ public:
     LayerField(Vector2 a, Vector2 b, int nx, int ny, ScalarField2 c1, ScalarField2 c2);
     LayerField(Vector2 a, Vector2 b, int nx, int ny, ScalarField2 c1, ScalarField2 c2, ScalarField2 c3);
 
+    double height(int i, int j);
+
     ScalarField2 couche1;
     ScalarField2 couche2;
     ScalarField2 couche3;
