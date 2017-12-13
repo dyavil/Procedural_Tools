@@ -63,6 +63,107 @@ Vector2 ScalarField2::gradient(int i, int j){
     return Vector2(dx, dy);
 }
 
+double ScalarField2::interpolation_cos1D(double a, double b, double x) {
+
+   double k = (1 - cos(x * M_PI)) / 2;
+
+    return a * (1 - k) + b * k;
+}
+
+double ScalarField2::interpolation_cos2D(double a, double b, double c, double d, double x, double y) {
+   double y1 = interpolation_cos1D(a, b, x);
+   double y2 = interpolation_cos1D(c, d, x);
+   return  interpolation_cos1D(y1, y2, y);
+}
+
+double ScalarField2::fonction_bruit2D(double x, double y, int pas2D) {
+   int i = (int) (y / pas2D);
+   int j = (int) (x / pas2D);
+   return interpolation_cos2D(field[pos(i, j)], field[pos(i + 1, j)], field[pos(i, j + 1)], field[pos(i + 1, j + 1)], fmod(y / pas2D, 1), fmod(x / pas2D, 1));
+}
+
+void ScalarField2::noiseMap(int pas){
+
+    srand(time(NULL));
+    for (int i = 0; i < h*w; ++i) {
+        field[i]= 0.1;
+    }
+    for (int q = 0; q < 1; ++q) {
+
+        std::vector<double> noise;
+        int lg = (int) ceil((w+1)/ pas);
+        int ht = (int) ceil((h+1)/ pas);
+        noise.resize(lg*ht);
+        for (unsigned int i = 0; i < lg*ht; ++i) {
+            noise[i] = ((double) rand() / (RAND_MAX))*0.8;
+        }
+        //std::cout << "noi " << noise[0] << std::endl;
+
+        ScalarField2 nn = ScalarField2(a, b, lg, ht);
+        nn.field = noise;
+        double pasX = (b.x - a.x)/(float)w;
+        double pasY = (b.y - a.y)/(float)h;
+        for (int i = 0; i < h; ++i) {
+            for (int j = 0; j < w; ++j) {
+                Vector2 t = a+Vector2(i*pasX, j*pasY);
+
+                double re = 0.0;
+                nn.Barycentrique(t, re);
+                re = nn.fonction_bruit2D(inside(Vector3(t, 0.0)).first, inside(Vector3(t, 0.0)).second, pas);
+                //field[pos(i, j)] += re;
+                field[pos(i, j)] = std::max(re, field[pos(i, j)]);
+            }
+        }
+
+
+        for(int t = 0; t < 0; ++t){
+
+            /*nn.w = nn.w*2;
+            nn.h = nn.h*2;
+            noise.resize(nn.h*nn.w);
+            for (int i = 0; i < nn.field.size(); ++i) {
+                noise[i]= nn.field[i];
+            }
+            for (int i = nn.field.size(); i < nn.field.size()*2; ++i) {
+                noise[i]= nn.field[i-nn.field.size()];
+            }
+            for (int i = nn.field.size()*2; i < nn.field.size()*3; ++i) {
+                noise[i]= nn.field[i-nn.field.size()*2];
+            }
+            for (int i = nn.field.size()*3; i < nn.field.size()*4; ++i) {
+                noise[i]= nn.field[i-nn.field.size()*3];
+            }*/
+            /*double last = noise[noise.size()-1];
+            for (int i = 1; i < noise.size(); ++i) {
+                noise[i] = noise[i-1];
+            }
+            noise[0] = last;*/
+            //std::cout << nn.field.size()*2 << noise.size() << nn.h*nn.w << std::endl;
+            /*lg = (int) ceil(w/ (pas*1.0));
+            ht = (int) ceil(h/ (pas*1.0));
+            noise.resize(lg*ht);
+            srand(time(NULL));
+            for (unsigned int i = 0; i < lg*ht; ++i) {
+                noise[i] = ((double) rand() / (RAND_MAX))*0.5;
+            }*/
+            //nn.field = noise;
+            for (int i = 0; i < h; i+=2) {
+                for (int j = 0; j < w; j+=2) {
+                    Vector2 t = a+Vector2(i*pasX, j*pasY);
+                    double re = 0.0;
+                    nn.Barycentrique(t, re);
+                    re = nn.fonction_bruit2D(inside(Vector3(t, 0.0)).first, inside(Vector3(t, 0.0)).second, 1);
+                    //field[pos(i, j)] += re;
+                    field[pos(i, j)] = std::max(re, field[pos(i, j)]);
+                }
+            }
+        }
+    }
+
+    for (int i = 0; i < field.size(); ++i) {
+       // field[i] = field[i]/10;
+    }
+}
 
 
 void ScalarField2::CalcUV(const Vector2 &p, int &xi, int &yi, double &u, double &v){
@@ -89,6 +190,7 @@ void ScalarField2::Barycentrique(const Vector2 &p, double &res) {
     int xi, yi;
     double u, v;
     CalcUV(p, xi, yi, u, v);
+
     if(xi < 0) std::cout << "bug " << p << ", " << xi << std::endl;
     res = 0;
     bool oppose = false;
