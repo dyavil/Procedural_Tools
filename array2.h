@@ -9,9 +9,36 @@ public:
     Array2(){}
     Array2(Vector2 a, Vector2 b, int ww, int hh);
 
-    int pos(int i, int j){return (i*w+j);}
+    /**
+     * @brief pos Retourne la position correspondante à (i,j) dans un tableau 1D
+     * @param i ligne
+     * @param j colonne
+     * @return position dans un tableau 1D
+     */
+    int pos(int i, int j) const { return (i*w + j); }
+
+    /**
+     * @brief coord Retourne la position correspondante à pos dans un tableau 2D
+     * @param pos position 1D recherchée
+     * @return position dans un tableau 2D
+     */
+    Vector2 coord(int pos) const { return Vector2(pos/h , pos%w); }
+
+    /**
+     * @brief get Retourne les coordonnées (i,j) mises à l'échelle du tableau
+     * @param i ligne
+     * @param j colonne
+     * @return coordonnées (i,j) réelles
+     */
     Vector2 get(int i, int j);
+
+    /**
+     * @brief inside
+     * @param v3
+     * @return
+     */
     std::pair<int, int> inside(const Vector3 & v3);
+
     int h;
     int w;
 };

@@ -1,7 +1,5 @@
 #include "heightfield.h"
 
-HeightField::HeightField(Vector2 a, Vector2 b, int ww, int hh, double defaut) : ScalarField2(a, b, ww, hh, defaut) {}
-
 
 Vector3 HeightField::normalOld(int i, int j) {
     Vector3 va, vb, vc, vd;
@@ -74,7 +72,7 @@ void HeightField::Bilineaire(const Vector2 &p, double &res) {
     CalcUV(p, xi, yi, u, v);
     if(xi < 0) std::cout << "bug " << p << ", " << xi << std::endl;
     res = 0;
-    if(pos(yi+1, xi) >= field.size() || pos(yi, xi+1) >= field.size() || pos(yi+1, xi+1) >= field.size()) res = field[pos(yi, xi)];
+    if(pos(yi+1, xi) >= (int)field.size() || pos(yi, xi+1) >= (int)field.size() || pos(yi+1, xi+1) >= (int)field.size()) res = field[pos(yi, xi)];
     else res = (1-u)*(1-v)*field[pos(yi, xi)] + (1-u)*v*field[pos(yi+1, xi)] + u*(1-v)*field[pos(yi, xi+1)] + u*v*field[pos(yi+1, xi+1)];
 }
 
@@ -133,8 +131,72 @@ ScalarField2 HeightField::generateSlopeField() {
 }
 
 
-void HeightField::exportOBJ(const std::string & filename, bool importNormals) {
+void HeightField::updateNeighborsWater(int position, ScalarField2 & waterField) const {
+    Vector2 vec = coord(position);
+    int i = vec.x, j = vec.y;
+    double somCoeff = 0.0;
 
+    // Calcul de la somme des coefficients
+    if((i-1) >= 0 && field[pos(i-1, j)] < field[position]) { somCoeff += field[position] - field[pos(i-1, j)]; }
+    if((j-1) >= 0 && field[pos(i, j-1)] < field[position]) { somCoeff += field[position] - field[pos(i, j-1)]; }
+    if((i+1) < h && field[pos(i+1, j)] < field[position]) { somCoeff += field[position] - field[pos(i+1, j)]; }
+    if((j+1) < w && field[pos(i, j+1)] < field[position]) { somCoeff += field[position] - field[pos(i, j+1)]; }
+    if((i-1) >= 0 && (j-1) >= 0 && field[pos(i-1, j-1)] < field[position]) { somCoeff += (field[position] - field[pos(i-1, j-1)]) / M_SQRT2; }
+    if((i-1) >= 0 && (j+1) < w && field[pos(i-1, j+1)] < field[position]) { somCoeff += (field[position] - field[pos(i-1, j+1)]) / M_SQRT2; }
+    if((i+1) < h && (j-1) >= 0 && field[pos(i+1, j-1)] < field[position]) { somCoeff += (field[position] - field[pos(i+1, j-1)]) / M_SQRT2; }
+    if((i+1) < h && (j+1) < w && field[pos(i+1, j+1)] < field[position]) { somCoeff += (field[position] - field[pos(i+1, j+1)]) / M_SQRT2; }
+
+    // Repartition de l'eau
+    if((i-1) >= 0 && field[pos(i-1, j)] < field[position]) {
+        waterField.field[pos(i-1, j)] = waterField.field[position] * (field[position] - field[pos(i-1, j)]) / somCoeff;
+    }
+    if((j-1) >= 0 && field[pos(i, j-1)] < field[position]) {
+        waterField.field[pos(i, j-1)] = waterField.field[position] * (field[position] - field[pos(i, j-1)]) / somCoeff;
+    }
+    if((i+1) < h && field[pos(i+1, j)] < field[position]) {
+        waterField.field[pos(i+1, j)] = waterField.field[position] * (field[position] - field[pos(i+1, j)]) / somCoeff;
+    }
+    if((j+1) < w && field[pos(i, j+1)] < field[position]) {
+        waterField.field[pos(i, j+1)] = waterField.field[position] * (field[position] - field[pos(i, j+1)]) / somCoeff;
+    }
+    if((i-1) >= 0 && (j-1) >= 0 && field[pos(i-1, j-1)] < field[position]) {
+        waterField.field[pos(i-1, j-1)] = waterField.field[position] * ((field[position] - field[pos(i-1, j-1)]) / M_SQRT2) / somCoeff;
+    }
+    if((i-1) >= 0 && (j+1) < w && field[pos(i-1, j+1)] < field[position]) {
+        waterField.field[pos(i-1, j+1)] = waterField.field[position] * ((field[position] - field[pos(i-1, j+1)]) / M_SQRT2) / somCoeff;
+    }
+    if((i+1) < h && (j-1) >= 0 && field[pos(i+1, j-1)] < field[position]) {
+        waterField.field[pos(i+1, j-1)] = waterField.field[position] * ((field[position] - field[pos(i+1, j-1)]) / M_SQRT2) / somCoeff;
+    }
+    if((i+1) < h && (j+1) < w && field[pos(i+1, j+1)] < field[position]) {
+        waterField.field[pos(i+1, j+1)] = waterField.field[position] * ((field[position] - field[pos(i+1, j+1)]) / M_SQRT2) / somCoeff;
+    }
+}
+
+
+ScalarField2 HeightField::generateDrainageArea(float initialAmount) const {
+    ScalarField2 res = ScalarField2(a, b, w, h);
+    std::vector<std::array<double, 2>> vecHeights(field.size());
+
+    for(int i = 0; i < h; ++i) {
+        for(int j = 0; j < w; ++j) {
+            int position = pos(i,j);
+            res.field[position] = initialAmount;
+            vecHeights[position] = { field[position], (double)position };
+        }
+    }
+
+    std::sort(vecHeights.begin(), vecHeights.end());
+
+    for(unsigned int i = 0; i < vecHeights.size(); ++i) {
+        updateNeighborsWater(vecHeights[i][1], res);
+    }
+
+    return res;
+}
+
+
+void HeightField::exportOBJ(const std::string & filename, bool importNormals) {
     std::unordered_map<Vector3, int, Vector3Hasher> mapNormales;
     std::ofstream file(filename);
 
