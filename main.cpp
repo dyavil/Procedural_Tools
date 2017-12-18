@@ -12,10 +12,10 @@ int main(int argc, char *argv[])
 
     DrawField d;
     ScalarField2 hg = ScalarField2(Vector2(0, 0), Vector2(1, 1), 10, 10, 0.0);
-    HeightField hf = HeightField(Vector2(-1, -1), Vector2(1, 1), 500, 500, 0.0);
+    HeightField hf = HeightField(Vector2(-400, -400), Vector2(400, 400), 500, 500, 0.0);
     QImage im = QImage("/home/dyavil/Images/map1.png");
     //hg.load(im, Vector2(-1, -1), Vector2(1, 1), 0.3, 0.6);
-    hf.load(im, Vector2(-1, -1), Vector2(1, 1), 0.1, 0.5);
+    hf.load(im, Vector2(-7500, -7500), Vector2(7500, 7500), 0, 400);
     //hf.noiseMap(4);
 
     hg = hf.generateSlopeField();
@@ -29,11 +29,12 @@ int main(int argc, char *argv[])
     hg = hf.generateDrainageArea();
     d.addRivers(hg);
     w.setDrainageArea(hg.render());
-    w.setWetness(hf.generateWetnessField().render());
+    ScalarField2 wet = hf.generateWetnessField();
+    w.setWetness(wet.render());
     w.setStreamPower(hf.generateStreamPowerField().render());
 
     w.drawHFBase(d);
-    hf.generateWetnessField().render().save("/home/dyavil/Images/res1.png");
+    wet.render().save("/home/dyavil/Images/res1.png");
     return a.exec();
 }
 

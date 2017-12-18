@@ -68,7 +68,6 @@ double HeightField::slope(int i, int j) {
 
 ScalarField2 HeightField::generateSlopeField() {
     ScalarField2 res = ScalarField2(a, b, w, h);
-    int t, tt;
     for (int i = 0; i < h; ++i) {
         for (int j = 0; j < w; ++j) {
             res.field[pos(i, j)] = slope(i, j);
@@ -225,3 +224,16 @@ void HeightField::exportOBJ(const std::string & filename, bool importNormals) {
 
     file.close();
 }
+
+
+
+std::pair<int, int> HeightField::initRay(Vector3 dir, Vector3 p){
+    std::pair<int, int> res = std::make_pair(-1, -1);
+    double len = 0.0;
+    if((Vector3(b, 0)-p).length() > (p-Vector3(a, 0)).length()){
+        len = (Vector3(b, 0)-p).length();
+    }else len = (p-Vector3(a, 0)).length();
+    std::pair<int, int> pos = inside(p);
+    return res;
+}
+

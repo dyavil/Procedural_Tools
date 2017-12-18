@@ -21,6 +21,8 @@ public:
     void Bilineaire(const Vector2 & p, double & res);
     void Barycentrique(const Vector2 & p, double & res);
 
+    void between0and1();
+
 
     std::vector<double> field;
 

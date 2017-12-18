@@ -112,7 +112,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Steam Power</string>
+     <string>Stream Power</string>
     </property>
    </widget>
    <widget class="QLabel" name="wetnessLabel">

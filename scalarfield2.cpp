@@ -35,13 +35,14 @@ QImage ScalarField2::render(){
     result = std::max_element(field.begin(), field.end());
     double zm = *result;
     result = std::min_element(field.begin(), field.end());
-    std::cout << zm << ", " << *result/zm*255.0 << std::endl;
+    double zmin = *result;
+    //std::cout << zm << ", " << *result/zm*255.0 << std::endl;
     QImage res = QImage(w, h, QImage::Format_RGB32);
     QRgb val;
     for (int i = 0; i < h; ++i) {
         for (int j = 0; j < w; ++j) {
             int ii = h-i-1;
-            double vt = ((field[pos(i, j)])/(zm));
+            double vt = ((field[pos(i, j)]-zmin)/(zm-zmin));
             int v = floor(vt * 255.0);
             val = qRgb(v, v, v);
             res.setPixel(j, ii, val);
@@ -86,16 +87,20 @@ void ScalarField2::noiseMap(int pas){
         coefM *=2;
     }
 
+}
+
+void ScalarField2::between0and1(){
     std::vector<double>::iterator result;
     result = std::max_element(field.begin(), field.end());
     double zm = *result;
     result = std::min_element(field.begin(), field.end());
-    std::cout << zm << ", rfrf" << *result << std::endl;
     double min = *result;
     for (int i = 0; i < h*w; ++i) {
         field[i] -= min ;
     }
-
+    for (int i = 0; i < h*w; ++i) {
+        field[i] /= (zm-min) ;
+    }
 }
 
 
@@ -103,8 +108,8 @@ void ScalarField2::CalcUV(const Vector2 &p, int &xi, int &yi, double &u, double 
     std::pair<int, int> xy= inside(Vector3(p, 0));
     xi=xy.second;
     yi=xy.first;
-    u = (p-get(yi, xi)).x*(w-1);
-    v = (p-get(yi, xi)).y*(h-1);
+    u = (p-get(yi, xi)).x/((b.x-a.x)/(w-1));
+    v = (p-get(yi, xi)).y/((b.y-a.y)/(h-1));
 }
 
 

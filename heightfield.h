@@ -23,7 +23,7 @@ public:
      */
     Vector3 normal(int i, int j);
 
-
+    std::pair<int, int> initRay(Vector3 dir, Vector3 p);
 
     /**
      * @brief slope
