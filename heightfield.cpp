@@ -57,57 +57,7 @@ Vector3 HeightField::normal(int i, int j) {
 }
 
 
-void HeightField::CalcUV(const Vector2 &p, int &xi, int &yi, float &u, float &v) {
-    std::pair<int, int> xy= inside(Vector3(p, 0));
-    xi=xy.second;
-    yi=xy.first;
-    u = (p-get(yi, xi)).x;
-    v = (p-get(yi, xi)).y;
-}
 
-
-void HeightField::Bilineaire(const Vector2 &p, double &res) {
-    int xi, yi;
-    float u, v;
-    CalcUV(p, xi, yi, u, v);
-    if(xi < 0) std::cout << "bug " << p << ", " << xi << std::endl;
-    res = 0;
-    if(pos(yi+1, xi) >= (int)field.size() || pos(yi, xi+1) >= (int)field.size() || pos(yi+1, xi+1) >= (int)field.size()) res = field[pos(yi, xi)];
-    else res = (1-u)*(1-v)*field[pos(yi, xi)] + (1-u)*v*field[pos(yi+1, xi)] + u*(1-v)*field[pos(yi, xi+1)] + u*v*field[pos(yi+1, xi+1)];
-}
-
-
-void HeightField::Barycentrique(const Vector2 &p, double &res) {
-    int xi, yi;
-    float u, v;
-    CalcUV(p, xi, yi, u, v);
-    if(xi < 0) std::cout << "bug " << p << ", " << xi << std::endl;
-    res = 0;
-    bool oppose = false;
-    if(distance(p, get(yi, xi)) > distance(p, get(yi+1, xi+1))) oppose = true;
-    if(pos(yi+1, xi) >= (int)field.size() || pos(yi, xi+1) >= (int)field.size() || pos(yi+1, xi+1) >= (int)field.size()) res = field[pos(yi, xi)];
-    else if(!oppose) {
-
-        float ar = area(Vector3(get(yi, xi), field[pos(yi, xi)]), Vector3(get(yi, xi+1), field[pos(yi, xi+1)]), Vector3(get(yi+1, xi), field[pos(yi+1, xi)]));
-        float a1 = area(Vector3(p, 0.0), Vector3(get(yi, xi), field[pos(yi, xi)]), Vector3(get(yi, xi+1), field[pos(yi, xi+1)]));
-        float a2 = area(Vector3(p, 0.0), Vector3(get(yi, xi+1), field[pos(yi, xi+1)]), Vector3(get(yi+1, xi), field[pos(yi+1, xi)]));
-        float a3 = area(Vector3(p, 0.0), Vector3(get(yi+1, xi), field[pos(yi+1, xi)]), Vector3(get(yi, xi), field[pos(yi, xi)]));
-        a1 = a1/ar;
-        a2 = a2/ar;
-        a3 = a3/ar;
-        res = a1*field[pos(yi+1, xi)] + a2*field[pos(yi, xi)] + a3*field[pos(yi, xi+1)];
-    }
-    else{
-        float ar = area(Vector3(get(yi+1, xi), field[pos(yi+1, xi)]), Vector3(get(yi, xi+1), field[pos(yi, xi+1)]), Vector3(get(yi+1, xi+1), field[pos(yi+1, xi+1)]));
-        float a1 = area(Vector3(p, 0.0), Vector3(get(yi+1, xi), field[pos(yi+1, xi)]), Vector3(get(yi, xi+1), field[pos(yi, xi+1)]));
-        float a2 = area(Vector3(p, 0.0), Vector3(get(yi, xi+1), field[pos(yi, xi+1)]), Vector3(get(yi+1, xi+1), field[pos(yi+1, xi+1)]));
-        float a3 = area(Vector3(p, 0.0), Vector3(get(yi+1, xi+1), field[pos(yi+1, xi+1)]), Vector3(get(yi+1, xi), field[pos(yi+1, xi)]));
-        a1 = a1/ar;
-        a2 = a2/ar;
-        a3 = a3/ar;
-        res = a1*field[pos(yi+1, xi+1)] + a2*field[pos(yi+1, xi)] + a3*field[pos(yi, xi+1)];
-    }
-}
 
 
 double HeightField::slope(int i, int j) {
@@ -121,14 +71,40 @@ ScalarField2 HeightField::generateSlopeField() {
     int t, tt;
     for (int i = 0; i < h; ++i) {
         for (int j = 0; j < w; ++j) {
-            res.field[pos(i, j)] = slope(i, j)/20;
-            t = j;
+            res.field[pos(i, j)] = slope(i, j);
         }
-        tt = i;
     }
-    std::cout << pos(t, tt)  << ", " << field.size() << std::endl;
     return res;
 }
+
+
+
+ScalarField2 HeightField::generateWetnessField() {
+    ScalarField2 stp = generateSlopeField();
+    ScalarField2 dr = generateDrainageArea();
+    ScalarField2 res = ScalarField2(a, b, w, h);
+    for (int i = 0; i < h; ++i) {
+        for (int j = 0; j < w; ++j) {
+            res.field[pos(i, j)] = log(dr.field[pos(i, j)]/(1.0+stp.field[pos(i, j)]));
+        }
+    }
+    return res;
+}
+
+ScalarField2 HeightField::generateStreamPowerField() {
+    ScalarField2 dra = generateDrainageArea();
+    ScalarField2 slp = generateSlopeField();
+    ScalarField2 res = ScalarField2(a, b, w, h);
+    for (int i = 0; i < h; ++i) {
+        for (int j = 0; j < w; ++j) {
+            res.field[pos(i, j)] = sqrt(dra.field[pos(i, j)])*slp.field[pos(i, j)];
+        }
+    }
+    return res;
+}
+
+
+
 
 
 void HeightField::updateNeighborsWater(int position, ScalarField2 & waterField) const {
@@ -148,28 +124,28 @@ void HeightField::updateNeighborsWater(int position, ScalarField2 & waterField) 
 
     // Repartition de l'eau
     if((i-1) >= 0 && field[pos(i-1, j)] < field[position]) {
-        waterField.field[pos(i-1, j)] = waterField.field[position] * (field[position] - field[pos(i-1, j)]) / somCoeff;
+        waterField.field[pos(i-1, j)] += waterField.field[position] * (field[position] - field[pos(i-1, j)]) / somCoeff;
     }
     if((j-1) >= 0 && field[pos(i, j-1)] < field[position]) {
-        waterField.field[pos(i, j-1)] = waterField.field[position] * (field[position] - field[pos(i, j-1)]) / somCoeff;
+        waterField.field[pos(i, j-1)] += waterField.field[position] * (field[position] - field[pos(i, j-1)]) / somCoeff;
     }
     if((i+1) < h && field[pos(i+1, j)] < field[position]) {
-        waterField.field[pos(i+1, j)] = waterField.field[position] * (field[position] - field[pos(i+1, j)]) / somCoeff;
+        waterField.field[pos(i+1, j)] += waterField.field[position] * (field[position] - field[pos(i+1, j)]) / somCoeff;
     }
     if((j+1) < w && field[pos(i, j+1)] < field[position]) {
-        waterField.field[pos(i, j+1)] = waterField.field[position] * (field[position] - field[pos(i, j+1)]) / somCoeff;
+        waterField.field[pos(i, j+1)] += waterField.field[position] * (field[position] - field[pos(i, j+1)]) / somCoeff;
     }
     if((i-1) >= 0 && (j-1) >= 0 && field[pos(i-1, j-1)] < field[position]) {
-        waterField.field[pos(i-1, j-1)] = waterField.field[position] * ((field[position] - field[pos(i-1, j-1)]) / M_SQRT2) / somCoeff;
+        waterField.field[pos(i-1, j-1)] += waterField.field[position] * ((field[position] - field[pos(i-1, j-1)]) / M_SQRT2) / somCoeff;
     }
     if((i-1) >= 0 && (j+1) < w && field[pos(i-1, j+1)] < field[position]) {
-        waterField.field[pos(i-1, j+1)] = waterField.field[position] * ((field[position] - field[pos(i-1, j+1)]) / M_SQRT2) / somCoeff;
+        waterField.field[pos(i-1, j+1)] += waterField.field[position] * ((field[position] - field[pos(i-1, j+1)]) / M_SQRT2) / somCoeff;
     }
     if((i+1) < h && (j-1) >= 0 && field[pos(i+1, j-1)] < field[position]) {
-        waterField.field[pos(i+1, j-1)] = waterField.field[position] * ((field[position] - field[pos(i+1, j-1)]) / M_SQRT2) / somCoeff;
+        waterField.field[pos(i+1, j-1)] += waterField.field[position] * ((field[position] - field[pos(i+1, j-1)]) / M_SQRT2) / somCoeff;
     }
     if((i+1) < h && (j+1) < w && field[pos(i+1, j+1)] < field[position]) {
-        waterField.field[pos(i+1, j+1)] = waterField.field[position] * ((field[position] - field[pos(i+1, j+1)]) / M_SQRT2) / somCoeff;
+        waterField.field[pos(i+1, j+1)] += waterField.field[position] * ((field[position] - field[pos(i+1, j+1)]) / M_SQRT2) / somCoeff;
     }
 }
 
@@ -186,7 +162,7 @@ ScalarField2 HeightField::generateDrainageArea(float initialAmount) const {
         }
     }
 
-    std::sort(vecHeights.begin(), vecHeights.end());
+    std::sort(vecHeights.rbegin(), vecHeights.rend());
 
     for(unsigned int i = 0; i < vecHeights.size(); ++i) {
         updateNeighborsWater(vecHeights[i][1], res);

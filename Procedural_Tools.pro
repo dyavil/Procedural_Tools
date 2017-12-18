@@ -32,7 +32,8 @@ SOURCES += \
         scalarfield2.cpp \
         heightfield.cpp \
         drawfield.cpp \
-        layerfield.cpp
+        layerfield.cpp \
+    FastNoise.cpp
 
 HEADERS += \
         display.h \
@@ -42,7 +43,8 @@ HEADERS += \
         heightfield.h \
         drawfield.h \
         scalarfield2.h \
-        layerfield.h
+        layerfield.h \
+    FastNoise.h
 
 FORMS += \
         display.ui

@@ -10,15 +10,17 @@ class DrawField
 public:
     DrawField();
     void prepare();
+    void addRivers(const ScalarField2 & sf);
     void draw();
-    void prepareInterpol(int size, int idf=0);
-    void addField(ScalarField2 & sf){fields.push_back(sf);}
-    std::vector<ScalarField2> fields;
+    void prepareInterpol(int size);
+    void setField(ScalarField2 & sf){fields = sf;}
+    ScalarField2 fields;
+    std::vector<Vector3> colors;
     std::vector<Vector3> vertices;
     std::vector<Triangle> triangles;
 
 private:
-    bool testPoint(const Vector3 & v3, int size, int idf);
+    bool testPoint(const Vector3 & v3, int size);
 };
 
 #endif // DRAWFIELD_H

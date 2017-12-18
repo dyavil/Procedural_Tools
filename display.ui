@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>742</width>
-    <height>495</height>
+    <width>1150</width>
+    <height>650</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,18 +19,18 @@
      <rect>
       <x>9</x>
       <y>9</y>
-      <width>441</width>
-      <height>441</height>
+      <width>630</width>
+      <height>630</height>
      </rect>
     </property>
    </widget>
    <widget class="QLabel" name="slopeImg">
     <property name="geometry">
      <rect>
-      <x>480</x>
+      <x>650</x>
       <y>0</y>
-      <width>221</width>
-      <height>221</height>
+      <width>241</width>
+      <height>241</height>
      </rect>
     </property>
     <property name="text">
@@ -40,14 +40,92 @@
    <widget class="QLabel" name="slopeLabel">
     <property name="geometry">
      <rect>
-      <x>480</x>
+      <x>650</x>
       <y>220</y>
-      <width>221</width>
+      <width>241</width>
       <height>20</height>
      </rect>
     </property>
     <property name="text">
      <string>Slope</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="dareaImg">
+    <property name="geometry">
+     <rect>
+      <x>900</x>
+      <y>0</y>
+      <width>241</width>
+      <height>241</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="dareaLabel">
+    <property name="geometry">
+     <rect>
+      <x>900</x>
+      <y>220</y>
+      <width>241</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Drainage Area</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="steamPowImg">
+    <property name="geometry">
+     <rect>
+      <x>650</x>
+      <y>250</y>
+      <width>241</width>
+      <height>241</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="wetnessImg">
+    <property name="geometry">
+     <rect>
+      <x>900</x>
+      <y>250</y>
+      <width>241</width>
+      <height>241</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="steamPowLabel">
+    <property name="geometry">
+     <rect>
+      <x>650</x>
+      <y>470</y>
+      <width>241</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Steam Power</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="wetnessLabel">
+    <property name="geometry">
+     <rect>
+      <x>900</x>
+      <y>470</y>
+      <width>241</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Wetness</string>
     </property>
    </widget>
   </widget>
@@ -56,7 +134,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>742</width>
+     <width>1150</width>
      <height>19</height>
     </rect>
    </property>

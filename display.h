@@ -15,8 +15,11 @@ class Display : public QMainWindow
 public:
     explicit Display(QWidget *parent = 0);
     ~Display();
-    void drawHFBase(DrawField hf);
+    void drawHFBase(DrawField & hf);
     void setSlopeField(QImage im);
+    void setDrainageArea(QImage im);
+    void setStreamPower(QImage im);
+    void setWetness(QImage im);
 
 private:
     Ui::Display *ui;

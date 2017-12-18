@@ -12,21 +12,28 @@ int main(int argc, char *argv[])
 
     DrawField d;
     ScalarField2 hg = ScalarField2(Vector2(0, 0), Vector2(1, 1), 10, 10, 0.0);
-    HeightField hf = HeightField(Vector2(0, 0), Vector2(1, 1), 3, 3, 0.1);
-    hf.setVal(0, 2, 0.4);
-    hf.setVal(1, 1, 0.8);
-    QImage im = QImage("/home/dyavil/Images/map6.png");
+    HeightField hf = HeightField(Vector2(-1, -1), Vector2(1, 1), 500, 500, 0.0);
+    QImage im = QImage("/home/dyavil/Images/map1.png");
     //hg.load(im, Vector2(-1, -1), Vector2(1, 1), 0.3, 0.6);
-    hf.load(im, Vector2(-1, -1), Vector2(1, 1), 0.1, 0.6);
-    //hf.noiseMap(32);
+    hf.load(im, Vector2(-1, -1), Vector2(1, 1), 0.1, 0.5);
+    //hf.noiseMap(4);
 
     hg = hf.generateSlopeField();
-    d.addField(hf);
+    d.setField(hf);
     //hf.exportOBJ("/home/dyavil/Images/map1.obj", false);
-    //d.prepareInterpol(600, 0);
+    //d.prepareInterpol(400);
     d.prepare();
-    w.drawHFBase(d);
+
     w.setSlopeField(hg.render());
+
+    hg = hf.generateDrainageArea();
+    d.addRivers(hg);
+    w.setDrainageArea(hg.render());
+    w.setWetness(hf.generateWetnessField().render());
+    w.setStreamPower(hf.generateStreamPowerField().render());
+
+    w.drawHFBase(d);
+    hf.generateWetnessField().render().save("/home/dyavil/Images/res1.png");
     return a.exec();
 }
 

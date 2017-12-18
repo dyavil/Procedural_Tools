@@ -23,29 +23,7 @@ public:
      */
     Vector3 normal(int i, int j);
 
-    /**
-     * @brief CalcUV
-     * @param p
-     * @param xi
-     * @param yi
-     * @param u
-     * @param v
-     */
-    void CalcUV(const Vector2 & p , int & xi, int & yi, float & u, float & v);
 
-    /**
-     * @brief Bilineaire
-     * @param p
-     * @param res
-     */
-    void Bilineaire(const Vector2 & p, double & res);
-
-    /**
-     * @brief Barycentrique
-     * @param p
-     * @param res
-     */
-    void Barycentrique(const Vector2 & p, double & res);
 
     /**
      * @brief slope
@@ -60,6 +38,12 @@ public:
      * @return
      */
     ScalarField2 generateSlopeField();
+
+
+    ScalarField2 generateWetnessField();
+
+
+    ScalarField2 generateStreamPowerField();
 
     /**
      * @brief updateNeighborsWater Met à jour la quantité d'eau de la drainageArea en un point
