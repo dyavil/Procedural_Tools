@@ -6,7 +6,7 @@
 class Array2 : public Box2
 {
 public:
-    Array2(){}
+    Array2() {}
     Array2(Vector2 a, Vector2 b, int ww, int hh);
 
     /**
@@ -31,6 +31,12 @@ public:
      * @return coordonnées (i,j) réelles
      */
     Vector2 get(int i, int j);
+
+    /**
+     * @brief getCenter Retourne le centre du tableau
+     * @return centre (en coordonnées réelles) du tableau
+     */
+    Vector2 getCenter();
 
     /**
      * @brief inside

@@ -1,6 +1,11 @@
 #include "heightfield.h"
 
 
+HeightField::HeightField(Vector2 a, Vector2 b, int ww, int hh, double defaut) : ScalarField2(a, b, ww, hh, defaut) {
+    defaultHeight = defaut;
+}
+
+
 Vector3 HeightField::normalOld(int i, int j) {
     Vector3 va, vb, vc, vd;
     if((i+1) < h) va = Vector3(get(i+1, j), field[pos(i+1, j)]) - Vector3(get(i, j), field[pos(i, j)]);
@@ -57,9 +62,6 @@ Vector3 HeightField::normal(int i, int j) {
 }
 
 
-
-
-
 double HeightField::slope(int i, int j) {
     Vector2 tmp = gradient(i, j);
     return sqrt(tmp.x*tmp.x + tmp.y*tmp.y);
@@ -68,7 +70,6 @@ double HeightField::slope(int i, int j) {
 
 ScalarField2 HeightField::generateSlopeField() {
     ScalarField2 res = ScalarField2(a, b, w, h);
-    int t, tt;
     for (int i = 0; i < h; ++i) {
         for (int j = 0; j < w; ++j) {
             res.field[pos(i, j)] = slope(i, j);
@@ -76,35 +77,6 @@ ScalarField2 HeightField::generateSlopeField() {
     }
     return res;
 }
-
-
-
-ScalarField2 HeightField::generateWetnessField() {
-    ScalarField2 stp = generateSlopeField();
-    ScalarField2 dr = generateDrainageArea();
-    ScalarField2 res = ScalarField2(a, b, w, h);
-    for (int i = 0; i < h; ++i) {
-        for (int j = 0; j < w; ++j) {
-            res.field[pos(i, j)] = log(dr.field[pos(i, j)]/(1.0+stp.field[pos(i, j)]));
-        }
-    }
-    return res;
-}
-
-ScalarField2 HeightField::generateStreamPowerField() {
-    ScalarField2 dra = generateDrainageArea();
-    ScalarField2 slp = generateSlopeField();
-    ScalarField2 res = ScalarField2(a, b, w, h);
-    for (int i = 0; i < h; ++i) {
-        for (int j = 0; j < w; ++j) {
-            res.field[pos(i, j)] = sqrt(dra.field[pos(i, j)])*slp.field[pos(i, j)];
-        }
-    }
-    return res;
-}
-
-
-
 
 
 void HeightField::updateNeighborsWater(int position, ScalarField2 & waterField) const {
@@ -167,6 +139,81 @@ ScalarField2 HeightField::generateDrainageArea(float initialAmount) const {
     for(unsigned int i = 0; i < vecHeights.size(); ++i) {
         updateNeighborsWater(vecHeights[i][1], res);
     }
+
+    return res;
+}
+
+
+ScalarField2 HeightField::generateWetnessField() {
+    ScalarField2 stp = generateSlopeField();
+    ScalarField2 dr = generateDrainageArea();
+    ScalarField2 res = ScalarField2(a, b, w, h);
+    for (int i = 0; i < h; ++i) {
+        for (int j = 0; j < w; ++j) {
+            res.field[pos(i, j)] = log(dr.field[pos(i, j)]/(1.0+stp.field[pos(i, j)]));
+        }
+    }
+    return res;
+}
+
+
+ScalarField2 HeightField::generateStreamPowerField() {
+    ScalarField2 dra = generateDrainageArea();
+    ScalarField2 slp = generateSlopeField();
+    ScalarField2 res = ScalarField2(a, b, w, h);
+    for (int i = 0; i < h; ++i) {
+        for (int j = 0; j < w; ++j) {
+            res.field[pos(i, j)] = sqrt(dra.field[pos(i, j)])*slp.field[pos(i, j)];
+        }
+    }
+    return res;
+}
+
+
+ScalarField2 HeightField::generateIlluminationField(int nbPoints) {
+    ScalarField2 res = ScalarField2(a, b, w, h);
+
+    Vector2 centre = getCenter();
+    VAR_TYPE radius = distance(centre, a) + distance(centre, a)/10;
+    Sphere sphere(Vector3(centre, 0.0) , radius);
+    Vector3 normaleSphere(centre, defaultHeight);
+
+    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+    std::mt19937 generator(seed);
+    std::uniform_real_distribution<double> uniform(0.0, 1.0);
+
+    std::vector<Vector3> listPoints(nbPoints);
+
+    for(int i = 0; i < nbPoints; ++i) {
+        double theta = 2 * M_PI * uniform(generator);
+        double phi = acos(1 - 2 * uniform(generator));
+
+        double x = sphere.center.x + sphere.radius * sin(phi) * cos(theta);
+        double y = sphere.center.y + sphere.radius * sin(phi) * sin(theta);
+        double z = sphere.center.z + sphere.radius * cos(phi);
+
+        Vector3 point(x, y, z);
+
+        // Si point dans l'hemisphere inférieur, on l'inverse
+        if(point.z < defaultHeight) {
+            point.x = -point.x;
+            point.y = -point.y;
+            point.z = -point.z;
+        }
+
+        listPoints[i] = point;
+    }
+
+    /*
+    std::cout << "center : " << sphere.center << std::endl;
+    std::cout << "radius : " << sphere.radius << std::endl;
+    for(unsigned int i = 0; i < listPoints.size(); ++i) {
+        std::cout << "p : " << listPoints[i] << std::endl;
+    }
+    */
+
+    // NOT FINISHED
+    // TODO : Ray Tracing
 
     return res;
 }
