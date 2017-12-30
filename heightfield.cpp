@@ -61,6 +61,14 @@ Vector3 HeightField::normal(int i, int j) {
     return normalize((n1+n2+n3+n4+n5+n6)/somN);
 }
 
+bool HeightField::underTerrain(Vector3 & vec) {
+    double height;
+    if(vec.x >= a.x && vec.x <= b.x && vec.y >= a.y && vec.y <= b.y) {
+        Bilineaire(Vector2(vec.x, vec.y), height);
+        return vec.z < height;
+    }
+    return false;
+}
 
 double HeightField::slope(int i, int j) {
     Vector2 tmp = gradient(i, j);
@@ -170,9 +178,10 @@ ScalarField2 HeightField::generateStreamPowerField() {
 }
 
 
-ScalarField2 HeightField::generateIlluminationField(int nbPoints) {
+ScalarField2 HeightField::generateIlluminationField(int nbSrcLum, int nbPas) {
     ScalarField2 res = ScalarField2(a, b, w, h);
 
+    // Génération de nos sources de lumières
     Vector2 centre = getCenter();
     VAR_TYPE radius = distance(centre, a) + distance(centre, a)/10;
     Sphere sphere(Vector3(centre, 0.0) , radius);
@@ -182,9 +191,9 @@ ScalarField2 HeightField::generateIlluminationField(int nbPoints) {
     std::mt19937 generator(seed);
     std::uniform_real_distribution<double> uniform(0.0, 1.0);
 
-    std::vector<Vector3> listPoints(nbPoints);
+    std::vector<Vector3> listPoints(nbSrcLum);
 
-    for(int i = 0; i < nbPoints; ++i) {
+    for(int i = 0; i < nbSrcLum; ++i) {
         double theta = 2 * M_PI * uniform(generator);
         double phi = acos(1 - 2 * uniform(generator));
 
@@ -194,26 +203,39 @@ ScalarField2 HeightField::generateIlluminationField(int nbPoints) {
 
         Vector3 point(x, y, z);
 
-        // Si point dans l'hemisphere inférieur, on l'inverse
+        // Si point dans l'hemisphere inférieur, on inverse z
         if(point.z < defaultHeight) {
-            point.x = -point.x;
-            point.y = -point.y;
             point.z = -point.z;
         }
 
         listPoints[i] = point;
     }
 
-    /*
-    std::cout << "center : " << sphere.center << std::endl;
-    std::cout << "radius : " << sphere.radius << std::endl;
-    for(unsigned int i = 0; i < listPoints.size(); ++i) {
-        std::cout << "p : " << listPoints[i] << std::endl;
-    }
-    */
+    // Lancer de rayons
+    for (int i = 0; i < h; ++i) {
+        for (int j = 0; j < w; ++j) {
+            res.field[pos(i, j)] = 0;
+            Vector3 depart(get(i, j), field[pos(i, j) + 0.01]);
 
-    // NOT FINISHED
-    // TODO : Ray Tracing
+            for(unsigned int p = 0; p < listPoints.size(); ++p) {
+                Vector3 rayon = listPoints[p] - depart;
+                bool visible = true;
+
+                // On ne parcourt que la 1ère moitié du rayon
+                for(double k = 1; k <= nbPas/2; ++k) {
+                    Vector3 rayPos = depart + (k/nbPas) * rayon;
+                    if(underTerrain(rayPos)) {
+                        visible = false;
+                        break;
+                    }
+                }
+
+                if(visible){
+                    res.field[pos(i, j)]++;
+                }
+            }
+        }
+    }
 
     return res;
 }

@@ -13,9 +13,6 @@ Vector2 Array2::get(int i, int j) {
 
 
 Vector2 Array2::getCenter() {
-
-    std::cout << w << std::endl;
-
     return Vector2(a.x + (b.x-a.x)/2.0, a.y + (b.y-a.y)/2.0);
 }
 

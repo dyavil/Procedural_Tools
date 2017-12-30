@@ -35,7 +35,7 @@ QImage ScalarField2::render(){
     result = std::max_element(field.begin(), field.end());
     double zm = *result;
     result = std::min_element(field.begin(), field.end());
-    std::cout << zm << ", " << *result/zm*255.0 << std::endl;
+    //std::cout << zm << ", " << *result/zm*255.0 << std::endl;
     QImage res = QImage(w, h, QImage::Format_RGB32);
     QRgb val;
     for (int i = 0; i < h; ++i) {
@@ -67,7 +67,6 @@ Vector2 ScalarField2::gradient(int i, int j){
 
 
 void ScalarField2::noiseMap(int pas){
-
     FastNoise myNoise;
     myNoise.SetNoiseType(FastNoise::Perlin);
     myNoise.SetFrequency(0.0035);
@@ -88,9 +87,9 @@ void ScalarField2::noiseMap(int pas){
 
     std::vector<double>::iterator result;
     result = std::max_element(field.begin(), field.end());
-    double zm = *result;
+    //double zm = *result;
     result = std::min_element(field.begin(), field.end());
-    std::cout << zm << ", rfrf" << *result << std::endl;
+    //std::cout << zm << ", rfrf" << *result << std::endl;
     double min = *result;
     for (int i = 0; i < h*w; ++i) {
         field[i] -= min ;

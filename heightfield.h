@@ -25,6 +25,13 @@ public:
     Vector3 normal(int i, int j);
 
     /**
+     * @brief underTerrain Indique si un point se situe en dessus ou en dessous du terrain
+     * @param vec position (réelles) du point que l'on teste
+     * @return true si le point(x, y, z est situé en dessous du terrain)
+     */
+    bool underTerrain(Vector3 & vec);
+
+    /**
      * @brief slope
      * @param i
      * @param j
@@ -64,7 +71,13 @@ public:
      */
     ScalarField2 generateStreamPowerField();
 
-    ScalarField2 generateIlluminationField(int nbPoints = 1000);
+    /**
+     * @brief generateIlluminationField Génère l'illuminationField du heightfield
+     * @param nbSrcLum nombre de sources lumineuses tirées aléatoirement
+     * @param nbPas nombre de pas testé pour chaque rayon
+     * @return l'illuminationField du heightfield
+     */
+    ScalarField2 generateIlluminationField(int nbSrcLum = 30, int nbPas = 30);
 
     /**
      * @brief exportOBJ Réalise l'export du heighfield au format .obj

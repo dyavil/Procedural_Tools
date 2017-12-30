@@ -52,6 +52,7 @@ inline Vector3 operator *(const Vector3 & u, VAR_TYPE other){Vector3 r; r.x=othe
 inline Vector3 operator *(VAR_TYPE other, const Vector3 & u){Vector3 r; r.x=other*u.x; r.y=other*u.y; r.z=other*u.z;  return r;}
 inline Vector3 operator /(const Vector3 & u, VAR_TYPE other){Vector3 r; r.x=u.x/other; r.y=u.y/other; r.z=u.z/other;  return r;}
 inline bool operator ==(Vector3 const& vec1, Vector3 const& vec2) { return vec1.x == vec2.x && vec1.y == vec2.y && vec1.z == vec2.z; }
+inline bool operator !=(Vector3 const& vec1, Vector3 const& vec2) { return !(vec1 == vec2); }
 
 inline static VAR_TYPE distance(const Vector3 & u, const Vector3 & v){return (u-v).length();}
 inline static VAR_TYPE area(const Vector3 & p, const Vector3 & a, const Vector3 & b){Vector3 u = (a-p); u.z =0.0; Vector3 v = (b-p); v.z=0.0; return cross(u, v).z;}

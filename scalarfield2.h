@@ -17,7 +17,7 @@ public:
     void noiseMap(int pas);
     QImage render();
     Vector2 gradient(int i, int j);
-    void setVal(int i, int j, double val){field[pos(i, j)] = val;}
+    void setVal(int i, int j, double val) {field[pos(i, j)] = val;}
     void CalcUV(const Vector2 & p , int & xi, int & yi, double & u, double & v);
     void Bilineaire(const Vector2 & p, double & res);
     void Barycentrique(const Vector2 & p, double & res);
