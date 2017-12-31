@@ -12,11 +12,11 @@ int main(int argc, char *argv[])
 
     DrawField d;
     ScalarField2 hg = ScalarField2(Vector2(0, 0), Vector2(1, 1), 10, 10, 0.0);
-    HeightField hf = HeightField(Vector2(-400, -400), Vector2(400, 400), 500, 500, 0.0);
-    QImage im = QImage("/home/dyavil/Images/map1.png");
+    HeightField hf = HeightField(Vector2(-4000, -4000), Vector2(4000, 4000), 500, 500, 0.0);
+    QImage im = QImage("/home/dyavil/Images/map7.png");
     //hg.load(im, Vector2(-1, -1), Vector2(1, 1), 0.3, 0.6);
-    hf.load(im, Vector2(-7500, -7500), Vector2(7500, 7500), 0, 400);
-    //hf.noiseMap(4);
+    //hf.load(im, Vector2(-7500, -7500), Vector2(7500, 7500), 0, 400);
+    hf.noiseMap(4);
 
     hg = hf.generateSlopeField();
     d.setField(hf);

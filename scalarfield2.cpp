@@ -71,7 +71,9 @@ void ScalarField2::noiseMap(int pas){
 
     FastNoise myNoise;
     myNoise.SetNoiseType(FastNoise::Perlin);
-    myNoise.SetFrequency(0.0035);
+    double freq = 0.002-1.0/((b-a).length());
+    std::cout << freq << std::endl;
+    myNoise.SetFrequency(freq);
     for (int i = 0; i < h*w; ++i) {
         field[i]= 0.0;
     }
