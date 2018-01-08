@@ -5,7 +5,7 @@ ScalarField2::ScalarField2(Vector2 a, Vector2 b, int ww, int hh, double defaut) 
 {
     field.resize(ww*hh);
     for (int i = 0; i < ww*hh; ++i) {
-             field[i] = defaut;
+        field[i] = defaut;
     }
 
 }
@@ -36,7 +36,6 @@ QImage ScalarField2::render(){
     double zm = *result;
     result = std::min_element(field.begin(), field.end());
     double zmin = *result;
-    //std::cout << zm << ", " << *result/zm*255.0 << std::endl;
     QImage res = QImage(w, h, QImage::Format_RGB32);
     QRgb val;
     for (int i = 0; i < h; ++i) {
@@ -68,7 +67,6 @@ Vector2 ScalarField2::gradient(int i, int j){
 
 
 void ScalarField2::noiseMap(int pas){
-
     FastNoise myNoise;
     myNoise.SetNoiseType(FastNoise::Perlin);
     double freq = 0.002-1.0/((b-a).length());
@@ -153,8 +151,7 @@ void ScalarField2::Barycentrique(const Vector2 &p, double &res) {
         /*if(a1 < 0) std::cout << "1 1 " << a1 << std::endl;
         if(a2 < 0) std::cout << "1 2 " << a2 << std::endl;
         if(a3 < 0) std::cout << "1 3 " << a3 << std::endl;*/
-    }
-    else{
+    } else {
         double ar = area(Vector3(get(yi+1, xi), field[pos(yi+1, xi)]), Vector3(get(yi, xi+1), field[pos(yi, xi+1)]), Vector3(get(yi+1, xi+1), field[pos(yi+1, xi+1)]));
         double a1 = area(Vector3(p, 0.0), Vector3(get(yi+1, xi), field[pos(yi+1, xi)]), Vector3(get(yi, xi+1), field[pos(yi, xi+1)]));
         double a2 = area(Vector3(p, 0.0), Vector3(get(yi, xi+1), field[pos(yi, xi+1)]), Vector3(get(yi+1, xi+1), field[pos(yi+1, xi+1)]));
@@ -163,7 +160,6 @@ void ScalarField2::Barycentrique(const Vector2 &p, double &res) {
         a2 = a2/ar;
         a3 = a3/ar;
         res = a1*field[pos(yi+1, xi+1)] + a2*field[pos(yi+1, xi)] + a3*field[pos(yi, xi+1)];
-
         /*if(a1 < 0) std::cout << "2 1 " << a1 << std::endl;
         if(a2 < 0) std::cout << "2 2 " << a2 << std::endl;
         if(a3 < 0) std::cout << "2 3 " << a3 << std::endl;*/

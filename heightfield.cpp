@@ -1,6 +1,11 @@
 #include "heightfield.h"
 
 
+HeightField::HeightField(Vector2 a, Vector2 b, int ww, int hh, double defaut) : ScalarField2(a, b, ww, hh, defaut) {
+    defaultHeight = defaut;
+}
+
+
 Vector3 HeightField::normalOld(int i, int j) {
     Vector3 va, vb, vc, vd;
     if((i+1) < h) va = Vector3(get(i+1, j), field[pos(i+1, j)]) - Vector3(get(i, j), field[pos(i, j)]);
@@ -56,9 +61,14 @@ Vector3 HeightField::normal(int i, int j) {
     return normalize((n1+n2+n3+n4+n5+n6)/somN);
 }
 
-
-
-
+bool HeightField::underTerrain(Vector3 & vec) {
+    double height;
+    if(vec.x >= a.x && vec.x <= b.x && vec.y >= a.y && vec.y <= b.y) {
+        Bilineaire(Vector2(vec.x, vec.y), height);
+        return vec.z < height;
+    }
+    return false;
+}
 
 double HeightField::slope(int i, int j) {
     Vector2 tmp = gradient(i, j);
@@ -73,37 +83,12 @@ ScalarField2 HeightField::generateSlopeField() {
             res.field[pos(i, j)] = slope(i, j);
         }
     }
+    std::vector<double>::iterator result;
+    result = std::max_element(res.field.begin(), res.field.end());
+    double zm = *result;
+    std::cout << zm << std::endl;
     return res;
 }
-
-
-
-ScalarField2 HeightField::generateWetnessField() {
-    ScalarField2 stp = generateSlopeField();
-    ScalarField2 dr = generateDrainageArea();
-    ScalarField2 res = ScalarField2(a, b, w, h);
-    for (int i = 0; i < h; ++i) {
-        for (int j = 0; j < w; ++j) {
-            res.field[pos(i, j)] = log(dr.field[pos(i, j)]/(1.0+stp.field[pos(i, j)]));
-        }
-    }
-    return res;
-}
-
-ScalarField2 HeightField::generateStreamPowerField() {
-    ScalarField2 dra = generateDrainageArea();
-    ScalarField2 slp = generateSlopeField();
-    ScalarField2 res = ScalarField2(a, b, w, h);
-    for (int i = 0; i < h; ++i) {
-        for (int j = 0; j < w; ++j) {
-            res.field[pos(i, j)] = sqrt(dra.field[pos(i, j)])*slp.field[pos(i, j)];
-        }
-    }
-    return res;
-}
-
-
-
 
 
 void HeightField::updateNeighborsWater(int position, ScalarField2 & waterField) const {
@@ -165,6 +150,96 @@ ScalarField2 HeightField::generateDrainageArea(float initialAmount) const {
 
     for(unsigned int i = 0; i < vecHeights.size(); ++i) {
         updateNeighborsWater(vecHeights[i][1], res);
+    }
+
+    return res;
+}
+
+
+ScalarField2 HeightField::generateWetnessField() {
+    ScalarField2 stp = generateSlopeField();
+    ScalarField2 dr = generateDrainageArea();
+    ScalarField2 res = ScalarField2(a, b, w, h);
+    for (int i = 0; i < h; ++i) {
+        for (int j = 0; j < w; ++j) {
+            res.field[pos(i, j)] = log(dr.field[pos(i, j)]/(1.0+stp.field[pos(i, j)]));
+        }
+    }
+    return res;
+}
+
+
+ScalarField2 HeightField::generateStreamPowerField() {
+    ScalarField2 dra = generateDrainageArea();
+    ScalarField2 slp = generateSlopeField();
+    ScalarField2 res = ScalarField2(a, b, w, h);
+    for (int i = 0; i < h; ++i) {
+        for (int j = 0; j < w; ++j) {
+            res.field[pos(i, j)] = sqrt(dra.field[pos(i, j)])*slp.field[pos(i, j)];
+        }
+    }
+    return res;
+}
+
+
+ScalarField2 HeightField::generateIlluminationField(int nbSrcLum, int nbPas) {
+    ScalarField2 res = ScalarField2(a, b, w, h);
+
+    // Génération de nos sources de lumières
+    Vector2 centre = getCenter();
+    VAR_TYPE radius = distance(centre, a) + distance(centre, a)/10;
+    std::cout << radius << std::endl;
+    Sphere sphere(Vector3(centre, 0.0) , radius);
+    Vector3 normaleSphere(centre, defaultHeight);
+
+    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+    std::mt19937 generator(seed);
+    std::uniform_real_distribution<double> uniform(0.0, 1.0);
+
+    std::vector<Vector3> listPoints(nbSrcLum);
+
+    for(int i = 0; i < nbSrcLum; ++i) {
+        double theta = 2 * M_PI * uniform(generator);
+        double phi = acos(1 - 2 * uniform(generator));
+
+        double x = sphere.center.x + sphere.radius * sin(phi) * cos(theta);
+        double y = sphere.center.y + sphere.radius * sin(phi) * sin(theta);
+        double z = sphere.center.z + sphere.radius * cos(phi);
+
+        Vector3 point(x, y, z);
+
+        // Si point dans l'hemisphere inférieur, on inverse z
+        if(point.z < defaultHeight) {
+            point.z = -point.z;
+        }
+
+        listPoints[i] = point;
+    }
+
+    // Lancer de rayons
+    for (int i = 0; i < h; ++i) {
+        for (int j = 0; j < w; ++j) {
+            res.field[pos(i, j)] = 0;
+            Vector3 depart(get(i, j), field[pos(i, j) + 0.01]);
+
+            for(unsigned int p = 0; p < listPoints.size(); ++p) {
+                Vector3 rayon = listPoints[p] - depart;
+                bool visible = true;
+
+                // On ne parcourt que la 1ère moitié du rayon
+                for(double k = 1; k <= nbPas/2; ++k) {
+                    Vector3 rayPos = depart + (k/nbPas) * rayon;
+                    if(underTerrain(rayPos)) {
+                        visible = false;
+                        break;
+                    }
+                }
+
+                if(visible){
+                    res.field[pos(i, j)]++;
+                }
+            }
+        }
     }
 
     return res;

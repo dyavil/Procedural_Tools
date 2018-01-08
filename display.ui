@@ -29,8 +29,8 @@
      <rect>
       <x>650</x>
       <y>0</y>
-      <width>241</width>
-      <height>241</height>
+      <width>221</width>
+      <height>221</height>
      </rect>
     </property>
     <property name="text">
@@ -41,7 +41,7 @@
     <property name="geometry">
      <rect>
       <x>650</x>
-      <y>220</y>
+      <y>200</y>
       <width>241</width>
       <height>20</height>
      </rect>
@@ -55,8 +55,8 @@
      <rect>
       <x>900</x>
       <y>0</y>
-      <width>241</width>
-      <height>241</height>
+      <width>221</width>
+      <height>221</height>
      </rect>
     </property>
     <property name="text">
@@ -67,7 +67,7 @@
     <property name="geometry">
      <rect>
       <x>900</x>
-      <y>220</y>
+      <y>200</y>
       <width>241</width>
       <height>20</height>
      </rect>
@@ -80,9 +80,9 @@
     <property name="geometry">
      <rect>
       <x>650</x>
-      <y>250</y>
-      <width>241</width>
-      <height>241</height>
+      <y>220</y>
+      <width>221</width>
+      <height>221</height>
      </rect>
     </property>
     <property name="text">
@@ -93,9 +93,9 @@
     <property name="geometry">
      <rect>
       <x>900</x>
-      <y>250</y>
-      <width>241</width>
-      <height>241</height>
+      <y>230</y>
+      <width>221</width>
+      <height>221</height>
      </rect>
     </property>
     <property name="text">
@@ -106,7 +106,7 @@
     <property name="geometry">
      <rect>
       <x>650</x>
-      <y>470</y>
+      <y>430</y>
       <width>241</width>
       <height>20</height>
      </rect>
@@ -119,13 +119,26 @@
     <property name="geometry">
      <rect>
       <x>900</x>
-      <y>470</y>
+      <y>430</y>
       <width>241</width>
       <height>20</height>
      </rect>
     </property>
     <property name="text">
      <string>Wetness</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lightFieldImg">
+    <property name="geometry">
+     <rect>
+      <x>650</x>
+      <y>450</y>
+      <width>160</width>
+      <height>160</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
     </property>
    </widget>
   </widget>

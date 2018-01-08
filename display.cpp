@@ -14,11 +14,16 @@ Display::Display(QWidget *parent) :
     ui->steamPowImg->setScaledContents(true);
     ui->wetnessImg->setBackgroundRole(QPalette::Base);
     ui->wetnessImg->setScaledContents(true);
+    ui->lightFieldImg->setBackgroundRole(QPalette::Base);
+    ui->lightFieldImg->setScaledContents(true);
     ui->slopeLabel->setAlignment(Qt::AlignCenter);
     ui->dareaLabel->setAlignment(Qt::AlignCenter);
     ui->steamPowLabel->setAlignment(Qt::AlignCenter);
     ui->wetnessLabel->setAlignment(Qt::AlignCenter);
     ui->wetnessLabel->setStyleSheet("QLabel { background-color : black;}");
+    ui->slopeLabel->setStyleSheet("QLabel { background-color : black;}");
+    ui->dareaLabel->setStyleSheet("QLabel { background-color : black;}");
+    ui->steamPowLabel->setStyleSheet("QLabel { background-color : black;}");
 }
 
 void Display::drawHFBase(DrawField & hf){
@@ -48,6 +53,12 @@ void Display::setWetness(QImage im){
     QPixmap m;
     m=m.fromImage(im);
     ui->wetnessImg->setPixmap(m);
+}
+
+void Display::setLightField(QImage im){
+    QPixmap m;
+    m=m.fromImage(im);
+    ui->lightFieldImg->setPixmap(m);
 }
 
 

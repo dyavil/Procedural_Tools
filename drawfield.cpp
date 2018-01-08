@@ -15,13 +15,20 @@ void DrawField::prepare()
     result = std::min_element(fields.field.begin(), fields.field.end());
     double minn = *result;
 
+    float ddd = fields.b.x - fields.a.x;
+
     for (int i = 0; i < fields.h*fields.w; ++i) {
         fields.field[i] -= minn;
     }
 
     for (int i = 0; i < fields.h*fields.w; ++i) {
-        fields.field[i] /= (zm-minn);
+        fields.field[i] /= (ddd);
+        fields.field[i] *=2 ;
     }
+    result = std::max_element(fields.field.begin(), fields.field.end());
+    zm = *result;
+
+    std::cout << zm << std::endl;
 
     ScalarField2 & hg = fields;
     for (int i = 0; i < hg.h; i++) {

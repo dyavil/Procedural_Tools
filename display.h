@@ -20,6 +20,7 @@ public:
     void setDrainageArea(QImage im);
     void setStreamPower(QImage im);
     void setWetness(QImage im);
+    void setLightField(QImage im);
 
 private:
     Ui::Display *ui;
