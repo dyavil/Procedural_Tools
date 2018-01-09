@@ -4,41 +4,52 @@
 #include "drawfield.h"
 #include "heightfield.h"
 
+#define resdir "/home/dyavil/Images/"
+
+
+void init(HeightField &hf, Display &w, int nbrayon, bool renderImage=false){
+    DrawField d;
+    d.setField(hf);
+    d.prepare();
+    ScalarField2 tmp = hf.generateSlopeField();
+    w.setSlopeField(tmp.render());
+    if(renderImage) tmp.render().save(QString(resdir) + QString("slope.png"));
+
+    tmp = hf.generateDrainageArea();
+    d.addRivers(tmp);
+    w.setDrainageArea(tmp.render());
+    if(renderImage) tmp.render().save(QString(resdir) + QString("drainageArea.png"));
+
+    tmp = hf.generateWetnessField();
+    w.setWetness(tmp.render());
+    if(renderImage) tmp.render().save(QString(resdir) + QString("wetness.png"));
+
+    tmp = hf.generateStreamPowerField();
+    w.setStreamPower(tmp.render());
+    if(renderImage) tmp.render().save(QString(resdir) + QString("streamPower.png"));
+
+    tmp = hf.generateIlluminationField(nbrayon);
+    w.setLightField(tmp.render());
+    if(renderImage) tmp.render().save(QString(resdir) + QString("lightField.png"));
+    w.drawHFBase(d);
+}
+
+
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     Display w;
     w.show();
-
-    DrawField d;
-    ScalarField2 hg = ScalarField2(Vector2(0, 0), Vector2(1, 1), 10, 10, 0.0);
     HeightField hf = HeightField(Vector2(-4000, -4000), Vector2(4000, 4000), 500, 500, 0.0);
-    QImage im = QImage("/home/dyavil/Images/map1.png");
+    QImage im = QImage("heightmaps/map8.png");
     //hg.load(im, Vector2(-1, -1), Vector2(1, 1), 0.3, 0.6);
-    hf.load(im, Vector2(-100, -100), Vector2(100, 100), 100, 120);
+    hf.load(im, Vector2(-2000, -2000), Vector2(2000, 2000), 0, 600);
     //hf.noiseMap(4);
+    init(hf, w, 20, true);
 
-    hg = hf.generateSlopeField();
-    d.setField(hf);
-    //hf.exportOBJ("/home/dyavil/Images/map6.obj", false);
-    //d.prepareInterpol(400);
-    d.prepare();
-
-    w.setSlopeField(hg.render());
-
-    hg = hf.generateDrainageArea();
-    d.addRivers(hg);
-    w.setDrainageArea(hg.render());
-    ScalarField2 wet = hf.generateWetnessField();
-    w.setWetness(wet.render());
-    w.setStreamPower(hf.generateStreamPowerField().render());
-    ScalarField2 light = hf.generateIlluminationField(20);
-    w.setLightField(light.render());
-    w.drawHFBase(d);
-    light.render().save("/home/dyavil/Images/res2.png");
     return a.exec();
-}
 
+}
 
 /*
 v2, v3

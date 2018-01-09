@@ -49,5 +49,15 @@ HEADERS += \
 FORMS += \
         display.ui
 
+heightmaps.path   = $${OUT_PWD}/heightmaps
+heightmaps.files  = heightmaps/*
+INSTALLS       += heightmaps
 
 QMAKE_CXXFLAGS += -std=c++11
+
+DISTFILES += \
+    heightmaps/map2.gif \
+    heightmaps/map3.jpg \
+    heightmaps/map1.png \
+    heightmaps/map8.png \
+    heightmaps/map6.png

@@ -85,8 +85,8 @@ ScalarField2 HeightField::generateSlopeField() {
     }
     std::vector<double>::iterator result;
     result = std::max_element(res.field.begin(), res.field.end());
-    double zm = *result;
-    std::cout << zm << std::endl;
+    //double zm = *result;
+    //std::cout << zm << std::endl;
     return res;
 }
 
@@ -188,7 +188,7 @@ ScalarField2 HeightField::generateIlluminationField(int nbSrcLum, int nbPas) {
     // Génération de nos sources de lumières
     Vector2 centre = getCenter();
     VAR_TYPE radius = distance(centre, a) + distance(centre, a)/10;
-    std::cout << radius << std::endl;
+    //std::cout << radius << std::endl;
     Sphere sphere(Vector3(centre, 0.0) , radius);
     Vector3 normaleSphere(centre, defaultHeight);
 
