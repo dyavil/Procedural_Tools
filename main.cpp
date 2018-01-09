@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
     Display w;
     w.show();
     HeightField hf = HeightField(Vector2(-4000, -4000), Vector2(4000, 4000), 500, 500, 0.0);
-    QImage im = QImage("heightmaps/map8.png");
+    QImage im = QImage("heightmaps/map9.png");
     //hg.load(im, Vector2(-1, -1), Vector2(1, 1), 0.3, 0.6);
     hf.load(im, Vector2(-2000, -2000), Vector2(2000, 2000), 0, 600);
     //hf.noiseMap(4);
