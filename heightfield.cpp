@@ -299,16 +299,3 @@ void HeightField::exportOBJ(const std::string & filename, bool importNormals) {
 
     file.close();
 }
-
-
-
-std::pair<int, int> HeightField::initRay(Vector3 dir, Vector3 p){
-    std::pair<int, int> res = std::make_pair(-1, -1);
-    double len = 0.0;
-    if((Vector3(b, 0)-p).length() > (p-Vector3(a, 0)).length()){
-        len = (Vector3(b, 0)-p).length();
-    }else len = (p-Vector3(a, 0)).length();
-    std::pair<int, int> pos = inside(p);
-    return res;
-}
-

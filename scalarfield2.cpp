@@ -30,6 +30,26 @@ bool ScalarField2::load(QImage & im, Vector2 a, Vector2 b, double za, double zb)
 }
 
 
+ScalarField2 ScalarField2::sfNormalize() const {
+    ScalarField2 res = ScalarField2(a, b, w, h);
+
+    std::vector<double>::const_iterator result;
+    result = std::max_element(field.begin(), field.end());
+    double max = *result;
+    result = std::min_element(field.begin(), field.end());
+    double min = *result;
+
+    for (int i = 0; i < h*w; ++i) {
+        res.field[i] -= min ;
+    }
+    for (int i = 0; i < h*w; ++i) {
+        res.field[i] /= (max-min) ;
+    }
+
+    return res;
+}
+
+
 QImage ScalarField2::render(){
     std::vector<double>::iterator result;
     result = std::max_element(field.begin(), field.end());
@@ -87,20 +107,6 @@ void ScalarField2::noiseMap(int pas){
         coefM *=2;
     }
 
-}
-
-void ScalarField2::between0and1(){
-    std::vector<double>::iterator result;
-    result = std::max_element(field.begin(), field.end());
-    double zm = *result;
-    result = std::min_element(field.begin(), field.end());
-    double min = *result;
-    for (int i = 0; i < h*w; ++i) {
-        field[i] -= min ;
-    }
-    for (int i = 0; i < h*w; ++i) {
-        field[i] /= (zm-min) ;
-    }
 }
 
 

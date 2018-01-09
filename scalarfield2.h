@@ -15,6 +15,13 @@ public:
 
     bool load(QImage & im, Vector2 a, Vector2 b, double za, double zb);
     void noiseMap(int pas);
+
+    /**
+     * @brief sfNormalize Normalise le scalarField entre 0 et 1
+     * @return scalarField normalisé
+     */
+    ScalarField2 sfNormalize() const;
+
     QImage render();
     Vector2 gradient(int i, int j);
     void setVal(int i, int j, double val) {field[pos(i, j)] = val;}
@@ -22,11 +29,8 @@ public:
     void Bilineaire(const Vector2 & p, double & res);
     void Barycentrique(const Vector2 & p, double & res);
 
-    void between0and1();
-
 
     std::vector<double> field;
-
 };
 
 #endif // SCALARFIELD_H
