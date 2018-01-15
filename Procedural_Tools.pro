@@ -33,7 +33,8 @@ SOURCES += \
         heightfield.cpp \
         drawfield.cpp \
         layerfield.cpp \
-    FastNoise.cpp
+    include/FastNoise.cpp \
+    vegetationfield.cpp
 
 HEADERS += \
         display.h \
@@ -44,7 +45,9 @@ HEADERS += \
         drawfield.h \
         scalarfield2.h \
         layerfield.h \
-    FastNoise.h
+    include/FastNoise.h \
+    vegetationfield.h \
+    include/thinks/poissonDiskSampling.hpp
 
 FORMS += \
         display.ui

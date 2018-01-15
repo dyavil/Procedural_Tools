@@ -1,5 +1,5 @@
 #include "scalarfield2.h"
-#include "FastNoise.h"
+#include "include/FastNoise.h"
 
 ScalarField2::ScalarField2(Vector2 a, Vector2 b, int ww, int hh, double defaut) : Array2(a, b, ww, hh)
 {
