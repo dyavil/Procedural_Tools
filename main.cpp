@@ -42,14 +42,13 @@ int main(int argc, char *argv[])
     Display w;
     w.show();
     HeightField hf = HeightField(Vector2(-1000, -1000), Vector2(1000, 1000), 500, 500, 0.0);
-    QImage im = QImage("heightmaps/map9.png");
+    QImage im = QImage("heightmaps/map5.png");
     //hg.load(im, Vector2(-1, -1), Vector2(1, 1), 0.3, 0.6);
     hf.load(im, Vector2(-2000, -2000), Vector2(2000, 2000), 0, 600);
     ScalarField2 test = vegetationField(Vector2(-200, -200), Vector2(200, 200), 200, 200, 0.0);
     test.render().save(QString(resdir) + QString("testpoisson.png"));
     //hf.noiseMap(4);
-    //init(hf, w, 20, true);
+    init(hf, w, 20, true);
 
     return a.exec();
-
 }

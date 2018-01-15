@@ -62,6 +62,5 @@ DISTFILES += \
     heightmaps/map2.gif \
     heightmaps/map3.jpg \
     heightmaps/map1.png \
-    heightmaps/map8.png \
     heightmaps/map6.png \
     heightmaps/map9.png
