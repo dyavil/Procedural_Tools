@@ -3,6 +3,10 @@
 
 HeightField::HeightField(Vector2 a, Vector2 b, int ww, int hh, double defaut) : ScalarField2(a, b, ww, hh, defaut) {}
 
+HeightField::HeightField(ScalarField2 & base, double defaut){
+    HeightField(base.a, base.b, base.w, base.h);
+}
+
 
 bool HeightField::load(QImage & im, Vector2 a, Vector2 b, double za, double zb) {
     zmin = za;

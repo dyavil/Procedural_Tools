@@ -1,5 +1,5 @@
 #include "scalarfield2.h"
-#include "FastNoise.h"
+#include "include/FastNoise.h"
 
 ScalarField2::ScalarField2(Vector2 a, Vector2 b, int ww, int hh, double defaut) : Array2(a, b, ww, hh)
 {
@@ -51,6 +51,7 @@ QImage ScalarField2::render(){
     double zm = *result;
     result = std::min_element(field.begin(), field.end());
     double zmin = *result;
+    std::cout << "min : " << zmin << ", " << zm <<std::endl;
     QImage res = QImage(w, h, QImage::Format_RGB32);
     QRgb val;
     for (int i = 0; i < h; ++i) {

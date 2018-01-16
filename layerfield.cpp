@@ -76,3 +76,7 @@ ScalarField2 LayerField::sedimentTransport(ScalarField2 & sedField, double angle
 ScalarField2 LayerField::generateThemralErosion(ScalarField2 & illumField, int nbSimu) {
     return ScalarField2();
 }
+
+void LayerField::setVegetField(ScalarField2 &veget){
+    vegetation = veget;
+}

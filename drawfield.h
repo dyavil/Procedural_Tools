@@ -11,6 +11,7 @@ public:
     DrawField();
     void prepare();
     void addRivers(const ScalarField2 & sf);
+    void addVeget(ScalarField2 & sf);
     void draw();
     void prepareInterpol(int size);
     void setField(ScalarField2 sf){fields = sf;}

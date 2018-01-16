@@ -3,10 +3,12 @@
 #include <QImageWriter>
 #include "drawfield.h"
 #include "layerfield.h"
+#include "vegetationfield.h"
 
 #define resdir "/media/emeric/DATA/Documents/Etudes/M2/Procedural/TP/images/"
 // /media/emeric/DATA/Documents/Etudes/M2/Procedural/TP/images/
 // /home/dyavil/Images/
+
 
 void init(HeightField &hf, Display &w, int nbrayon, bool renderImage=false){
     DrawField d;
@@ -36,11 +38,18 @@ void init(HeightField &hf, Display &w, int nbrayon, bool renderImage=false){
     illum = currentHeight.generateIlluminationField(nbrayon);
     w.setLightField(illum.render());
     if(renderImage) illum.render().save(QString(resdir) + QString("lightField.png"));
-    w.drawHFBase(d);
 
     ero = lf.generateThemralStress(illum, 10);
     w.setLightField(ero.render());
     if(renderImage) ero.render().save(QString(resdir) + QString("thermalErosion.png"));
+
+    vegetationField veget = vegetationField(Vector2(-2000, -2000), Vector2(2000, 2000), 0.0, 20.0);
+    veget.render().save(QString(resdir) + QString("testpoissonprev.png"));
+    veget.adaptVegetation(hf);
+    veget.render().save(QString(resdir) + QString("testpoisson.png"));
+    d.addVeget(veget);
+
+    w.drawHFBase(d);
 }
 
 
@@ -49,7 +58,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     Display w;
     w.show();
-    HeightField hf = HeightField(Vector2(-4000, -4000), Vector2(4000, 4000), 500, 500, 0.0);
+    HeightField hf = HeightField(Vector2(-1000, -1000), Vector2(1000, 1000), 500, 500, 0.0);
     QImage im = QImage("heightmaps/map5.png");
     hf.load(im, Vector2(-2000, -2000), Vector2(2000, 2000), 0, 600);
     init(hf, w, 20, true);

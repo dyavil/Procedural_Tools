@@ -64,6 +64,24 @@ void DrawField::addRivers(const ScalarField2 &sf){
     }
 }
 
+
+
+void DrawField::addVeget(ScalarField2 &sf){
+    std::vector<double>::const_iterator result;
+    //std::cout << colors.size() << ", " << sf.h*sf.w << std::endl;
+    result = std::max_element(sf.field.begin(), sf.field.end());
+    double zm = sqrt(*result);
+    for (int i = 0; i < sf.h; i++) {
+        for (int j = 0; j < sf.w; j++) {
+            if((sqrt(sf.field[sf.pos(i, j)])/zm) > 0.0) {
+                Vector2 tmpp= sf.get(i, j);
+                std::pair<int, int> ij = fields.inside(Vector3(tmpp, 0.0));
+                colors[fields.pos(ij.first, ij.second)].y += (sqrt(sf.field[sf.pos(i, j)])/zm);
+            }
+        }
+    }
+}
+
 void DrawField::prepareInterpol(int size1){
     std::vector<double>::iterator result;
     result = std::max_element(fields.field.begin(), fields.field.end());

@@ -13,6 +13,7 @@ class HeightField : public ScalarField2
 public:
     HeightField() {}
     HeightField(Vector2 a, Vector2 b, int ww, int hh, double defaut=0.0);
+    HeightField(ScalarField2 & base, double defaut=0.0);
 
     bool load(QImage & im, Vector2 a, Vector2 b, double za, double zb);
 

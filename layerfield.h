@@ -32,9 +32,13 @@ public:
 
     ScalarField2 generateThemralErosion(ScalarField2 & illumField, int nbSimu);
 
+
+    void setVegetField(ScalarField2 & veget);
+
     HeightField couche1;
     ScalarField2 couche2;
     ScalarField2 couche3;
+    ScalarField2 vegetation;
 };
 
 #endif // LAYERFIELD2_H
