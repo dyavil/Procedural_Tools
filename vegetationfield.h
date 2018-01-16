@@ -1,7 +1,7 @@
 #ifndef VEGETATIONFIELD_H
 #define VEGETATIONFIELD_H
 
-#include "scalarfield2.h"
+#include "heightfield.h"
 #include "include/thinks/poissonDiskSampling.hpp"
 
 template <typename T, std::size_t N>
@@ -23,8 +23,10 @@ class vegetationField : public ScalarField2
 {
 public:
     vegetationField(){}
-    vegetationField(Vector2 a, Vector2 b, int ww, int hh, double defaut=0.0, double radius=20.0);
+    vegetationField(Vector2 a, Vector2 b, double defaut=0.0, double radius=20.0);
 
+    void adaptVegetation(HeightField hf);
+    double treeWidth;
 
     std::vector<bool> hasTree;
 };

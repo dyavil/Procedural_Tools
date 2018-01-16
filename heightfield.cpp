@@ -5,6 +5,10 @@ HeightField::HeightField(Vector2 a, Vector2 b, int ww, int hh, double defaut) : 
     defaultHeight = defaut;
 }
 
+HeightField::HeightField(ScalarField2 & base, double defaut){
+    HeightField(base.a, base.b, base.w, base.h);
+    defaultHeight = defaut;
+}
 
 Vector3 HeightField::normalOld(int i, int j) {
     Vector3 va, vb, vc, vd;

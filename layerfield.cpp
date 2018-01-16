@@ -21,3 +21,7 @@ LayerField::LayerField(Vector2 a, Vector2 b, int nx, int ny, ScalarField2 c1, Sc
 double LayerField::height(int i, int j) {
    return couche1.field[pos(i, j)] + couche2.field[pos(i, j)] + couche3.field[pos(i, j)];
 }
+
+void LayerField::setVegetField(ScalarField2 &veget){
+    vegetation = veget;
+}

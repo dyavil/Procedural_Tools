@@ -56,6 +56,7 @@ QImage ScalarField2::render(){
     double zm = *result;
     result = std::min_element(field.begin(), field.end());
     double zmin = *result;
+    std::cout << "min : " << zmin << ", " << zm <<std::endl;
     QImage res = QImage(w, h, QImage::Format_RGB32);
     QRgb val;
     for (int i = 0; i < h; ++i) {

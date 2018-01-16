@@ -1,7 +1,7 @@
 #ifndef LAYERFIELD2_H
 #define LAYERFIELD2_H
 
-#include "scalarfield2.h"
+#include "heightfield.h"
 
 class LayerField : public Array2
 {
@@ -13,9 +13,12 @@ public:
 
     double height(int i, int j);
 
+    void setVegetField(ScalarField2 & veget);
+
     ScalarField2 couche1;
     ScalarField2 couche2;
     ScalarField2 couche3;
+    ScalarField2 vegetation;
 };
 
 #endif // LAYERFIELD2_H

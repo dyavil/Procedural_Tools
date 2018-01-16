@@ -13,6 +13,7 @@ class HeightField : public ScalarField2
 public:
     HeightField() {}
     HeightField(Vector2 a, Vector2 b, int ww, int hh, double defaut=0.0);
+    HeightField(ScalarField2 & base, double defaut=0.0);
 
     // Ancien calcul de normale (plus utilisé)
     Vector3 normalOld(int i, int j);
