@@ -13,7 +13,7 @@ public:
     ScalarField2(){};
     ScalarField2(Vector2 a, Vector2 b, int ww, int hh, double defaut=0.0);
 
-    bool load(QImage & im, Vector2 a, Vector2 b, double za, double zb);
+    bool load(QImage & im, Vector2 a, Vector2 b, double zmin, double zmax);
     void noiseMap(int pas);
 
     /**

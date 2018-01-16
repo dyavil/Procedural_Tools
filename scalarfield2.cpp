@@ -7,11 +7,10 @@ ScalarField2::ScalarField2(Vector2 a, Vector2 b, int ww, int hh, double defaut) 
     for (int i = 0; i < ww*hh; ++i) {
         field[i] = defaut;
     }
-
 }
 
 
-bool ScalarField2::load(QImage & im, Vector2 a, Vector2 b, double za, double zb){
+bool ScalarField2::load(QImage & im, Vector2 a, Vector2 b, double zmin, double zmax){
     this->a=a;
     this->b=b;
     h=im.height();
@@ -22,7 +21,7 @@ bool ScalarField2::load(QImage & im, Vector2 a, Vector2 b, double za, double zb)
         for (int j = 0; j < im.width(); ++j) {
             QColor clrC( im.pixel( j, i ) );
             int ii = im.height()-i-1;
-            field[pos(ii, j)] = zb-(((zb-za)*clrC.black())/(255));
+            field[pos(ii, j)] = zmax-(((zmax-zmin)*clrC.black())/(255));
         }
     }
 
@@ -32,15 +31,11 @@ bool ScalarField2::load(QImage & im, Vector2 a, Vector2 b, double za, double zb)
 
 ScalarField2 ScalarField2::sfNormalize() const {
     ScalarField2 res = ScalarField2(a, b, w, h);
-
-    std::vector<double>::const_iterator result;
-    result = std::max_element(field.begin(), field.end());
-    double max = *result;
-    result = std::min_element(field.begin(), field.end());
-    double min = *result;
+    double max = *std::max_element(field.begin(), field.end());
+    double min = *std::min_element(field.begin(), field.end());
 
     for (int i = 0; i < h*w; ++i) {
-        res.field[i] -= min ;
+        res.field[i] = field[i] - min ;
     }
     for (int i = 0; i < h*w; ++i) {
         res.field[i] /= (max-min) ;

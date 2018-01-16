@@ -1,8 +1,13 @@
 #include "heightfield.h"
 
 
-HeightField::HeightField(Vector2 a, Vector2 b, int ww, int hh, double defaut) : ScalarField2(a, b, ww, hh, defaut) {
-    defaultHeight = defaut;
+HeightField::HeightField(Vector2 a, Vector2 b, int ww, int hh, double defaut) : ScalarField2(a, b, ww, hh, defaut) {}
+
+
+bool HeightField::load(QImage & im, Vector2 a, Vector2 b, double za, double zb) {
+    zmin = za;
+    zmax = zb;
+    return ScalarField2::load(im, a, b, zmin, zmax);
 }
 
 
@@ -95,8 +100,8 @@ void HeightField::updateNeighborsWater(int position, ScalarField2 & waterField) 
     Vector2 vec = coord(position);
     int i = vec.x, j = vec.y;
     double somCoeff = 0.0;
-
-    // Calcul de la somme des coefficients
+    // plop
+    // Calcul de la somme des coefficients hello world
     if((i-1) >= 0 && field[pos(i-1, j)] < field[position]) { somCoeff += field[position] - field[pos(i-1, j)]; }
     if((j-1) >= 0 && field[pos(i, j-1)] < field[position]) { somCoeff += field[position] - field[pos(i, j-1)]; }
     if((i+1) < h && field[pos(i+1, j)] < field[position]) { somCoeff += field[position] - field[pos(i+1, j)]; }
@@ -157,12 +162,12 @@ ScalarField2 HeightField::generateDrainageArea(float initialAmount) const {
 
 
 ScalarField2 HeightField::generateWetnessField() {
-    ScalarField2 stp = generateSlopeField();
     ScalarField2 dr = generateDrainageArea();
+    ScalarField2 slp = generateSlopeField();
     ScalarField2 res = ScalarField2(a, b, w, h);
     for (int i = 0; i < h; ++i) {
         for (int j = 0; j < w; ++j) {
-            res.field[pos(i, j)] = log(dr.field[pos(i, j)]/(1.0+stp.field[pos(i, j)]));
+            res.field[pos(i, j)] = log(dr.field[pos(i, j)]/(1.0+slp.field[pos(i, j)]));
         }
     }
     return res;
@@ -170,12 +175,12 @@ ScalarField2 HeightField::generateWetnessField() {
 
 
 ScalarField2 HeightField::generateStreamPowerField() {
-    ScalarField2 dra = generateDrainageArea();
+    ScalarField2 dr = generateDrainageArea();
     ScalarField2 slp = generateSlopeField();
     ScalarField2 res = ScalarField2(a, b, w, h);
     for (int i = 0; i < h; ++i) {
         for (int j = 0; j < w; ++j) {
-            res.field[pos(i, j)] = sqrt(dra.field[pos(i, j)])*slp.field[pos(i, j)];
+            res.field[pos(i, j)] = sqrt(dr.field[pos(i, j)])*slp.field[pos(i, j)];
         }
     }
     return res;
@@ -188,9 +193,7 @@ ScalarField2 HeightField::generateIlluminationField(int nbSrcLum, int nbPas) {
     // Génération de nos sources de lumières
     Vector2 centre = getCenter();
     VAR_TYPE radius = distance(centre, a) + distance(centre, a)/10;
-    //std::cout << radius << std::endl;
     Sphere sphere(Vector3(centre, 0.0) , radius);
-    Vector3 normaleSphere(centre, defaultHeight);
 
     unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
     std::mt19937 generator(seed);
@@ -209,7 +212,7 @@ ScalarField2 HeightField::generateIlluminationField(int nbSrcLum, int nbPas) {
         Vector3 point(x, y, z);
 
         // Si point dans l'hemisphere inférieur, on inverse z
-        if(point.z < defaultHeight) {
+        if(point.z < zmin) {
             point.z = -point.z;
         }
 
@@ -220,7 +223,7 @@ ScalarField2 HeightField::generateIlluminationField(int nbSrcLum, int nbPas) {
     for (int i = 0; i < h; ++i) {
         for (int j = 0; j < w; ++j) {
             res.field[pos(i, j)] = 0;
-            Vector3 depart(get(i, j), field[pos(i, j) + 0.01]);
+            Vector3 depart(get(i, j), field[pos(i, j) + 0.001 * (zmax - zmin)]);
 
             for(unsigned int p = 0; p < listPoints.size(); ++p) {
                 Vector3 rayon = listPoints[p] - depart;
