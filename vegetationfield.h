@@ -26,7 +26,8 @@ public:
     vegetationField(Vector2 a, Vector2 b, double defaut=0.0, double radius=20.0);
     vegetationField(const HeightField & hf, double radius=20.0);
 
-    ScalarField2 adaptVegetation(HeightField hf);
+    ScalarField2 adaptVegetation(const HeightField & hf);
+    ScalarField2 adaptVegetation(const ScalarField2 & slope, const ScalarField2 & wetness, const ScalarField2 & illum, const ScalarField2 & streamPower);
     double treeWidth;
 
     std::vector<bool> hasTree;

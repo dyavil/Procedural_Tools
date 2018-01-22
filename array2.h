@@ -30,20 +30,20 @@ public:
      * @param j colonne
      * @return coordonnées (i,j) réelles
      */
-    Vector2 get(int i, int j);
+    Vector2 get(int i, int j) const;
 
     /**
      * @brief getCenter Retourne le centre du tableau
      * @return centre (en coordonnées réelles) du tableau
      */
-    Vector2 getCenter();
+    Vector2 getCenter() const;
 
     /**
      * @brief inside
      * @param v3
      * @return
      */
-    std::pair<int, int> inside(const Vector3 & v3);
+    std::pair<int, int> inside(const Vector3 & v3) const;
 
     int h;
     int w;

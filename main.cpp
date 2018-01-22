@@ -13,11 +13,12 @@
 void init(LayerField &lf, Display &w, bool renderImage = false) {
     HeightField currentHeight = lf.computeHeight();
     ScalarField2 slope, drain, wetness, stream, illum;
-    vegetationField veget = vegetationField(currentHeight, 15.0);
+    vegetationField veget = vegetationField(currentHeight, 20.0);
 
     DrawField d;
     d.setField(currentHeight);
     d.prepare();
+    d.loadTreeObj("lowpolytree3.obj");
 
     slope = currentHeight.generateSlopeField();
     w.setSlopeField(slope.render());
@@ -41,7 +42,7 @@ void init(LayerField &lf, Display &w, bool renderImage = false) {
     if(renderImage) illum.render().save(QString(resdir) + QString("lightField.png"));
 
     veget.render().save(QString(resdir) + QString("testpoissonprev.png"));
-    ScalarField2 vegetview = veget.adaptVegetation(currentHeight);
+    ScalarField2 vegetview = veget.adaptVegetation(slope, wetness, illum, stream);
     w.setTreeZones(vegetview.render());
     if(renderImage) vegetview.render().save(QString(resdir) + QString("veget.png"));
     d.addVeget(veget);

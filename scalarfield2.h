@@ -23,10 +23,10 @@ public:
     ScalarField2 sfNormalize() const;
 
     QImage render();
-    Vector2 gradient(int i, int j);
+    Vector2 gradient(int i, int j) const;
     void setVal(int i, int j, double val) {field[pos(i, j)] = val;}
-    void CalcUV(const Vector2 & p , int & xi, int & yi, double & u, double & v);
-    void Bilineaire(const Vector2 & p, double & res);
+    void CalcUV(const Vector2 & p , int & xi, int & yi, double & u, double & v) const;
+    void Bilineaire(const Vector2 & p, double & res) const;
     void Barycentrique(const Vector2 & p, double & res);
 
 
