@@ -10,13 +10,14 @@
 // /home/dyavil/Images/
 
 
-void init(HeightField &hf, Display &w, int nbrayon, bool renderImage=false){
-    DrawField d;
-    d.setField(hf);
-    d.prepare();
-    ScalarField2 slope, drain, wet, stream, illum, ero;
-    LayerField lf(hf);
+void init(LayerField &lf, Display &w, bool renderImage = false) {
     HeightField currentHeight = lf.computeHeight();
+    ScalarField2 slope, drain, wetness, stream, illum;
+    vegetationField veget = vegetationField(Vector2(-2000, -2000), Vector2(2000, 2000), 0.0, 20.0);
+
+    DrawField d;
+    d.setField(currentHeight);
+    d.prepare();
 
     slope = currentHeight.generateSlopeField();
     w.setSlopeField(slope.render());
@@ -27,27 +28,25 @@ void init(HeightField &hf, Display &w, int nbrayon, bool renderImage=false){
     w.setDrainageArea(drain.render());
     if(renderImage) drain.render().save(QString(resdir) + QString("drainageArea.png"));
 
-    wet = currentHeight.generateWetnessField();
-    w.setWetness(wet.render());
-    if(renderImage) wet.render().save(QString(resdir) + QString("wetness.png"));
+    wetness = currentHeight.generateWetnessField();
+    w.setWetness(wetness.render());
+    if(renderImage) wetness.render().save(QString(resdir) + QString("wetness.png"));
 
     stream = currentHeight.generateStreamPowerField();
     w.setStreamPower(stream.render());
     if(renderImage) stream.render().save(QString(resdir) + QString("streamPower.png"));
 
-    illum = currentHeight.generateIlluminationField(nbrayon);
+    illum = currentHeight.generateIlluminationField();
     w.setLightField(illum.render());
     if(renderImage) illum.render().save(QString(resdir) + QString("lightField.png"));
 
-    ero = lf.generateThemralStress(illum, 10);
-    w.setLightField(ero.render());
-    if(renderImage) ero.render().save(QString(resdir) + QString("thermalErosion.png"));
-
-    vegetationField veget = vegetationField(Vector2(-2000, -2000), Vector2(2000, 2000), 0.0, 20.0);
     veget.render().save(QString(resdir) + QString("testpoissonprev.png"));
-    veget.adaptVegetation(hf);
+    veget.adaptVegetation(currentHeight);
     veget.render().save(QString(resdir) + QString("testpoisson.png"));
     d.addVeget(veget);
+
+    // BUG HERE !
+    //lf.generateThemralErosion(1);
 
     w.drawHFBase(d);
 }
@@ -58,13 +57,13 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     Display w;
     w.show();
-    HeightField hf = HeightField(Vector2(-1000, -1000), Vector2(1000, 1000), 500, 500, 0.0);
-    QImage im = QImage("heightmaps/map5.png");
-    hf.load(im, Vector2(-2000, -2000), Vector2(2000, 2000), 0, 600);
-    init(hf, w, 20, true);
 
-    //hg.load(im, Vector2(-1, -1), Vector2(1, 1), 0.3, 0.6);
+    HeightField hf = HeightField(Vector2(-2000, -2000), Vector2(2000, 2000), 512, 512, 600, 0);
+    hf.load("heightmaps/map5.png");
     //hf.noiseMap(4);
+    LayerField lf = LayerField(hf);
+
+    init(lf, w, true);
 
     return a.exec();
 }

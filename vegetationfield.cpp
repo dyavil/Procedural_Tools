@@ -3,7 +3,7 @@
 vegetationField::vegetationField(Vector2 a, Vector2 b, double defaut, double radius): ScalarField2(a, b, (b.x-a.x), (b.y-a.y), defaut)
 {
     hasTree.resize((b.x-a.x)*(b.y-a.y));
-    for (int i = 0; i < hasTree.size(); ++i) hasTree[i] = false;
+    for (unsigned int i = 0; i < hasTree.size(); ++i) hasTree[i] = false;
     Vec2f x_min;
     x_min[0] = a.x;
     x_min[1] = a.y;

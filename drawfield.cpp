@@ -1,17 +1,12 @@
 #include "drawfield.h"
 
-DrawField::DrawField()
-{
-
-}
+DrawField::DrawField() {}
 
 
 void DrawField::prepare()
 {
-
     std::vector<double>::iterator result;
-    result = std::max_element(fields.field.begin(), fields.field.end());
-    double zm = *result;
+
     result = std::min_element(fields.field.begin(), fields.field.end());
     double minn = *result;
 
@@ -26,15 +21,10 @@ void DrawField::prepare()
         fields.field[i] *=2 ;
     }
     result = std::max_element(fields.field.begin(), fields.field.end());
-    zm = *result;
-
-    std::cout << zm << std::endl;
 
     ScalarField2 & hg = fields;
     for (int i = 0; i < hg.h; i++) {
         for (int j = 0; j < hg.w; j++) {
-
-
             Vector2 pos = hg.get(i, j);
             double wid = fields.b.x - fields.a.x;
             double hgt = fields.b.y - fields.a.y;
@@ -44,11 +34,10 @@ void DrawField::prepare()
             colors.push_back(Vector3(hg.field[hg.pos(i, j)], hg.field[hg.pos(i, j)], hg.field[hg.pos(i, j)]));
             if((j+1) < hg.w && (i+1)<hg.h) triangles.push_back(Triangle((i*hg.w+j), (i*hg.w+(j+1)), ((i+1)*hg.w+j)));
             if((j+1) < hg.w && (i+1)<hg.h) triangles.push_back(Triangle((i*hg.w+(j+1)), ((i+1)*hg.w+(j+1)), ((i+1)*hg.w+j)));
-
         }
     }
-
 }
+
 
 void DrawField::addRivers(const ScalarField2 &sf){
     std::vector<double>::const_iterator result;
@@ -63,7 +52,6 @@ void DrawField::addRivers(const ScalarField2 &sf){
         }
     }
 }
-
 
 
 void DrawField::addVeget(ScalarField2 &sf){
@@ -81,6 +69,7 @@ void DrawField::addVeget(ScalarField2 &sf){
         }
     }
 }
+
 
 void DrawField::prepareInterpol(int size1){
     std::vector<double>::iterator result;
@@ -110,11 +99,10 @@ void DrawField::prepareInterpol(int size1){
             Vector2 p1 = fields.a + Vector2((i+1)*pasX, j*pasY);
             Vector2 p2 = fields.a + Vector2(i*pasX, (j+1)*pasY);
             Vector2 p3 = fields.a + Vector2((i+1)*pasX, (j+1)*pasY);
-            //std::cout << "test" <<std::endl;
-            hf.Bilineaire(p, z);
 
-            //std::cout << "in" << std::endl;
+            hf.Bilineaire(p, z);
             //hf.Barycentrique(p, z);
+
             double wid = fields.b.x - fields.a.x;
             double hgt = fields.b.y - fields.a.y;
             p.x = ((p.x-fields.a.x)/wid)*2.0;
@@ -129,11 +117,8 @@ void DrawField::prepareInterpol(int size1){
 
             if(!testPoint(Vector3(p3, 0), size1)) ok = false;
             if(ok) triangles.push_back(Triangle((i*size+(j+1)), ((i+1)*size+j), ((i+1)*size+(j+1))));
-
         }
-
     }
-    //std::cout << triangles.size() << std::endl;
 }
 
 
@@ -161,5 +146,4 @@ void DrawField::draw(){
         glVertex3f(vertices[triangles[i].vertices[2]].x, vertices[triangles[i].vertices[2]].y, z);
         glEnd();
     }
-
 }

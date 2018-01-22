@@ -10,21 +10,19 @@ ScalarField2::ScalarField2(Vector2 a, Vector2 b, int ww, int hh, double defaut) 
 }
 
 
-bool ScalarField2::load(QImage & im, Vector2 a, Vector2 b, double zmin, double zmax){
-    this->a=a;
-    this->b=b;
-    h=im.height();
-    w=im.width();
-    field.resize(im.width()*im.height());
-    if(im.isNull()) return false;
-    for (int i = 0; i < im.height(); ++i) {
-        for (int j = 0; j < im.width(); ++j) {
-            QColor clrC( im.pixel( j, i ) );
-            int ii = im.height()-i-1;
+bool ScalarField2::load(QString path, double zmin, double zmax){
+    QImage img = QImage(path);
+    h=img.height();
+    w=img.width();
+    field.resize(img.width()*img.height());
+    if(img.isNull()) return false;
+    for (int i = 0; i < img.height(); ++i) {
+        for (int j = 0; j < img.width(); ++j) {
+            QColor clrC( img.pixel( j, i ) );
+            int ii = img.height()-i-1;
             field[pos(ii, j)] = zmax-(((zmax-zmin)*clrC.black())/(255));
         }
     }
-
     return true;
 }
 
@@ -51,7 +49,7 @@ QImage ScalarField2::render(){
     double zm = *result;
     result = std::min_element(field.begin(), field.end());
     double zmin = *result;
-    std::cout << "min : " << zmin << ", " << zm <<std::endl;
+    //std::cout << "min : " << zmin << ", " << zm <<std::endl;
     QImage res = QImage(w, h, QImage::Format_RGB32);
     QRgb val;
     for (int i = 0; i < h; ++i) {

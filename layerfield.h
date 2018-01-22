@@ -18,19 +18,14 @@ public:
      */
     HeightField computeHeight(int nbCouches = 2);
 
-    /**
-     * @brief generateThemralErosion Génère la quantité de roche érodée par le soleil
-     * @param illumField scalarField de l'illumination (non normalisé)
-     * @param eroMax erosion maximum (en m)
-     * @return la quantité de roche érodée du heightfield
-     */
-    ScalarField2 generateThemralStress(ScalarField2 & illumField, double eroMax);
 
+    void generateThemralStress(double eroMax, int nbSrcLum = 30, int nbPas = 30);
 
-    ScalarField2 sedimentTransport(ScalarField2 & sedField, double angleMin);
+    void updateNeighborsSediment(int position, double qteTransport, double angleMin);
 
+    void sedimentTransport(double qteTransport = 1, unsigned int nbIters = 10, double angleMin = 40);
 
-    ScalarField2 generateThemralErosion(ScalarField2 & illumField, int nbSimu);
+    void generateThemralErosion(int nbSimu, double eroMax = 10, double qteSedTrans = 1, int nbSrcLum = 30, int nbPasLum = 30);
 
 
     void setVegetField(ScalarField2 & veget);

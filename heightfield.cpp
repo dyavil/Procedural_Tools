@@ -1,17 +1,19 @@
 #include "heightfield.h"
 
 
-HeightField::HeightField(Vector2 a, Vector2 b, int ww, int hh, double defaut) : ScalarField2(a, b, ww, hh, defaut) {}
-
-HeightField::HeightField(ScalarField2 & base, double defaut){
-    HeightField(base.a, base.b, base.w, base.h);
+HeightField::HeightField(Vector2 a, Vector2 b, int width, int height, double max, double min) : ScalarField2(a, b, width, height, min) {
+    zmin = min;
+    zmax = max;
 }
 
 
-bool HeightField::load(QImage & im, Vector2 a, Vector2 b, double za, double zb) {
-    zmin = za;
-    zmax = zb;
-    return ScalarField2::load(im, a, b, zmin, zmax);
+bool HeightField::load(QString path) {
+    return ScalarField2::load(path, zmin, zmax);
+}
+
+
+QImage HeightField::render() {
+    return ScalarField2::render();
 }
 
 
@@ -87,6 +89,7 @@ double HeightField::slope(int i, int j) {
 
 ScalarField2 HeightField::generateSlopeField() {
     ScalarField2 res = ScalarField2(a, b, w, h);
+
     for (int i = 0; i < h; ++i) {
         for (int j = 0; j < w; ++j) {
             res.field[pos(i, j)] = slope(i, j);
@@ -94,8 +97,7 @@ ScalarField2 HeightField::generateSlopeField() {
     }
     std::vector<double>::iterator result;
     result = std::max_element(res.field.begin(), res.field.end());
-    //double zm = *result;
-    //std::cout << zm << std::endl;
+
     return res;
 }
 
