@@ -24,7 +24,11 @@ public:
     void setTreeZones(QImage im);
 
 private:
+    bool showTree;
     Ui::Display *ui;
+
+public slots:
+    void switchShowTrees();
 };
 
 #endif // DISPLAY_H

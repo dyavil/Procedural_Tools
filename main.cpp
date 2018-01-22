@@ -29,11 +29,11 @@ void init(LayerField &lf, Display &w, bool renderImage = false) {
     w.setDrainageArea(drain.render());
     if(renderImage) drain.render().save(QString(resdir) + QString("drainageArea.png"));
 
-    wetness = currentHeight.generateWetnessField();
+    wetness = currentHeight.generateWetnessField(drain, slope);
     w.setWetness(wetness.render());
     if(renderImage) wetness.render().save(QString(resdir) + QString("wetness.png"));
 
-    stream = currentHeight.generateStreamPowerField();
+    stream = currentHeight.generateStreamPowerField(drain, slope);
     w.setStreamPower(stream.render());
     if(renderImage) stream.render().save(QString(resdir) + QString("streamPower.png"));
 
@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
     Display w;
     w.show();
 
-    HeightField hf = HeightField(Vector2(-2000, -2000), Vector2(2000, 2000), 512, 512, 600, 0);
+    HeightField hf = HeightField(Vector2(-2000, -2000), Vector2(2000, 2000), 512, 512, 500, 0);
     hf.load("heightmaps/map5.png");
     //hf.noiseMap(4);
     LayerField lf = LayerField(hf);

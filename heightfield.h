@@ -70,11 +70,15 @@ public:
      */
     ScalarField2 generateWetnessField() const;
 
+    ScalarField2 generateWetnessField(const ScalarField2 & dr, const ScalarField2 & slp) const;
+
     /**
      * @brief generateStreamPowerField Génère le streamPowerField du heightfield
      * @return le streamPowerField du heightfield
      */
     ScalarField2 generateStreamPowerField() const;
+
+    ScalarField2 generateStreamPowerField(const ScalarField2 & dr, const ScalarField2 & slp) const;
 
     /**
      * @brief generateIlluminationField Génère l'illuminationField du heightfield

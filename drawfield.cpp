@@ -1,17 +1,17 @@
 #include "drawfield.h"
 
-DrawField::DrawField() {}
+DrawField::DrawField() { idStartTree = 0;}
 
 
 void DrawField::prepare()
 {
     std::vector<double>::iterator result;
     result = std::max_element(fields.field.begin(), fields.field.end());
-    double zm = *result;
+    double zm = *result+(*result/10.0);
     result = std::min_element(fields.field.begin(), fields.field.end());
     double minn = *result;
 
-    float ddd = fields.b.x - fields.a.x;
+    //float ddd = fields.b.x - fields.a.x;
 
     /*for (int i = 0; i < fields.h*fields.w; ++i) {
         fields.field[i] -= minn;
@@ -32,7 +32,7 @@ void DrawField::prepare()
             //pos.x = ((pos.x-fields.a.x)/wid)*2.0;
             //pos.y = ((pos.y-fields.a.y)/hgt)*2.0;
             vertices.push_back(Vector3(pos, hg.field[hg.pos(i, j)]));
-            colors.push_back(Vector3((hg.field[hg.pos(i, j)]-minn)/zm, (hg.field[hg.pos(i, j)]-minn)/zm, (hg.field[hg.pos(i, j)]-minn)/zm));
+            colors.push_back(Vector3((hg.field[hg.pos(i, j)]-minn)/zm+0.1, (hg.field[hg.pos(i, j)]-minn)/zm+0.1, (hg.field[hg.pos(i, j)]-minn)/zm+0.1));
             if((j+1) < hg.w && (i+1)<hg.h) triangles.push_back(Triangle((i*hg.w+j), (i*hg.w+(j+1)), ((i+1)*hg.w+j)));
             if((j+1) < hg.w && (i+1)<hg.h) triangles.push_back(Triangle((i*hg.w+(j+1)), ((i+1)*hg.w+(j+1)), ((i+1)*hg.w+j)));
         }
@@ -62,6 +62,7 @@ void DrawField::addVeget(vegetationField &sf){
     double zm = sqrt(*result);
     double larg = sf.treeWidth;
     double upp = 0.0;
+    idStartTree = triangles.size();
     for (int i = 0; i < sf.h; i++) {
         for (int j = 0; j < sf.w; j++) {
             if((sqrt(sf.field[sf.pos(i, j)])/zm) > 0.0) {
@@ -214,9 +215,12 @@ bool DrawField::testPoint(const Vector3 &v3, int size){
 }
 
 
-void DrawField::draw(){
+void DrawField::draw(bool showTree){
 
-    for (unsigned int i = 0; i < triangles.size(); ++i) {
+    unsigned int endLoop = triangles.size();
+    //std::cout << idStartTree << std::endl;
+    if (idStartTree != 0 && !showTree) endLoop = idStartTree;
+    for (unsigned int i = 0; i < endLoop; ++i) {
         glBegin(GL_TRIANGLES);
         double z = vertices[triangles[i].vertices[0]].z;
         glColor3f(colors[triangles[i].vertices[0]].x, colors[triangles[i].vertices[0]].y, colors[triangles[i].vertices[0]].z);

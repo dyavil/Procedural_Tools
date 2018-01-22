@@ -14,7 +14,7 @@ public:
     void prepare();
     void addRivers(const ScalarField2 & sf);
     void addVeget(vegetationField & sf);
-    void draw();
+    void draw(bool showTree);
     void prepareInterpol(int size);
     void setField(ScalarField2 sf) {fields = sf;}
     void loadTreeObj(QString path);
@@ -28,6 +28,7 @@ public:
 
 private:
     bool testPoint(const Vector3 & v3, int size);
+    int idStartTree;
 };
 
 #endif // DRAWFIELD_H

@@ -4,6 +4,7 @@
 
 GLView::GLView(QWidget *parent) :
     QGLWidget(parent),
+    showTree(false),
     hg(),
     angle(290.0f),
     anglex(360.0f),
@@ -33,7 +34,7 @@ void GLView::initializeGL()
 
     glFrontFace(GL_CCW);
 
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClearColor(0.282353, 0.239216, 0.545098, 1.0f);
 
     glColor3f(1.0, 1.0, 0.0);
 }
@@ -51,7 +52,7 @@ void GLView::paintGL()
     glRotatef(anglez, 0.0f, 0.0f, 1.0f);
 
     //hg.draw();
-    hg.draw();
+    hg.draw(showTree);
 }
 
 void GLView::resizeGL(int w, int h)

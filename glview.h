@@ -21,6 +21,8 @@ public:
 
     virtual void setHFBase(DrawField hf);
 
+    bool showTree;
+
 protected:
     virtual void mouseMoveEvent ( QMouseEvent * event );
     virtual void mousePressEvent ( QMouseEvent * event );

@@ -180,9 +180,29 @@ ScalarField2 HeightField::generateWetnessField() const{
 }
 
 
+ScalarField2 HeightField::generateWetnessField(const ScalarField2 & dr, const ScalarField2 & slp) const{
+    ScalarField2 res = ScalarField2(a, b, w, h);
+    for (int i = 0; i < h; ++i) {
+        for (int j = 0; j < w; ++j) {
+            res.field[pos(i, j)] = log(dr.field[pos(i, j)]/(1.0+slp.field[pos(i, j)]));
+        }
+    }
+    return res;
+}
+
 ScalarField2 HeightField::generateStreamPowerField() const{
     ScalarField2 dr = generateDrainageArea();
     ScalarField2 slp = generateSlopeField();
+    ScalarField2 res = ScalarField2(a, b, w, h);
+    for (int i = 0; i < h; ++i) {
+        for (int j = 0; j < w; ++j) {
+            res.field[pos(i, j)] = sqrt(dr.field[pos(i, j)])*slp.field[pos(i, j)];
+        }
+    }
+    return res;
+}
+
+ScalarField2 HeightField::generateStreamPowerField(const ScalarField2 & dr, const ScalarField2 & slp) const{
     ScalarField2 res = ScalarField2(a, b, w, h);
     for (int i = 0; i < h; ++i) {
         for (int j = 0; j < w; ++j) {
