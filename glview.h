@@ -3,6 +3,7 @@
 
 #include <QGLWidget>
 #include <QMouseEvent>
+#include <QWheelEvent>
 #include <QApplication>
 #include "drawfield.h"
 
@@ -23,10 +24,15 @@ public:
 protected:
     virtual void mouseMoveEvent ( QMouseEvent * event );
     virtual void mousePressEvent ( QMouseEvent * event );
+    virtual void wheelEvent ( QWheelEvent * event );
 
 private:
     DrawField hg;
     float angle;
+    float anglex;
+    float anglez;
+    float zoom;
+    float progress_zoom;
     QPoint position;
 
 };

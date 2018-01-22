@@ -21,6 +21,7 @@ public:
     void setStreamPower(QImage im);
     void setWetness(QImage im);
     void setLightField(QImage im);
+    void setTreeZones(QImage im);
 
 private:
     Ui::Display *ui;

@@ -16,6 +16,8 @@ Display::Display(QWidget *parent) :
     ui->wetnessImg->setScaledContents(true);
     ui->lightFieldImg->setBackgroundRole(QPalette::Base);
     ui->lightFieldImg->setScaledContents(true);
+    ui->treeZoneImg->setBackgroundRole(QPalette::Base);
+    ui->treeZoneImg->setScaledContents(true);
     ui->slopeLabel->setAlignment(Qt::AlignCenter);
     ui->dareaLabel->setAlignment(Qt::AlignCenter);
     ui->steamPowLabel->setAlignment(Qt::AlignCenter);
@@ -59,6 +61,12 @@ void Display::setLightField(QImage im){
     QPixmap m;
     m=m.fromImage(im);
     ui->lightFieldImg->setPixmap(m);
+}
+
+void Display::setTreeZones(QImage im){
+    QPixmap m;
+    m=m.fromImage(im);
+    ui->treeZoneImg->setPixmap(m);
 }
 
 

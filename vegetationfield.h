@@ -24,8 +24,9 @@ class vegetationField : public ScalarField2
 public:
     vegetationField(){}
     vegetationField(Vector2 a, Vector2 b, double defaut=0.0, double radius=20.0);
+    vegetationField(const HeightField & hf, double radius=20.0);
 
-    void adaptVegetation(HeightField hf);
+    ScalarField2 adaptVegetation(HeightField hf);
     double treeWidth;
 
     std::vector<bool> hasTree;
