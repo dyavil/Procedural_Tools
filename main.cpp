@@ -16,8 +16,7 @@ void init(LayerField &lf, Display &w, bool renderImage = false) {
     vegetationField veget = vegetationField(curHeight, 20.0);
 
 
-    // Problem when liberating the memory
-    lf.generateThemralErosion(curHeight, light, 1, 10, 1, 20, 20, true);
+    lf.generateThemralErosion(curHeight, light, 1, 10, 1, 20, 20);
 
     slope = curHeight.generateSlopeField();
     w.setSlopeField(slope.render());

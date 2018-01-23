@@ -141,7 +141,7 @@ void DrawField::loadTreeObj(QString path){
         shapes[s].mesh.material_ids[f];
       }
     }
-    std::cout << shapes.size() << std::endl;
+    //std::cout << shapes.size() << std::endl;
 }
 
 void DrawField::prepareInterpol(int size1){

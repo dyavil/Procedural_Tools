@@ -170,13 +170,13 @@ void LayerField::updateNeighborsSediment(int position, double qteTransport, doub
     std::default_random_engine random;
     double rand = distrib(random);
 
-    for(int i = 0; i < 8; ++i) {
-        rand -= coeff[i];
-        if(rand <= 0) {
-            double qteEro = std::max(0.0, couche2.field[position] - qteTransport);
+    for(int k = 0; k < 8; ++k) {
+        rand -= coeff[k];
+        if(rand < 0.0) {    // Not <=
+            double qteEro = std::min(qteTransport, couche2.field[position]);
             couche2.field[position] -= qteEro;
 
-            switch(i) {
+            switch(k) {
                 case 0:
                     couche2.field[pos(i-1, j+1)] += qteEro;
                     break;
@@ -202,6 +202,7 @@ void LayerField::updateNeighborsSediment(int position, double qteTransport, doub
                     couche2.field[pos(i, j-1)] += qteEro;
                     break;
             }
+
             return;
         }
     }
@@ -217,7 +218,7 @@ void LayerField::sedimentTransport(unsigned int nbIters, double qteTransport, do
             for(int j = 0; j < w; ++j) {
                 int position = pos(i,j);
                 double height = couche1.field[position] + couche2.field[position];
-                vecHeights[position] = { height , (double)position };
+                vecHeights[position] = { height, (double)position };
             }
         }
 
