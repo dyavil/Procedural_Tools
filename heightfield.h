@@ -16,8 +16,6 @@ public:
 
     bool load(QString path);
 
-    QImage render();
-
     // Ancien calcul de normale (plus utilisé)
     Vector3 normalOld(int i, int j);
 

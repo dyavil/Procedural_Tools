@@ -12,11 +12,6 @@ bool HeightField::load(QString path) {
 }
 
 
-QImage HeightField::render() {
-    return ScalarField2::render();
-}
-
-
 Vector3 HeightField::normalOld(int i, int j) {
     Vector3 va, vb, vc, vd;
     if((i+1) < h) va = Vector3(get(i+1, j), field[pos(i+1, j)]) - Vector3(get(i, j), field[pos(i, j)]);

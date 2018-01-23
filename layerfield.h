@@ -19,14 +19,14 @@ public:
     HeightField computeHeight(int nbCouches = 2);
 
 
-    void generateThemralStress(double eroMax, int nbSrcLum = 30, int nbPas = 30);
+    void generateThemralStress(ScalarField2 & light, double eroMax, int nbSrcLum = 30, int nbPas = 30);
 
     void updateNeighborsSediment(int position, double qteTransport, double angleMin);
 
-    void sedimentTransport(double qteTransport = 1, unsigned int nbIters = 10, double angleMin = 40);
+    void sedimentTransport(unsigned int nbIters, double qteTransport = 1, double angleMin = 40);
 
-    void generateThemralErosion(int nbSimu, double eroMax = 10, double qteSedTrans = 1, int nbSrcLum = 30, int nbPasLum = 30);
-
+    void generateThemralErosion(HeightField & hf, ScalarField2 & light, int nbSimu,
+                                double eroMax = 10, double qteSedTrans = 1, int nbSrcLum = 30, int nbPasLum = 30, bool saveImg = false);
 
     void setVegetField(ScalarField2 & veget);
 
