@@ -21,9 +21,14 @@ public:
     void setStreamPower(QImage im);
     void setWetness(QImage im);
     void setLightField(QImage im);
+    void setTreeZones(QImage im);
 
 private:
+    bool showTree;
     Ui::Display *ui;
+
+public slots:
+    void switchShowTrees();
 };
 
 #endif // DISPLAY_H

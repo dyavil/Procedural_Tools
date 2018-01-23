@@ -32,7 +32,7 @@ public:
      * @param vec position (réelles) du point que l'on teste
      * @return true si le point(x, y, z est situé en dessous du terrain)
      */
-    bool underTerrain(Vector3 & vec);
+    bool underTerrain(Vector3 & vec) const;
 
     /**
      * @brief slope
@@ -40,13 +40,13 @@ public:
      * @param j
      * @return
      */
-    double slope(int i, int j);
+    double slope(int i, int j) const;
 
     /**
      * @brief generateSlopeField
      * @return
      */
-    ScalarField2 generateSlopeField();
+    ScalarField2 generateSlopeField() const;
 
     /**
      * @brief updateNeighborsWater Met à jour la quantité d'eau de la drainageArea en un point
@@ -66,13 +66,17 @@ public:
      * @brief generateWetnessField Génère le wetnessField du heightfield
      * @return le wetnessField du heightfield
      */
-    ScalarField2 generateWetnessField();
+    ScalarField2 generateWetnessField() const;
+
+    ScalarField2 generateWetnessField(const ScalarField2 & dr, const ScalarField2 & slp) const;
 
     /**
      * @brief generateStreamPowerField Génère le streamPowerField du heightfield
      * @return le streamPowerField du heightfield
      */
-    ScalarField2 generateStreamPowerField();
+    ScalarField2 generateStreamPowerField() const;
+
+    ScalarField2 generateStreamPowerField(const ScalarField2 & dr, const ScalarField2 & slp) const;
 
     /**
      * @brief generateIlluminationField Génère l'illuminationField du heightfield
@@ -80,7 +84,7 @@ public:
      * @param nbPas nombre de pas testé pour chaque rayon
      * @return l'illuminationField du heightfield
      */
-    ScalarField2 generateIlluminationField(int nbSrcLum = 30, int nbPas = 30);
+    ScalarField2 generateIlluminationField(int nbSrcLum = 30, int nbPas = 30) const;
 
     /**
      * @brief exportOBJ Réalise l'export du heighfield au format .obj

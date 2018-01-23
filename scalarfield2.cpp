@@ -65,7 +65,7 @@ QImage ScalarField2::render(){
 }
 
 
-Vector2 ScalarField2::gradient(int i, int j){
+Vector2 ScalarField2::gradient(int i, int j) const{
     double aa = 2.0*((b.x-a.x)/(double)w);
     double dx;
     if(j+1 >= w) dx = (field[pos(i, j)] - field[pos(i, j-1)])/(aa/2.0);
@@ -104,7 +104,7 @@ void ScalarField2::noiseMap(int pas){
 }
 
 
-void ScalarField2::CalcUV(const Vector2 &p, int &xi, int &yi, double &u, double &v){
+void ScalarField2::CalcUV(const Vector2 &p, int &xi, int &yi, double &u, double &v) const{
     std::pair<int, int> xy= inside(Vector3(p, 0));
     xi=xy.second;
     yi=xy.first;
@@ -113,7 +113,7 @@ void ScalarField2::CalcUV(const Vector2 &p, int &xi, int &yi, double &u, double 
 }
 
 
-void ScalarField2::Bilineaire(const Vector2 &p, double &res){
+void ScalarField2::Bilineaire(const Vector2 &p, double &res) const{
     int xi, yi;
     double u, v;
     CalcUV(p, xi, yi, u, v);

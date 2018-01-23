@@ -1,25 +1,16 @@
 #include "drawfield.h"
 
-DrawField::DrawField() {}
+DrawField::DrawField() { idStartTree = 0;}
 
 
 void DrawField::prepare()
 {
     std::vector<double>::iterator result;
-
+    result = std::max_element(fields.field.begin(), fields.field.end());
+    double zm = *result+(*result/10.0);
     result = std::min_element(fields.field.begin(), fields.field.end());
     double minn = *result;
 
-    float ddd = fields.b.x - fields.a.x;
-
-    for (int i = 0; i < fields.h*fields.w; ++i) {
-        fields.field[i] -= minn;
-    }
-
-    for (int i = 0; i < fields.h*fields.w; ++i) {
-        fields.field[i] /= (ddd);
-        fields.field[i] *=2 ;
-    }
     result = std::max_element(fields.field.begin(), fields.field.end());
 
     ScalarField2 & hg = fields;
@@ -28,10 +19,8 @@ void DrawField::prepare()
             Vector2 pos = hg.get(i, j);
             double wid = fields.b.x - fields.a.x;
             double hgt = fields.b.y - fields.a.y;
-            pos.x = ((pos.x-fields.a.x)/wid)*2.0;
-            pos.y = ((pos.y-fields.a.y)/hgt)*2.0;
-            vertices.push_back(Vector3(pos+Vector2(-1, -1), hg.field[hg.pos(i, j)]));
-            colors.push_back(Vector3(hg.field[hg.pos(i, j)], hg.field[hg.pos(i, j)], hg.field[hg.pos(i, j)]));
+            vertices.push_back(Vector3(pos, hg.field[hg.pos(i, j)]));
+            colors.push_back(Vector3((hg.field[hg.pos(i, j)]-minn)/zm+0.1, (hg.field[hg.pos(i, j)]-minn)/zm+0.1, (hg.field[hg.pos(i, j)]-minn)/zm+0.1));
             if((j+1) < hg.w && (i+1)<hg.h) triangles.push_back(Triangle((i*hg.w+j), (i*hg.w+(j+1)), ((i+1)*hg.w+j)));
             if((j+1) < hg.w && (i+1)<hg.h) triangles.push_back(Triangle((i*hg.w+(j+1)), ((i+1)*hg.w+(j+1)), ((i+1)*hg.w+j)));
         }
@@ -54,22 +43,106 @@ void DrawField::addRivers(const ScalarField2 &sf){
 }
 
 
-void DrawField::addVeget(ScalarField2 &sf){
+void DrawField::addVeget(vegetationField &sf){
     std::vector<double>::const_iterator result;
     //std::cout << colors.size() << ", " << sf.h*sf.w << std::endl;
     result = std::max_element(sf.field.begin(), sf.field.end());
     double zm = sqrt(*result);
+    double larg = sf.treeWidth;
+    double upp = 0.0;
+    idStartTree = triangles.size();
     for (int i = 0; i < sf.h; i++) {
         for (int j = 0; j < sf.w; j++) {
             if((sqrt(sf.field[sf.pos(i, j)])/zm) > 0.0) {
                 Vector2 tmpp= sf.get(i, j);
                 std::pair<int, int> ij = fields.inside(Vector3(tmpp, 0.0));
-                colors[fields.pos(ij.first, ij.second)].y += (sqrt(sf.field[sf.pos(i, j)])/zm);
+                //colors[fields.pos(ij.first, ij.second)].y += (sqrt(sf.field[sf.pos(i, j)])/zm);
+                for (unsigned int k = 0; k < treeVertices.size(); k+=3) {
+                    double x = (tmpp.x+treeVertices[k].x/5.0*larg+upp);
+                    double y = (tmpp.y+treeVertices[k].y/5.0*larg+upp);
+                    double z = fields.field[fields.pos(ij.first, ij.second)]+treeVertices[k].z/5.0*larg+upp;
+                    vertices.push_back(Vector3(x, y, z));
+                    colors.push_back(treeColors[k]);
+
+
+                    x = (tmpp.x+treeVertices[k+1].x/5.0*larg+upp);
+                    y = (tmpp.y+treeVertices[k+1].y/5.0*larg+upp);
+                    z = fields.field[fields.pos(ij.first, ij.second)]+treeVertices[k+1].z/5.0*larg+upp;
+                    vertices.push_back(Vector3(x, y, z));
+                    colors.push_back(treeColors[k+1]);
+
+
+                    x = (tmpp.x+treeVertices[k+2].x/5.0*larg+upp);
+                    y = (tmpp.y+treeVertices[k+2].y/5.0*larg+upp);
+                    z = fields.field[fields.pos(ij.first, ij.second)]+treeVertices[k+2].z/5.0*larg+upp;
+                    vertices.push_back(Vector3(x, y, z));
+                    colors.push_back(treeColors[k+2]);
+                    triangles.push_back(Triangle(vertices.size()-3, vertices.size()-2, vertices.size()-1));
+                }
             }
         }
     }
 }
 
+
+void DrawField::loadTreeObj(QString path){
+    std::string inputfile = path.toStdString();
+    tinyobj::attrib_t attrib;
+    std::vector<tinyobj::shape_t> shapes;
+    std::vector<tinyobj::material_t> materials;
+
+    std::string err;
+    bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &err, inputfile.c_str());
+
+    if (!err.empty()) { // `err` may contain warning message.
+      std::cerr << err << std::endl;
+    }
+
+    if (!ret) {
+      exit(1);
+    }
+
+    std::vector<tinyobj::real_t>::const_iterator result;
+    //std::cout << colors.size() << ", " << sf.h*sf.w << std::endl;
+    result = std::max_element(attrib.vertices.begin(), attrib.vertices.end());
+
+
+    // Loop over shapes
+    for (size_t s = 0; s < shapes.size(); s++) {
+      // Loop over faces(polygon)
+      Vector3 colorr = Vector3(0.0, 0.392157, 0.0);
+      size_t index_offset = 0;
+      for (size_t f = 0; f < shapes[s].mesh.num_face_vertices.size(); f++) {
+        int fv = shapes[s].mesh.num_face_vertices[f];
+
+        // Loop over vertices in the face.
+        for (size_t v = 0; v < fv; v++) {
+          // access to vertex
+          tinyobj::index_t idx = shapes[s].mesh.indices[index_offset + v];
+          tinyobj::real_t vx = attrib.vertices[3*idx.vertex_index+0];
+          tinyobj::real_t vy = attrib.vertices[3*idx.vertex_index+1];
+          tinyobj::real_t vz = attrib.vertices[3*idx.vertex_index+2];
+          treeVertices.push_back(Vector3(vx, vy, vz));
+          /*tinyobj::real_t nx = attrib.normals[3*idx.normal_index+0];
+          tinyobj::real_t ny = attrib.normals[3*idx.normal_index+1];
+          tinyobj::real_t nz = attrib.normals[3*idx.normal_index+2];
+          tinyobj::real_t tx = attrib.texcoords[2*idx.texcoord_index+0];
+          tinyobj::real_t ty = attrib.texcoords[2*idx.texcoord_index+1];*/
+          // Optional: vertex colors
+          /*tinyobj::real_t red = attrib.colors[3*idx.vertex_index+0];
+          tinyobj::real_t green = attrib.colors[3*idx.vertex_index+1];
+          tinyobj::real_t blue = attrib.colors[3*idx.vertex_index+2];*/
+          if(vz > (*result - *result*0.82) )treeColors.push_back(colorr);
+          else treeColors.push_back(Vector3(0.647059, 0.164706, 0.164706));
+        }
+        index_offset += fv;
+
+        // per-face material
+        shapes[s].mesh.material_ids[f];
+      }
+    }
+    std::cout << shapes.size() << std::endl;
+}
 
 void DrawField::prepareInterpol(int size1){
     std::vector<double>::iterator result;
@@ -130,9 +203,12 @@ bool DrawField::testPoint(const Vector3 &v3, int size){
 }
 
 
-void DrawField::draw(){
+void DrawField::draw(bool showTree){
 
-    for (unsigned int i = 0; i < triangles.size(); ++i) {
+    unsigned int endLoop = triangles.size();
+    //std::cout << idStartTree << std::endl;
+    if (idStartTree != 0 && !showTree) endLoop = idStartTree;
+    for (unsigned int i = 0; i < endLoop; ++i) {
         glBegin(GL_TRIANGLES);
         double z = vertices[triangles[i].vertices[0]].z;
         glColor3f(colors[triangles[i].vertices[0]].x, colors[triangles[i].vertices[0]].y, colors[triangles[i].vertices[0]].z);

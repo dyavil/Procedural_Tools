@@ -34,7 +34,8 @@ SOURCES += \
         drawfield.cpp \
         layerfield.cpp \
     include/FastNoise.cpp \
-    vegetationfield.cpp
+    vegetationfield.cpp \
+    include/tiny_obj_loader.cc
 
 HEADERS += \
         display.h \
@@ -47,14 +48,19 @@ HEADERS += \
         layerfield.h \
     include/FastNoise.h \
     vegetationfield.h \
-    include/thinks/poissonDiskSampling.hpp
+    include/thinks/poissonDiskSampling.hpp \
+    include/tiny_obj_loader.h
 
 FORMS += \
         display.ui
 
 heightmaps.path   = $${OUT_PWD}/heightmaps
 heightmaps.files  = heightmaps/*
+objs.path   = $${OUT_PWD}
+objs.files  = lowpolytree3.obj\
+                lowpolytree3.mtl
 INSTALLS       += heightmaps
+INSTALLS       += objs
 
 QMAKE_CXXFLAGS += -std=c++11
 
@@ -63,4 +69,6 @@ DISTFILES += \
     heightmaps/map3.jpg \
     heightmaps/map1.png \
     heightmaps/map6.png \
-    heightmaps/map9.png
+    heightmaps/map9.png \
+    lowpolytree3.obj \
+    lowpolytree3.mtl

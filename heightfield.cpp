@@ -67,7 +67,7 @@ Vector3 HeightField::normal(int i, int j) {
     return normalize((n1+n2+n3+n4+n5+n6)/somN);
 }
 
-bool HeightField::underTerrain(Vector3 & vec) {
+bool HeightField::underTerrain(Vector3 & vec) const{
     double height;
     if(vec.x >= a.x && vec.x <= b.x && vec.y >= a.y && vec.y <= b.y) {
         Bilineaire(Vector2(vec.x, vec.y), height);
@@ -76,13 +76,13 @@ bool HeightField::underTerrain(Vector3 & vec) {
     return false;
 }
 
-double HeightField::slope(int i, int j) {
+double HeightField::slope(int i, int j) const{
     Vector2 tmp = gradient(i, j);
     return sqrt(tmp.x*tmp.x + tmp.y*tmp.y);
 }
 
 
-ScalarField2 HeightField::generateSlopeField() {
+ScalarField2 HeightField::generateSlopeField() const{
     ScalarField2 res = ScalarField2(a, b, w, h);
 
     for (int i = 0; i < h; ++i) {
@@ -162,7 +162,7 @@ ScalarField2 HeightField::generateDrainageArea(float initialAmount) const {
 }
 
 
-ScalarField2 HeightField::generateWetnessField() {
+ScalarField2 HeightField::generateWetnessField() const{
     ScalarField2 dr = generateDrainageArea();
     ScalarField2 slp = generateSlopeField();
     ScalarField2 res = ScalarField2(a, b, w, h);
@@ -175,7 +175,17 @@ ScalarField2 HeightField::generateWetnessField() {
 }
 
 
-ScalarField2 HeightField::generateStreamPowerField() {
+ScalarField2 HeightField::generateWetnessField(const ScalarField2 & dr, const ScalarField2 & slp) const{
+    ScalarField2 res = ScalarField2(a, b, w, h);
+    for (int i = 0; i < h; ++i) {
+        for (int j = 0; j < w; ++j) {
+            res.field[pos(i, j)] = log(dr.field[pos(i, j)]/(1.0+slp.field[pos(i, j)]));
+        }
+    }
+    return res;
+}
+
+ScalarField2 HeightField::generateStreamPowerField() const{
     ScalarField2 dr = generateDrainageArea();
     ScalarField2 slp = generateSlopeField();
     ScalarField2 res = ScalarField2(a, b, w, h);
@@ -187,8 +197,18 @@ ScalarField2 HeightField::generateStreamPowerField() {
     return res;
 }
 
+ScalarField2 HeightField::generateStreamPowerField(const ScalarField2 & dr, const ScalarField2 & slp) const{
+    ScalarField2 res = ScalarField2(a, b, w, h);
+    for (int i = 0; i < h; ++i) {
+        for (int j = 0; j < w; ++j) {
+            res.field[pos(i, j)] = sqrt(dr.field[pos(i, j)])*slp.field[pos(i, j)];
+        }
+    }
+    return res;
+}
 
-ScalarField2 HeightField::generateIlluminationField(int nbSrcLum, int nbPas) {
+
+ScalarField2 HeightField::generateIlluminationField(int nbSrcLum, int nbPas) const{
     ScalarField2 res = ScalarField2(a, b, w, h);
 
     // Génération de nos sources de lumières
