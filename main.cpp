@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
     Display w;
     w.show();
 
-    HeightField hf = HeightField(Vector2(-2000, -2000), Vector2(2000, 2000), 512, 512, 500, 0);
+    HeightField hf = HeightField(Vector2(-2000, -2000), Vector2(2000, 2000), 512, 512, 300, 0);
     hf.load("heightmaps/map5.png");
     //hf.noiseMap(4);
     LayerField lf = LayerField(hf);

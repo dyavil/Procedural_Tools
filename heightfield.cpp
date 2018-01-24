@@ -67,6 +67,7 @@ Vector3 HeightField::normal(int i, int j) {
     return normalize((n1+n2+n3+n4+n5+n6)/somN);
 }
 
+
 bool HeightField::underTerrain(Vector3 & vec) const{
     double height;
     if(vec.x >= a.x && vec.x <= b.x && vec.y >= a.y && vec.y <= b.y) {
@@ -75,6 +76,7 @@ bool HeightField::underTerrain(Vector3 & vec) const{
     }
     return false;
 }
+
 
 double HeightField::slope(int i, int j) const{
     Vector2 tmp = gradient(i, j);

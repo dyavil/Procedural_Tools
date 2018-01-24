@@ -80,7 +80,7 @@ void LayerField::updateNeighborsSediment(int position, double qteTransport, doub
     if((i-1) >= 0 && (j+1) < w && couche1.field[pos(i-1, j+1)] < couche1.field[position]) {
         double nbrHeight = couche1.field[pos(i-1, j+1)] + couche2.field[pos(i-1, j+1)];
         if(nbrHeight < curHeight) {
-            double curAngle = atan((curHeight - nbrHeight) / M_SQRT2);
+            double curAngle = atan((curHeight - nbrHeight) / M_SQRT2) * 180 / M_PI;
             if(curAngle >= angleMin) {
                 coeff[0] = curAngle;
                 somCoeff += curAngle;
@@ -91,7 +91,7 @@ void LayerField::updateNeighborsSediment(int position, double qteTransport, doub
     if((j+1) < w && couche1.field[pos(i, j+1)] < couche1.field[position]) {
         double nbrHeight = couche1.field[pos(i, j+1)] + couche2.field[pos(i, j+1)];
         if(nbrHeight < curHeight) {
-            double curAngle = atan(curHeight - nbrHeight);
+            double curAngle = atan(curHeight - nbrHeight) * 180 / M_PI;
             if(curAngle >= angleMin) {
                 coeff[1] = curAngle;
                 somCoeff += curAngle;
@@ -102,7 +102,7 @@ void LayerField::updateNeighborsSediment(int position, double qteTransport, doub
     if((i+1) < h && (j+1) < w && couche1.field[pos(i+1, j+1)] < couche1.field[position]) {
         double nbrHeight = couche1.field[pos(i+1, j+1)] + couche2.field[pos(i+1, j+1)];
         if(nbrHeight < curHeight) {
-            double curAngle = atan((curHeight - nbrHeight) / M_SQRT2);
+            double curAngle = atan((curHeight - nbrHeight) / M_SQRT2) * 180 / M_PI;
             if(curAngle >= angleMin) {
                 coeff[2] = curAngle;
                 somCoeff += curAngle;
@@ -113,7 +113,7 @@ void LayerField::updateNeighborsSediment(int position, double qteTransport, doub
     if((i+1) < h && couche1.field[pos(i+1, j)] < couche1.field[position]) {
         double nbrHeight = couche1.field[pos(i+1, j)] + couche2.field[pos(i+1, j)];
         if(nbrHeight < curHeight) {
-            double curAngle = atan(curHeight - nbrHeight);
+            double curAngle = atan(curHeight - nbrHeight) * 180 / M_PI;
             if(curAngle >= angleMin) {
                 coeff[3] = curAngle;
                 somCoeff += curAngle;
@@ -124,7 +124,7 @@ void LayerField::updateNeighborsSediment(int position, double qteTransport, doub
     if((i+1) < h && (j-1) >= 0 && couche1.field[pos(i+1, j-1)] < couche1.field[position]) {
         double nbrHeight = couche1.field[pos(i+1, j-1)] + couche2.field[pos(i+1, j-1)];
         if(nbrHeight < curHeight) {
-            double curAngle = atan((curHeight - nbrHeight) / M_SQRT2);
+            double curAngle = atan((curHeight - nbrHeight) / M_SQRT2) * 180 / M_PI;
             if(curAngle >= angleMin) {
                 coeff[4] = curAngle;
                 somCoeff += curAngle;
@@ -135,7 +135,7 @@ void LayerField::updateNeighborsSediment(int position, double qteTransport, doub
     if((i-1) >= 0 && couche1.field[pos(i-1, j)] < couche1.field[position]) {
         double nbrHeight = couche1.field[pos(i-1, j)] + couche2.field[pos(i-1, j)];
         if(nbrHeight < curHeight) {
-            double curAngle = atan(curHeight - nbrHeight);
+            double curAngle = atan(curHeight - nbrHeight) * 180 / M_PI;
             if(curAngle >= angleMin) {
                 coeff[5] = curAngle;
                 somCoeff += curAngle;
@@ -146,7 +146,7 @@ void LayerField::updateNeighborsSediment(int position, double qteTransport, doub
     if((i-1) >= 0 && (j-1) >= 0 && couche1.field[pos(i-1, j-1)] < couche1.field[position]) {
         double nbrHeight = couche1.field[pos(i-1, j-1)] + couche2.field[pos(i-1, j-1)];
         if(nbrHeight < curHeight) {
-            double curAngle = atan((curHeight - nbrHeight) / M_SQRT2);
+            double curAngle = atan((curHeight - nbrHeight) / M_SQRT2) * 180 / M_PI;
             if(curAngle >= angleMin) {
                 coeff[6] = curAngle;
                 somCoeff += curAngle;
@@ -157,7 +157,7 @@ void LayerField::updateNeighborsSediment(int position, double qteTransport, doub
     if((j-1) >= 0 && couche1.field[pos(i, j-1)] < couche1.field[position]) {
         double nbrHeight = couche1.field[pos(i, j-1)] + couche2.field[pos(i, j-1)];
         if(nbrHeight < curHeight) {
-            double curAngle = atan(curHeight - nbrHeight);
+            double curAngle = atan(curHeight - nbrHeight) * 180 / M_PI;
             if(curAngle >= angleMin) {
                 coeff[7] = curAngle;
                 somCoeff += curAngle;
@@ -222,7 +222,7 @@ void LayerField::sedimentTransport(unsigned int nbIters, double qteTransport, do
             }
         }
 
-        std::sort(vecHeights.rbegin(), vecHeights.rend());
+        std::random_shuffle(vecHeights.begin(), vecHeights.end());
 
         for(unsigned int i = 0; i < vecHeights.size(); ++i) {
             if(couche2.field[i] >= qteTransport) {
@@ -233,7 +233,7 @@ void LayerField::sedimentTransport(unsigned int nbIters, double qteTransport, do
 }
 
 
-void LayerField::generateThemralErosion(HeightField & hf, ScalarField2 & light, int nbSimu,
+void LayerField::generateThemralErosion(HeightField & hf, ScalarField2 & light, unsigned int nbSimu,
                                         double eroMax, double qteSedTrans, int nbSrcLum, int nbPasLum, bool saveImg) {
 
     for(int i = 1; i <= nbSimu; ++i) {
