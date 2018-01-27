@@ -11,16 +11,6 @@ void DrawField::prepare()
     result = std::min_element(fields.field.begin(), fields.field.end());
     double minn = *result;
 
-    //float ddd = fields.b.x - fields.a.x;
-
-    /*for (int i = 0; i < fields.h*fields.w; ++i) {
-        fields.field[i] -= minn;
-    }
-
-    for (int i = 0; i < fields.h*fields.w; ++i) {
-        fields.field[i] /= (ddd);
-        fields.field[i] *=2 ;
-    }*/
     result = std::max_element(fields.field.begin(), fields.field.end());
 
     ScalarField2 & hg = fields;
@@ -29,8 +19,6 @@ void DrawField::prepare()
             Vector2 pos = hg.get(i, j);
             double wid = fields.b.x - fields.a.x;
             double hgt = fields.b.y - fields.a.y;
-            //pos.x = ((pos.x-fields.a.x)/wid)*2.0;
-            //pos.y = ((pos.y-fields.a.y)/hgt)*2.0;
             vertices.push_back(Vector3(pos, hg.field[hg.pos(i, j)]));
             colors.push_back(Vector3((hg.field[hg.pos(i, j)]-minn)/zm+0.1, (hg.field[hg.pos(i, j)]-minn)/zm+0.1, (hg.field[hg.pos(i, j)]-minn)/zm+0.1));
             if((j+1) < hg.w && (i+1)<hg.h) triangles.push_back(Triangle((i*hg.w+j), (i*hg.w+(j+1)), ((i+1)*hg.w+j)));
@@ -153,7 +141,7 @@ void DrawField::loadTreeObj(QString path){
         shapes[s].mesh.material_ids[f];
       }
     }
-    std::cout << shapes.size() << std::endl;
+    //std::cout << shapes.size() << std::endl;
 }
 
 void DrawField::prepareInterpol(int size1){

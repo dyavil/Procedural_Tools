@@ -23,7 +23,7 @@ void GLView::setHFBase(DrawField df){
             hg.fields.a.y*zoom, hg.fields.b.y*zoom,
             (hg.fields.a.x)*1.3*zoom, (hg.fields.b.x)*1.3*zoom);
     glMatrixMode(GL_MODELVIEW);
-    std::cout << "ax : " << round(hg.fields.a.x*sqrt(3)) << std::endl;
+    //std::cout << "ax : " << round(hg.fields.a.x*sqrt(3)) << std::endl;
 }
 
 void GLView::initializeGL()

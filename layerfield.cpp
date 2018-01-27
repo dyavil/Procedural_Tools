@@ -55,10 +55,10 @@ HeightField LayerField::computeHeight(int nbCouches) {
 }
 
 
-void LayerField::generateThemralStress(double eroMax, int nbSrcLum, int nbPas) {
+void LayerField::generateThemralStress(ScalarField2 & light, double eroMax, int nbSrcLum, int nbPas) {
     HeightField heightMap = computeHeight();
-    ScalarField2 illumField = heightMap.generateIlluminationField(nbSrcLum, nbPas);
-    ScalarField2 illumFieldNorm = illumField.sfNormalize();
+    light = heightMap.generateIlluminationField(nbSrcLum, nbPas);
+    ScalarField2 illumFieldNorm = light.sfNormalize();
 
     for (int i = 0; i < h; ++i) {
         for (int j = 0; j < w; ++j) {
@@ -80,7 +80,7 @@ void LayerField::updateNeighborsSediment(int position, double qteTransport, doub
     if((i-1) >= 0 && (j+1) < w && couche1.field[pos(i-1, j+1)] < couche1.field[position]) {
         double nbrHeight = couche1.field[pos(i-1, j+1)] + couche2.field[pos(i-1, j+1)];
         if(nbrHeight < curHeight) {
-            double curAngle = atan((curHeight - nbrHeight) / M_SQRT2);
+            double curAngle = atan((curHeight - nbrHeight) / M_SQRT2) * 180 / M_PI;
             if(curAngle >= angleMin) {
                 coeff[0] = curAngle;
                 somCoeff += curAngle;
@@ -91,7 +91,7 @@ void LayerField::updateNeighborsSediment(int position, double qteTransport, doub
     if((j+1) < w && couche1.field[pos(i, j+1)] < couche1.field[position]) {
         double nbrHeight = couche1.field[pos(i, j+1)] + couche2.field[pos(i, j+1)];
         if(nbrHeight < curHeight) {
-            double curAngle = atan(curHeight - nbrHeight);
+            double curAngle = atan(curHeight - nbrHeight) * 180 / M_PI;
             if(curAngle >= angleMin) {
                 coeff[1] = curAngle;
                 somCoeff += curAngle;
@@ -102,7 +102,7 @@ void LayerField::updateNeighborsSediment(int position, double qteTransport, doub
     if((i+1) < h && (j+1) < w && couche1.field[pos(i+1, j+1)] < couche1.field[position]) {
         double nbrHeight = couche1.field[pos(i+1, j+1)] + couche2.field[pos(i+1, j+1)];
         if(nbrHeight < curHeight) {
-            double curAngle = atan((curHeight - nbrHeight) / M_SQRT2);
+            double curAngle = atan((curHeight - nbrHeight) / M_SQRT2) * 180 / M_PI;
             if(curAngle >= angleMin) {
                 coeff[2] = curAngle;
                 somCoeff += curAngle;
@@ -113,7 +113,7 @@ void LayerField::updateNeighborsSediment(int position, double qteTransport, doub
     if((i+1) < h && couche1.field[pos(i+1, j)] < couche1.field[position]) {
         double nbrHeight = couche1.field[pos(i+1, j)] + couche2.field[pos(i+1, j)];
         if(nbrHeight < curHeight) {
-            double curAngle = atan(curHeight - nbrHeight);
+            double curAngle = atan(curHeight - nbrHeight) * 180 / M_PI;
             if(curAngle >= angleMin) {
                 coeff[3] = curAngle;
                 somCoeff += curAngle;
@@ -124,7 +124,7 @@ void LayerField::updateNeighborsSediment(int position, double qteTransport, doub
     if((i+1) < h && (j-1) >= 0 && couche1.field[pos(i+1, j-1)] < couche1.field[position]) {
         double nbrHeight = couche1.field[pos(i+1, j-1)] + couche2.field[pos(i+1, j-1)];
         if(nbrHeight < curHeight) {
-            double curAngle = atan((curHeight - nbrHeight) / M_SQRT2);
+            double curAngle = atan((curHeight - nbrHeight) / M_SQRT2) * 180 / M_PI;
             if(curAngle >= angleMin) {
                 coeff[4] = curAngle;
                 somCoeff += curAngle;
@@ -135,7 +135,7 @@ void LayerField::updateNeighborsSediment(int position, double qteTransport, doub
     if((i-1) >= 0 && couche1.field[pos(i-1, j)] < couche1.field[position]) {
         double nbrHeight = couche1.field[pos(i-1, j)] + couche2.field[pos(i-1, j)];
         if(nbrHeight < curHeight) {
-            double curAngle = atan(curHeight - nbrHeight);
+            double curAngle = atan(curHeight - nbrHeight) * 180 / M_PI;
             if(curAngle >= angleMin) {
                 coeff[5] = curAngle;
                 somCoeff += curAngle;
@@ -146,7 +146,7 @@ void LayerField::updateNeighborsSediment(int position, double qteTransport, doub
     if((i-1) >= 0 && (j-1) >= 0 && couche1.field[pos(i-1, j-1)] < couche1.field[position]) {
         double nbrHeight = couche1.field[pos(i-1, j-1)] + couche2.field[pos(i-1, j-1)];
         if(nbrHeight < curHeight) {
-            double curAngle = atan((curHeight - nbrHeight) / M_SQRT2);
+            double curAngle = atan((curHeight - nbrHeight) / M_SQRT2) * 180 / M_PI;
             if(curAngle >= angleMin) {
                 coeff[6] = curAngle;
                 somCoeff += curAngle;
@@ -157,7 +157,7 @@ void LayerField::updateNeighborsSediment(int position, double qteTransport, doub
     if((j-1) >= 0 && couche1.field[pos(i, j-1)] < couche1.field[position]) {
         double nbrHeight = couche1.field[pos(i, j-1)] + couche2.field[pos(i, j-1)];
         if(nbrHeight < curHeight) {
-            double curAngle = atan(curHeight - nbrHeight);
+            double curAngle = atan(curHeight - nbrHeight) * 180 / M_PI;
             if(curAngle >= angleMin) {
                 coeff[7] = curAngle;
                 somCoeff += curAngle;
@@ -170,13 +170,13 @@ void LayerField::updateNeighborsSediment(int position, double qteTransport, doub
     std::default_random_engine random;
     double rand = distrib(random);
 
-    for(int i = 0; i < 8; ++i) {
-        rand -= coeff[i];
-        if(rand <= 0) {
-            double qteEro = std::max(0.0, couche2.field[position] - qteTransport);
+    for(int k = 0; k < 8; ++k) {
+        rand -= coeff[k];
+        if(rand < 0.0) {    // Not <=
+            double qteEro = std::min(qteTransport, couche2.field[position]);
             couche2.field[position] -= qteEro;
 
-            switch(i) {
+            switch(k) {
                 case 0:
                     couche2.field[pos(i-1, j+1)] += qteEro;
                     break;
@@ -202,25 +202,27 @@ void LayerField::updateNeighborsSediment(int position, double qteTransport, doub
                     couche2.field[pos(i, j-1)] += qteEro;
                     break;
             }
+
             return;
         }
     }
 }
 
 
-void LayerField::sedimentTransport(double qteTransport, unsigned int nbIters, double angleMin) {
+void LayerField::sedimentTransport(unsigned int nbIters, double qteTransport, double angleMin) {
     std::vector<std::array<double, 2>> vecHeights(couche1.field.size());
 
     for(unsigned int k = 0; k < nbIters; ++k) {
+
         for(int i = 0; i < h; ++i) {
             for(int j = 0; j < w; ++j) {
                 int position = pos(i,j);
                 double height = couche1.field[position] + couche2.field[position];
-                vecHeights[position] = { height , (double)position };
+                vecHeights[position] = { height, (double)position };
             }
         }
 
-        std::sort(vecHeights.rbegin(), vecHeights.rend());
+        std::random_shuffle(vecHeights.begin(), vecHeights.end());
 
         for(unsigned int i = 0; i < vecHeights.size(); ++i) {
             if(couche2.field[i] >= qteTransport) {
@@ -231,15 +233,22 @@ void LayerField::sedimentTransport(double qteTransport, unsigned int nbIters, do
 }
 
 
-void LayerField::generateThemralErosion(int nbSimu, double eroMax, double qteSedTrans, int nbSrcLum, int nbPasLum) {
-    for(int i = 0; i < nbSimu; ++i) {
-        generateThemralStress(eroMax, nbSrcLum, nbPasLum);
-        sedimentTransport(qteSedTrans);
+void LayerField::generateThemralErosion(HeightField & hf, ScalarField2 & light, unsigned int nbSimu,
+                                        double eroMax, double qteSedTrans, int nbSrcLum, int nbPasLum, bool saveImg) {
 
-        //computeHeight().render().save(QString("/media/emeric/DATA/Documents/Etudes/M2/Procedural/TP/images/") + QString("aaa"));
+    for(int i = 1; i <= nbSimu; ++i) {
+        std::cout << "Erosion - passe n°" << i << std::endl;
 
-        //std::cout << i << std::endl;
+        generateThemralStress(light, eroMax, nbSrcLum, nbPasLum);
+        sedimentTransport(eroMax/qteSedTrans, qteSedTrans);
+
+        if(saveImg) {
+            QString path = QString("/media/emeric/DATA/Documents/Etudes/M2/Procedural/TP/images/");
+            computeHeight().render().save(path + QString("ero_") + QString::number(i) + QString(".png"));
+        }
     }
+
+    hf = computeHeight();
 }
 
 

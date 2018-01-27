@@ -18,9 +18,7 @@ vegetationField::vegetationField(Vector2 a, Vector2 b, double defaut, double rad
         std::pair<int, int> xy= inside(Vector3(samples[i][0], samples[i][1], 0));
         field[pos(xy.first, xy.second)] = 20.0;
         hasTree[pos(xy.first, xy.second)] = true;
-
     }
-
 }
 
 
@@ -42,12 +40,8 @@ vegetationField::vegetationField(const HeightField & hf, double radius): ScalarF
         std::pair<int, int> xy= inside(Vector3(samples[i][0], samples[i][1], 0));
         field[pos(xy.first, xy.second)] = 20.0;
         hasTree[pos(xy.first, xy.second)] = true;
-
     }
-
 }
-
-
 
 
 ScalarField2 vegetationField::adaptVegetation(const HeightField & hf){
@@ -83,22 +77,6 @@ ScalarField2 vegetationField::adaptVegetation(const HeightField & hf){
         }
     }
 
-
-    /*for (int i = 0; i < h; ++i) {
-        for (int j = 0; j < w; ++j) {
-            //res.field[pos(i, j)] = slope(i, j);
-            if(hasTree[pos(i, j)]){
-                double cSize = field[pos(i, j)];
-                for (int k = 0; k < treeWidth/2 - 1; ++k) {
-                    cSize /= 2.0;
-                    if(i-k > 0 && j-k > 0) field[pos(i-k, j-k)] =cSize;
-                    if(i-k > 0 && j+k < w) field[pos(i-k, j+k)] =cSize;
-                    if(i+k < h && j-k > 0) field[pos(i+k, j-k)] =cSize;
-                    if(i+k < h && j+k < w) field[pos(i+k, j+k)] =cSize;
-                }
-            }
-        }
-    }*/
     return res;
 }
 
@@ -131,4 +109,3 @@ ScalarField2 vegetationField::adaptVegetation(const ScalarField2 &slope, const S
 
     return res;
 }
-

@@ -11,48 +11,48 @@
 
 
 void init(LayerField &lf, Display &w, bool renderImage = false) {
-    HeightField currentHeight = lf.computeHeight();
-    ScalarField2 slope, drain, wetness, stream, illum;
-    vegetationField veget = vegetationField(currentHeight, 20.0);
+    HeightField curHeight = lf.computeHeight();
+    ScalarField2 slope, drain, wetness, stream, light;
+    vegetationField veget = vegetationField(curHeight, 20.0);
 
-    DrawField d;
-    d.setField(currentHeight);
-    d.prepare();
-    d.loadTreeObj("lowpolytree3.obj");
 
-    slope = currentHeight.generateSlopeField();
+    lf.generateThemralErosion(curHeight, light, 1, 10, 1, 20, 20);
+
+    slope = curHeight.generateSlopeField();
     w.setSlopeField(slope.render());
     if(renderImage) slope.render().save(QString(resdir) + QString("slope.png"));
 
-    drain = currentHeight.generateDrainageArea();
-    d.addRivers(drain);
+    drain = curHeight.generateDrainageArea();
     w.setDrainageArea(drain.render());
     if(renderImage) drain.render().save(QString(resdir) + QString("drainageArea.png"));
 
-    wetness = currentHeight.generateWetnessField(drain, slope);
+    wetness = curHeight.generateWetnessField();
     w.setWetness(wetness.render());
     if(renderImage) wetness.render().save(QString(resdir) + QString("wetness.png"));
 
-    stream = currentHeight.generateStreamPowerField(drain, slope);
+    stream = curHeight.generateStreamPowerField();
     w.setStreamPower(stream.render());
     if(renderImage) stream.render().save(QString(resdir) + QString("streamPower.png"));
 
-    illum = currentHeight.generateIlluminationField();
-    w.setLightField(illum.render());
-    if(renderImage) illum.render().save(QString(resdir) + QString("lightField.png"));
+    light = curHeight.generateIlluminationField();
+    w.setLightField(light.render());
+    if(renderImage) light.render().save(QString(resdir) + QString("lightField.png"));
 
     veget.render().save(QString(resdir) + QString("testpoissonprev.png"));
-    ScalarField2 vegetview = veget.adaptVegetation(slope, wetness, illum, stream);
+    ScalarField2 vegetview = veget.adaptVegetation(slope, wetness, light, stream);
     w.setTreeZones(vegetview.render());
     if(renderImage) vegetview.render().save(QString(resdir) + QString("veget.png"));
-    d.addVeget(veget);
 
-    // BUG HERE !
-    //lf.generateThemralErosion(1);
+
+    DrawField d;
+    d.setField(curHeight);
+    d.prepare();
+    d.loadTreeObj("lowpolytree3.obj");
+    d.addVeget(veget);
+    d.addRivers(drain);
 
     w.drawHFBase(d);
 }
-
 
 int main(int argc, char *argv[])
 {
@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
     Display w;
     w.show();
 
-    HeightField hf = HeightField(Vector2(-2000, -2000), Vector2(2000, 2000), 512, 512, 500, 0);
+    HeightField hf = HeightField(Vector2(-2000, -2000), Vector2(2000, 2000), 512, 512, 300, 0);
     hf.load("heightmaps/map5.png");
     hf.noiseMap(4);
     LayerField lf = LayerField(hf);
