@@ -80,26 +80,56 @@ Vector2 ScalarField2::gradient(int i, int j) const{
 }
 
 
-void ScalarField2::noiseMap(int pas){
+void ScalarField2::noiseMap(int pas, float rapport){
     FastNoise myNoise;
+    w = (b.x - a.x)/16;
+    h = (b.y - a.y)/16;
+    field.resize(w*h);
     myNoise.SetNoiseType(FastNoise::Perlin);
-    double freq = 0.002-1.0/((b-a).length());
-    std::cout << freq << std::endl;
+    double tmpp = sqrt((b-a).length())*7100.0;
+    double freq = (((b-a).length())/tmpp)/rapport;
+    //std::cout << freq << ", " << tmpp << std::endl;
+    double heightFact = sqrt((b-a).length())*(1000.0/(float)h)*rapport;
+    //std::cout << freq << ", " << heightFact << std::endl;
     myNoise.SetFrequency(freq);
     for (int i = 0; i < h*w; ++i) {
         field[i]= 0.0;
     }
-    double coef = 1.0;
+
+    for (int i = 0; i < h; ++i) {
+        for (int j = 0; j < w; ++j) {
+            field[pos(i, j)] = (myNoise.GetNoise(j,i));
+        }
+    }
+    double coef = 0.5;
     double coefM = 1.0;
     for (int oc = 0; oc < pas; ++oc) {
+        freq = freq *1.4;
+        myNoise.SetFrequency(freq);
         for (int i = 0; i < h; ++i) {
             for (int j = 0; j < w; ++j) {
                 field[pos(i, j)] += (coef*myNoise.GetNoise(coefM*j,coefM*i));
             }
         }
-        coef /=2;
-        coefM *=2;
+        coef /=2.0;
+        coefM *= 2.0;
     }
+
+    std::vector<double>::iterator result;
+    result = std::max_element(field.begin(), field.end());
+    double zm = *result;
+    result = std::min_element(field.begin(), field.end());
+    double zmin = *result;
+    std::cout << "min : " << zmin << ", " << zm <<std::endl;
+    for (int i = 0; i < h*w; ++i) {
+        field[i]= field[i] -= zmin;
+        field[i] *= heightFact;
+    }
+    result = std::max_element(field.begin(), field.end());
+    zm = *result;
+    result = std::min_element(field.begin(), field.end());
+    zmin = *result;
+    std::cout << "min : " << zmin << ", " << zm <<std::endl;
 
 }
 

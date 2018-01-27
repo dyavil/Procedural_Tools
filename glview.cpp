@@ -14,7 +14,7 @@ GLView::GLView(QWidget *parent) :
 {
 }
 
-void GLView::setHFBase(DrawField df){
+void GLView::setHFBase(DrawField & df){
     hg = df;
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();

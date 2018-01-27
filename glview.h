@@ -19,7 +19,7 @@ public:
 
     virtual void resizeGL(int w, int h);
 
-    virtual void setHFBase(DrawField hf);
+    virtual void setHFBase(DrawField & hf);
 
     bool showTree;
 

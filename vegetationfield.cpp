@@ -3,6 +3,7 @@
 vegetationField::vegetationField(Vector2 a, Vector2 b, double defaut, double radius): ScalarField2(a, b, (b.x-a.x)/(radius/2), (b.y-a.y)/(radius/2), defaut)
 {
     hasTree.resize(((b.x-a.x)*(b.y-a.y))/(radius/2));
+    field.resize(((b.x-a.x)*(b.y-a.y))/(radius/2));
     for (unsigned int i = 0; i < hasTree.size(); ++i) hasTree[i] = false;
     Vec2f x_min;
     x_min[0] = a.x;
@@ -22,9 +23,10 @@ vegetationField::vegetationField(Vector2 a, Vector2 b, double defaut, double rad
 }
 
 
-vegetationField::vegetationField(const HeightField & hf, double radius): ScalarField2(hf.a, hf.b, (hf.b.x-hf.a.x)/radius, (hf.b.y-hf.a.y)/radius, 0.0)
+vegetationField::vegetationField(const HeightField & hf, double radius): ScalarField2(hf.a, hf.b, (hf.b.x-hf.a.x)/(radius/2), (hf.b.y-hf.a.y)/(radius/2), 0.0)
 {
-    hasTree.resize(((b.x-a.x)*(b.y-a.y))/radius);
+    hasTree.resize(((b.x-a.x)*(b.y-a.y))/(radius/2));
+    field.resize(((b.x-a.x)*(b.y-a.y))/(radius/2));
     for (unsigned int i = 0; i < hasTree.size(); ++i) hasTree[i] = false;
     Vec2f x_min;
     x_min[0] = a.x;

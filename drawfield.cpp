@@ -17,8 +17,8 @@ void DrawField::prepare()
     for (int i = 0; i < hg.h; i++) {
         for (int j = 0; j < hg.w; j++) {
             Vector2 pos = hg.get(i, j);
-            double wid = fields.b.x - fields.a.x;
-            double hgt = fields.b.y - fields.a.y;
+            /*double wid = fields.b.x - fields.a.x;
+            double hgt = fields.b.y - fields.a.y;*/
             vertices.push_back(Vector3(pos, hg.field[hg.pos(i, j)]));
             colors.push_back(Vector3((hg.field[hg.pos(i, j)]-minn)/zm+0.1, (hg.field[hg.pos(i, j)]-minn)/zm+0.1, (hg.field[hg.pos(i, j)]-minn)/zm+0.1));
             if((j+1) < hg.w && (i+1)<hg.h) triangles.push_back(Triangle((i*hg.w+j), (i*hg.w+(j+1)), ((i+1)*hg.w+j)));
@@ -206,7 +206,7 @@ bool DrawField::testPoint(const Vector3 &v3, int size){
 void DrawField::draw(bool showTree){
 
     unsigned int endLoop = triangles.size();
-    //std::cout << idStartTree << std::endl;
+    //std::cout << triangles.size() << ", " << idStartTree << ", " << std::endl;
     if (idStartTree != 0 && !showTree) endLoop = idStartTree;
     for (unsigned int i = 0; i < endLoop; ++i) {
         glBegin(GL_TRIANGLES);

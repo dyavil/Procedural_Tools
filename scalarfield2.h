@@ -14,7 +14,7 @@ public:
     ScalarField2(Vector2 a, Vector2 b, int ww, int hh, double defaut=0.0);
 
     bool load(QString path, double zmin, double zmax);
-    void noiseMap(int pas);
+    void noiseMap(int pas, float rapport = 1.0);
 
     /**
      * @brief sfNormalize Normalise le scalarField entre 0 et 1
