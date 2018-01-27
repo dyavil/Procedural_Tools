@@ -1,8 +1,8 @@
 #include "vegetationfield.h"
 
-vegetationField::vegetationField(Vector2 a, Vector2 b, double defaut, double radius): ScalarField2(a, b, (b.x-a.x)/radius, (b.y-a.y)/radius, defaut)
+vegetationField::vegetationField(Vector2 a, Vector2 b, double defaut, double radius): ScalarField2(a, b, (b.x-a.x)/(radius/2), (b.y-a.y)/(radius/2), defaut)
 {
-    hasTree.resize(((b.x-a.x)*(b.y-a.y))/radius);
+    hasTree.resize(((b.x-a.x)*(b.y-a.y))/(radius/2));
     for (unsigned int i = 0; i < hasTree.size(); ++i) hasTree[i] = false;
     Vec2f x_min;
     x_min[0] = a.x;
