@@ -16,7 +16,7 @@ void init(LayerField &lf, Display &w, bool renderImage = false) {
     vegetationField veget = vegetationField(curHeight, 20.0);
 
     std::cout << "step0" <<std::endl;
-    lf.generateThemralErosion(curHeight, light, 1, 10, 1, 20, 20);
+    //lf.generateThemralErosion(curHeight, light, 1, 10, 1, 20, 20);
 
     slope = curHeight.generateSlopeField();
     w.setSlopeField(slope.render());
@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
 
     HeightField hf = HeightField(Vector2(-2000, -2000), Vector2(2000, 2000), 512, 512, 400, 0);
     //hf.load("heightmaps/map5.png");
-    hf.noiseMap(4, 1.0);
+    hf.noiseMap(4, 1.0, 1994);
     LayerField lf = LayerField(hf);
 
     init(lf, w, true);

@@ -80,12 +80,13 @@ Vector2 ScalarField2::gradient(int i, int j) const{
 }
 
 
-void ScalarField2::noiseMap(int pas, float rapport){
+void ScalarField2::noiseMap(int pas, float rapport, int seed){
     FastNoise myNoise;
     w = (b.x - a.x)/16;
     h = (b.y - a.y)/16;
     field.resize(w*h);
     myNoise.SetNoiseType(FastNoise::Perlin);
+    myNoise.SetSeed(seed);
     double tmpp = sqrt((b-a).length())*7100.0;
     double freq = (((b-a).length())/tmpp)/rapport;
     //std::cout << freq << ", " << tmpp << std::endl;
