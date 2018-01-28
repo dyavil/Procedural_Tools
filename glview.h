@@ -23,6 +23,8 @@ public:
 
     bool showTree;
 
+    DrawField * getDrawField(){return  &hg;}
+
 protected:
     virtual void mouseMoveEvent ( QMouseEvent * event );
     virtual void mousePressEvent ( QMouseEvent * event );

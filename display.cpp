@@ -1,5 +1,6 @@
 #include "display.h"
 #include "ui_display.h"
+#include <QTest>
 
 Display::Display(QWidget *parent) :
     QMainWindow(parent),
@@ -29,6 +30,9 @@ Display::Display(QWidget *parent) :
     ui->steamPowLabel->setStyleSheet("QLabel { background-color : black;}");
 
     connect(ui->showTrees, SIGNAL(clicked(bool)), this, SLOT(switchShowTrees()));
+    connect(ui->ErodeButton, SIGNAL(clicked(bool)), this, SLOT(erodeField()));
+    ui->erodeSpinBox->setMinimum(1);
+    ui->erodeSpinBox->setMaximum(1000);
 }
 
 void Display::drawHFBase(DrawField & hf){
@@ -81,7 +85,105 @@ void Display::switchShowTrees(){
 }
 
 
+void Display::erodeField(){
+    Operation *op = new Operation(this, ui);
+    std::cout << op->isWidgetType() << std::endl;
+
+}
+
+
 Display::~Display()
 {
     delete ui;
 }
+
+
+Operation::Operation(QObject *parent, Ui::Display *ui)
+    : QObject(parent), steps(0), ui(ui), start(false)
+{
+    int p = ui->erodeSpinBox->value();
+    pd = new QProgressDialog("Eroding", "Cancel", 0, p+2);
+    pd->setWindowTitle("Eroding");
+    pd->setLabelText("Eroding init..");
+    connect(pd, SIGNAL(canceled()), this, SLOT(cancel()));
+    t = new QTimer(this);
+    connect(t, SIGNAL(timeout()), this, SLOT(perform()));
+
+
+    t->start(0);
+    pd->setVisible(true);
+
+    //////////////////////////
+    //init fields
+    lf = LayerField(ui->glview->getDrawField()->fields);
+    curHeight = lf.computeHeight();
+
+    ///////////////////////////
+}
+
+void Operation::perform()
+{
+    pd->setValue(steps);
+    //if(steps < 1) QTest::qSleep(100);
+//    /std::cout << steps<<std::endl;
+    if(steps > 0 && steps < pd->maximum()-1) {
+        pd->setLabelText("Eroding step "+QString::number(steps));
+        lf.generateThemralErosion(curHeight, light, 1, 10, 1, 20, 20);
+    }else if(steps == pd->maximum()-1){
+        vegetationField veget = vegetationField(curHeight, 10.0);
+        slope = curHeight.generateSlopeField();
+        imgs.push_back(slope.render());
+
+        drain = curHeight.generateDrainageArea();
+        imgs.push_back(drain.render());
+
+        wetness = curHeight.generateWetnessField();
+        imgs.push_back(wetness.render());
+
+        stream = curHeight.generateStreamPowerField();
+        imgs.push_back(stream.render());
+
+        light = curHeight.generateIlluminationField();
+        imgs.push_back(light.render());
+
+        ScalarField2 vegetrep = veget.adaptVegetation(slope, wetness, light, stream);
+        imgs.push_back(vegetrep.render());
+
+        ui->glview->getDrawField()->setField(curHeight);
+        ui->glview->getDrawField()->prepare();
+        ui->glview->getDrawField()->addVeget(veget);
+        ui->glview->getDrawField()->addRivers(drain);
+    }
+    steps++;
+
+    if (steps > pd->maximum()){
+
+        QPixmap m = m.fromImage(imgs[0]);
+        ui->slopeImg->setPixmap(m);
+        m = m.fromImage(imgs[1]);
+        ui->dareaImg->setPixmap(m);
+        m = m.fromImage(imgs[2]);
+        ui->wetnessImg->setPixmap(m);
+        m = m.fromImage(imgs[3]);
+        ui->steamPowImg->setPixmap(m);
+        m = m.fromImage(imgs[4]);
+        ui->lightFieldImg->setPixmap(m);
+        m = m.fromImage(imgs[5]);
+        ui->treeZoneImg->setPixmap(m);
+        t->stop();
+        pd->setVisible(false);
+        ui->glview->updateGL();
+        delete pd;
+        delete this;
+    }
+}
+
+void Operation::cancel()
+{
+    t->stop();
+    pd->setVisible(false);
+    delete pd;
+    delete this;
+    //... cleanup
+}
+

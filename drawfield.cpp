@@ -10,7 +10,7 @@ void DrawField::prepare()
     double zm = *result+(*result/10.0);
     result = std::min_element(fields.field.begin(), fields.field.end());
     double minn = *result;
-
+    std::cout << "max : " << zm << std::endl;
     result = std::max_element(fields.field.begin(), fields.field.end());
 
     ScalarField2 & hg = fields;
@@ -48,8 +48,8 @@ void DrawField::addVeget(vegetationField &sf){
     //std::cout << colors.size() << ", " << sf.h*sf.w << std::endl;
     result = std::max_element(sf.field.begin(), sf.field.end());
     double zm = sqrt(*result);
-    double larg = sf.treeWidth;
-    double upp = 0.0;
+    larg = sf.treeWidth*1.4;
+    //double upp = 0.0;
     idStartTree = triangles.size();
     for (int i = 0; i < sf.h; i++) {
         for (int j = 0; j < sf.w; j++) {
@@ -57,7 +57,10 @@ void DrawField::addVeget(vegetationField &sf){
                 Vector2 tmpp= sf.get(i, j);
                 std::pair<int, int> ij = fields.inside(Vector3(tmpp, 0.0));
                 //colors[fields.pos(ij.first, ij.second)].y += (sqrt(sf.field[sf.pos(i, j)])/zm);
-                for (unsigned int k = 0; k < treeVertices.size(); k+=3) {
+
+                double tz = fields.field[fields.pos(ij.first, ij.second)];
+                treeTranslations.push_back(Vector3(tmpp.x, tmpp.y, tz));
+                /*for (unsigned int k = 0; k < treeVertices.size(); k+=3) {
                     double x = (tmpp.x+treeVertices[k].x/5.0*larg+upp);
                     double y = (tmpp.y+treeVertices[k].y/5.0*larg+upp);
                     double z = fields.field[fields.pos(ij.first, ij.second)]+treeVertices[k].z/5.0*larg+upp;
@@ -78,11 +81,12 @@ void DrawField::addVeget(vegetationField &sf){
                     vertices.push_back(Vector3(x, y, z));
                     colors.push_back(treeColors[k+2]);
                     triangles.push_back(Triangle(vertices.size()-3, vertices.size()-2, vertices.size()-1));
-                }
+                }*/
             }
         }
     }
 }
+
 
 
 void DrawField::loadTreeObj(QString path){
@@ -113,7 +117,7 @@ void DrawField::loadTreeObj(QString path){
       Vector3 colorr = Vector3(0.0, 0.392157, 0.0);
       size_t index_offset = 0;
       for (size_t f = 0; f < shapes[s].mesh.num_face_vertices.size(); f++) {
-        int fv = shapes[s].mesh.num_face_vertices[f];
+        unsigned int fv = shapes[s].mesh.num_face_vertices[f];
 
         // Loop over vertices in the face.
         for (size_t v = 0; v < fv; v++) {
@@ -206,7 +210,7 @@ bool DrawField::testPoint(const Vector3 &v3, int size){
 void DrawField::draw(bool showTree){
 
     unsigned int endLoop = triangles.size();
-    //std::cout << triangles.size() << ", " << idStartTree << ", " << std::endl;
+
     if (idStartTree != 0 && !showTree) endLoop = idStartTree;
     for (unsigned int i = 0; i < endLoop; ++i) {
         glBegin(GL_TRIANGLES);
@@ -221,5 +225,27 @@ void DrawField::draw(bool showTree){
         glColor3f(colors[triangles[i].vertices[2]].x, colors[triangles[i].vertices[2]].y, colors[triangles[i].vertices[2]].z);
         glVertex3f(vertices[triangles[i].vertices[2]].x, vertices[triangles[i].vertices[2]].y, z);
         glEnd();
+    }
+
+    if(showTree && treeTranslations.size() > 0){
+        //std::cout << triangles.size() << ", " << idStartTree << ", " << std::endl;
+
+        for (unsigned int i = 0; i < treeTranslations.size(); ++i) {
+
+            for (unsigned int k = 0; k < treeVertices.size(); k+=3) {
+                glBegin(GL_TRIANGLES);
+                glColor3f(treeColors[k].x, treeColors[k].y, treeColors[k].z);
+                glVertex3f((treeTranslations[i].x+treeVertices[k].x/5.0*larg), (treeTranslations[i].y+treeVertices[k].y/5.0*larg), (treeTranslations[i].z+treeVertices[k].z/5.0*larg));
+
+                glColor3f(treeColors[k+1].x, treeColors[k+1].y, treeColors[k+1].z);
+                glVertex3f((treeTranslations[i].x+treeVertices[k+1].x/5.0*larg), (treeTranslations[i].y+treeVertices[k+1].y/5.0*larg), (treeTranslations[i].z+treeVertices[k+1].z/5.0*larg));
+
+
+                glColor3f(treeColors[k+2].x, treeColors[k+2].y, treeColors[k+2].z);
+                glVertex3f((treeTranslations[i].x+treeVertices[k+2].x/5.0*larg), (treeTranslations[i].y+treeVertices[k+2].y/5.0*larg), (treeTranslations[i].z+treeVertices[k+2].z/5.0*larg));
+
+                glEnd();
+            }
+        }
     }
 }

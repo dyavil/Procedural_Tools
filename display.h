@@ -2,6 +2,8 @@
 #define DISPLAY_H
 
 #include <QMainWindow>
+#include <QProgressDialog>
+#include <QTimer>
 #include "drawfield.h"
 
 namespace Ui {
@@ -22,13 +24,39 @@ public:
     void setWetness(QImage im);
     void setLightField(QImage im);
     void setTreeZones(QImage im);
-
 private:
-    bool showTree;
     Ui::Display *ui;
+    bool showTree;
 
 public slots:
     void switchShowTrees();
+    void erodeField();
+
+};
+
+class Operation: public QObject
+{
+    Q_OBJECT
+public:
+    explicit Operation(QObject *parent = 0, Ui::Display *ui = 0);
+
+signals:
+
+public slots:
+    void perform();
+    void cancel();
+private:
+    int steps;
+    QProgressDialog *pd;
+    Ui::Display *ui;
+    QTimer *t;
+    bool start;
+    std::vector<QImage> imgs;
+
+    ScalarField2 slope, drain, wetness, stream, light;
+    LayerField lf;
+    HeightField curHeight;
+
 };
 
 #endif // DISPLAY_H

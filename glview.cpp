@@ -26,6 +26,7 @@ void GLView::setHFBase(DrawField & df){
     //std::cout << "ax : " << round(hg.fields.a.x*sqrt(3)) << std::endl;
 }
 
+
 void GLView::initializeGL()
 {
     glEnable(GL_DEPTH_TEST);
@@ -53,6 +54,7 @@ void GLView::paintGL()
 
     //hg.draw();
     hg.draw(showTree);
+    std::cout << "drawing" << std::endl;
 }
 
 void GLView::resizeGL(int w, int h)

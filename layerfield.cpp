@@ -236,7 +236,7 @@ void LayerField::sedimentTransport(unsigned int nbIters, double qteTransport, do
 void LayerField::generateThemralErosion(HeightField & hf, ScalarField2 & light, unsigned int nbSimu,
                                         double eroMax, double qteSedTrans, int nbSrcLum, int nbPasLum, bool saveImg) {
 
-    for(int i = 1; i <= nbSimu; ++i) {
+    for(unsigned int i = 1; i <= nbSimu; ++i) {
         std::cout << "Erosion - passe n°" << i << std::endl;
 
         generateThemralStress(light, eroMax, nbSrcLum, nbPasLum);

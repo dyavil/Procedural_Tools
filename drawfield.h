@@ -4,6 +4,7 @@
 #include <vector>
 #include <GL/gl.h>
 #include "heightfield.h"
+#include "layerfield.h"
 #include "vegetationfield.h"
 #include "include/tiny_obj_loader.h"
 
@@ -13,17 +14,20 @@ public:
     DrawField();
     void prepare();
     void addRivers(const ScalarField2 & sf);
+
     void addVeget(vegetationField & sf);
     void draw(bool showTree);
     void prepareInterpol(int size);
-    void setField(ScalarField2 sf) {fields = sf;}
+    void setField(HeightField sf) {fields = sf;}
     void loadTreeObj(QString path);
-    ScalarField2 fields;
+    HeightField fields;
     std::vector<Vector3> colors;
     std::vector<Vector3> vertices;
     std::vector<Triangle> triangles;
     std::vector<Vector3> treeVertices;
     std::vector<Vector3> treeColors;
+    std::vector<Vector3> treeTranslations;
+    double larg;
 
 
 private:
