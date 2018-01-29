@@ -17,7 +17,7 @@ void DrawField::prepare()
     treeTranslations.resize(trees.size());
     treeColors.resize(trees.size());
     larg.resize(trees.size());
-    for (int i = 0; i < trees.size(); ++i) {
+    for (unsigned int i = 0; i < trees.size(); ++i) {
         larg[i]= trees[i].widthT*1.4;
     }
 
@@ -54,8 +54,8 @@ void DrawField::addRivers(const ScalarField2 &sf){
 void DrawField::addVeget(vegetationField &sf){
     std::vector<double>::const_iterator result;
     //std::cout << colors.size() << ", " << sf.h*sf.w << std::endl;
-    result = std::max_element(sf.field.begin(), sf.field.end());
-    double zm = sqrt(*result);
+    //result = std::max_element(sf.field.begin(), sf.field.end());
+    //double zm = sqrt(*result);
 
     //double upp = 0.0;
     idStartTree = triangles.size();
@@ -217,7 +217,7 @@ void DrawField::draw(bool showTree){
 
     if(showTree && treeTranslations.size() > 0){
         //std::cout << triangles.size() << ", " << idStartTree << ", " << std::endl;
-        for (int l = 0; l < treeVertices.size(); ++l) {
+        for (unsigned int l = 0; l < treeVertices.size(); ++l) {
 
             for (unsigned int i = 0; i < treeTranslations[l].size(); ++i) {
 

@@ -16,7 +16,7 @@ vegetationField::vegetationField(Vector2 a, Vector2 b, double defaut): ScalarFie
 
 
     srand(time(NULL));
-    for (int tr = 0; tr < trees.size(); ++tr) {
+    for (unsigned int tr = 0; tr < trees.size(); ++tr) {
         VAR_TYPE radius = trees[tr].widthT;
         std::vector<Vec2f> samples = thinks::poissonDiskSampling(radius, x_min, x_max, max_sample_attempts, seed);
         for (unsigned int i = 0; i < samples.size(); ++i) {
@@ -52,7 +52,7 @@ vegetationField::vegetationField(const HeightField & hf): ScalarField2(hf.a, hf.
     uint32_t seed = 1994;
 
     srand(time(NULL));
-    for (int tr = 0; tr < trees.size(); ++tr) {
+    for (unsigned int tr = 0; tr < trees.size(); ++tr) {
         VAR_TYPE radius = trees[tr].widthT;
         std::vector<Vec2f> samples = thinks::poissonDiskSampling(radius, x_min, x_max, max_sample_attempts, seed);
         for (unsigned int i = 0; i < samples.size(); ++i) {
