@@ -9,7 +9,7 @@
 void init(LayerField &lf, Display &w, bool renderImage = false) {
     HeightField curHeight = lf.computeHeight();
     ScalarField2 slope, drain, wetness, stream, light;
-    vegetationField veget = vegetationField(curHeight, 10.0);
+    vegetationField veget = vegetationField(curHeight);
 
     std::cout << "step0" <<std::endl;
     //lf.generateThemralErosion(curHeight, light, 1, 10, 1, 20, 20);
@@ -48,7 +48,8 @@ void init(LayerField &lf, Display &w, bool renderImage = false) {
     std::cout << "step7" <<std::endl;
     d.prepare();
     std::cout << "step8" <<std::endl;
-    d.loadTreeObj("lowpolytree3.obj");
+    d.loadTreeObj(trees[0].objPath);
+    d.loadTreeObj(trees[1].objPath, 1);
     d.addVeget(veget);
     std::cout << "step9" <<std::endl;
     d.addRivers(drain);
@@ -64,7 +65,7 @@ int main(int argc, char *argv[])
     Display w;
     w.show();
 
-    HeightField hf = HeightField(Vector2(-2000, -2000), Vector2(2000, 2000), 512, 512, 480, 0);
+    HeightField hf = HeightField(Vector2(-1000, -1000), Vector2(1000, 1000), 512, 512, 250, 0);
     hf.load("heightmaps/map5.png");
     //hf.noiseMap(4, 1.0, 1994);
     LayerField lf = LayerField(hf);

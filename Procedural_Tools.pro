@@ -60,7 +60,9 @@ maps.path       = $${OUT_PWD}/maps
 maps.files      = maps/*
 objs.path       = $${OUT_PWD}
 objs.files      = lowpolytree3.obj\
-                lowpolytree3.mtl
+                lowpolytree3.mtl\
+                lowpolytree4.obj\
+                lowpolytree4.mtl
 
 INSTALLS       += heightmaps
 INSTALLS       += maps
@@ -75,4 +77,6 @@ DISTFILES += \
     heightmaps/map6.png \
     heightmaps/map9.png \
     lowpolytree3.obj \
-    lowpolytree3.mtl
+    lowpolytree3.mtl \
+    lowpolytree4.mtl \
+    lowpolytree4.obj

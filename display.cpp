@@ -130,7 +130,7 @@ void Operation::perform()
         pd->setLabelText("Eroding step "+QString::number(steps));
         lf.generateThemralErosion(curHeight, 1, 10, 1, 40, 20, 20);
     }else if(steps == pd->maximum()-1){
-        vegetationField veget = vegetationField(curHeight, 10.0);
+        vegetationField veget = vegetationField(curHeight);
         slope = curHeight.generateSlopeField();
         imgs.push_back(slope.render());
 

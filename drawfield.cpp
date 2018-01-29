@@ -13,6 +13,14 @@ void DrawField::prepare()
     std::cout << "max : " << zm << std::endl;
     result = std::max_element(fields.field.begin(), fields.field.end());
 
+    treeVertices.resize(trees.size());
+    treeTranslations.resize(trees.size());
+    treeColors.resize(trees.size());
+    larg.resize(trees.size());
+    for (int i = 0; i < trees.size(); ++i) {
+        larg[i]= trees[i].widthT*1.4;
+    }
+
     ScalarField2 & hg = fields;
     for (int i = 0; i < hg.h; i++) {
         for (int j = 0; j < hg.w; j++) {
@@ -48,40 +56,20 @@ void DrawField::addVeget(vegetationField &sf){
     //std::cout << colors.size() << ", " << sf.h*sf.w << std::endl;
     result = std::max_element(sf.field.begin(), sf.field.end());
     double zm = sqrt(*result);
-    larg = sf.treeWidth*1.4;
+
     //double upp = 0.0;
     idStartTree = triangles.size();
     for (int i = 0; i < sf.h; i++) {
         for (int j = 0; j < sf.w; j++) {
-            if((sqrt(sf.field[sf.pos(i, j)])/zm) > 0.0) {
+            if(sf.hasTree[sf.pos(i, j)]) {
                 Vector2 tmpp= sf.get(i, j);
+
                 std::pair<int, int> ij = fields.inside(Vector3(tmpp, 0.0));
                 //colors[fields.pos(ij.first, ij.second)].y += (sqrt(sf.field[sf.pos(i, j)])/zm);
 
                 double tz = fields.field[fields.pos(ij.first, ij.second)];
-                treeTranslations.push_back(Vector3(tmpp.x, tmpp.y, tz));
-                /*for (unsigned int k = 0; k < treeVertices.size(); k+=3) {
-                    double x = (tmpp.x+treeVertices[k].x/5.0*larg+upp);
-                    double y = (tmpp.y+treeVertices[k].y/5.0*larg+upp);
-                    double z = fields.field[fields.pos(ij.first, ij.second)]+treeVertices[k].z/5.0*larg+upp;
-                    vertices.push_back(Vector3(x, y, z));
-                    colors.push_back(treeColors[k]);
+                treeTranslations[(int)sf.field[sf.pos(i, j)]].push_back(Vector3(tmpp.x, tmpp.y, tz));
 
-
-                    x = (tmpp.x+treeVertices[k+1].x/5.0*larg+upp);
-                    y = (tmpp.y+treeVertices[k+1].y/5.0*larg+upp);
-                    z = fields.field[fields.pos(ij.first, ij.second)]+treeVertices[k+1].z/5.0*larg+upp;
-                    vertices.push_back(Vector3(x, y, z));
-                    colors.push_back(treeColors[k+1]);
-
-
-                    x = (tmpp.x+treeVertices[k+2].x/5.0*larg+upp);
-                    y = (tmpp.y+treeVertices[k+2].y/5.0*larg+upp);
-                    z = fields.field[fields.pos(ij.first, ij.second)]+treeVertices[k+2].z/5.0*larg+upp;
-                    vertices.push_back(Vector3(x, y, z));
-                    colors.push_back(treeColors[k+2]);
-                    triangles.push_back(Triangle(vertices.size()-3, vertices.size()-2, vertices.size()-1));
-                }*/
             }
         }
     }
@@ -89,12 +77,12 @@ void DrawField::addVeget(vegetationField &sf){
 
 
 
-void DrawField::loadTreeObj(QString path){
+void DrawField::loadTreeObj(QString path, int pos){
     std::string inputfile = path.toStdString();
     tinyobj::attrib_t attrib;
     std::vector<tinyobj::shape_t> shapes;
     std::vector<tinyobj::material_t> materials;
-
+    VAR_TYPE chang = pos/10.0;
     std::string err;
     bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &err, inputfile.c_str());
 
@@ -114,7 +102,7 @@ void DrawField::loadTreeObj(QString path){
     // Loop over shapes
     for (size_t s = 0; s < shapes.size(); s++) {
       // Loop over faces(polygon)
-      Vector3 colorr = Vector3(0.0, 0.392157, 0.0);
+      Vector3 colorr = Vector3(0.0, 0.392157+chang, 0.0);
       size_t index_offset = 0;
       for (size_t f = 0; f < shapes[s].mesh.num_face_vertices.size(); f++) {
         unsigned int fv = shapes[s].mesh.num_face_vertices[f];
@@ -126,7 +114,7 @@ void DrawField::loadTreeObj(QString path){
           tinyobj::real_t vx = attrib.vertices[3*idx.vertex_index+0];
           tinyobj::real_t vy = attrib.vertices[3*idx.vertex_index+1];
           tinyobj::real_t vz = attrib.vertices[3*idx.vertex_index+2];
-          treeVertices.push_back(Vector3(vx, vy, vz));
+          treeVertices[pos].push_back(Vector3(vx, vy, vz));
           /*tinyobj::real_t nx = attrib.normals[3*idx.normal_index+0];
           tinyobj::real_t ny = attrib.normals[3*idx.normal_index+1];
           tinyobj::real_t nz = attrib.normals[3*idx.normal_index+2];
@@ -136,8 +124,8 @@ void DrawField::loadTreeObj(QString path){
           /*tinyobj::real_t red = attrib.colors[3*idx.vertex_index+0];
           tinyobj::real_t green = attrib.colors[3*idx.vertex_index+1];
           tinyobj::real_t blue = attrib.colors[3*idx.vertex_index+2];*/
-          if(vz > (*result - *result*0.82) )treeColors.push_back(colorr);
-          else treeColors.push_back(Vector3(0.647059, 0.164706, 0.164706));
+          if(vz > (*result - *result*0.82) )treeColors[pos].push_back(colorr);
+          else treeColors[pos].push_back(Vector3(0.647059+chang, 0.164706+chang, 0.164706+chang));
         }
         index_offset += fv;
 
@@ -229,22 +217,24 @@ void DrawField::draw(bool showTree){
 
     if(showTree && treeTranslations.size() > 0){
         //std::cout << triangles.size() << ", " << idStartTree << ", " << std::endl;
+        for (int l = 0; l < treeVertices.size(); ++l) {
 
-        for (unsigned int i = 0; i < treeTranslations.size(); ++i) {
+            for (unsigned int i = 0; i < treeTranslations[l].size(); ++i) {
 
-            for (unsigned int k = 0; k < treeVertices.size(); k+=3) {
-                glBegin(GL_TRIANGLES);
-                glColor3f(treeColors[k].x, treeColors[k].y, treeColors[k].z);
-                glVertex3f((treeTranslations[i].x+treeVertices[k].x/5.0*larg), (treeTranslations[i].y+treeVertices[k].y/5.0*larg), (treeTranslations[i].z+treeVertices[k].z/5.0*larg));
+                for (unsigned int k = 0; k < treeVertices[l].size(); k+=3) {
+                    glBegin(GL_TRIANGLES);
+                    glColor3f(treeColors[l][k].x, treeColors[l][k].y, treeColors[l][k].z);
+                    glVertex3f((treeTranslations[l][i].x+treeVertices[l][k].x/5.0*larg[l]), (treeTranslations[l][i].y+treeVertices[l][k].y/5.0*larg[l]), (treeTranslations[l][i].z+treeVertices[l][k].z/5.0*larg[l]));
 
-                glColor3f(treeColors[k+1].x, treeColors[k+1].y, treeColors[k+1].z);
-                glVertex3f((treeTranslations[i].x+treeVertices[k+1].x/5.0*larg), (treeTranslations[i].y+treeVertices[k+1].y/5.0*larg), (treeTranslations[i].z+treeVertices[k+1].z/5.0*larg));
+                    glColor3f(treeColors[l][k+1].x, treeColors[l][k+1].y, treeColors[l][k+1].z);
+                    glVertex3f((treeTranslations[l][i].x+treeVertices[l][k+1].x/5.0*larg[l]), (treeTranslations[l][i].y+treeVertices[l][k+1].y/5.0*larg[l]), (treeTranslations[l][i].z+treeVertices[l][k+1].z/5.0*larg[l]));
 
 
-                glColor3f(treeColors[k+2].x, treeColors[k+2].y, treeColors[k+2].z);
-                glVertex3f((treeTranslations[i].x+treeVertices[k+2].x/5.0*larg), (treeTranslations[i].y+treeVertices[k+2].y/5.0*larg), (treeTranslations[i].z+treeVertices[k+2].z/5.0*larg));
+                    glColor3f(treeColors[l][k+2].x, treeColors[l][k+2].y, treeColors[l][k+2].z);
+                    glVertex3f((treeTranslations[l][i].x+treeVertices[l][k+2].x/5.0*larg[l]), (treeTranslations[l][i].y+treeVertices[l][k+2].y/5.0*larg[l]), (treeTranslations[l][i].z+treeVertices[l][k+2].z/5.0*larg[l]));
 
-                glEnd();
+                    glEnd();
+                }
             }
         }
     }

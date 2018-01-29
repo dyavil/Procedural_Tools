@@ -1,9 +1,9 @@
 #include "vegetationfield.h"
 
-vegetationField::vegetationField(Vector2 a, Vector2 b, double defaut, double radius): ScalarField2(a, b, (b.x-a.x)/(radius/2), (b.y-a.y)/(radius/2), defaut)
+vegetationField::vegetationField(Vector2 a, Vector2 b, double defaut): ScalarField2(a, b, (b.x-a.x)/(5.0), (b.y-a.y)/(5.0), defaut)
 {
-    hasTree.resize(((b.x-a.x)*(b.y-a.y))/(radius/2));
-    field.resize(((b.x-a.x)*(b.y-a.y))/(radius/2));
+    hasTree.resize(((b.x-a.x)*(b.y-a.y))/(5.0));
+    field.resize(((b.x-a.x)*(b.y-a.y))/(5.0));
     for (unsigned int i = 0; i < hasTree.size(); ++i) hasTree[i] = false;
     Vec2f x_min;
     x_min[0] = a.x;
@@ -11,22 +11,35 @@ vegetationField::vegetationField(Vector2 a, Vector2 b, double defaut, double rad
     Vec2f x_max;
     x_max[0] = b.x;
     x_max[1] = b.y;
-    treeWidth = radius;
     uint32_t max_sample_attempts = 50;
     uint32_t seed = 1994;
-    std::vector<Vec2f> samples = thinks::poissonDiskSampling(radius, x_min, x_max, max_sample_attempts, seed);
-    for (unsigned int i = 0; i < samples.size(); ++i) {
-        std::pair<int, int> xy= inside(Vector3(samples[i][0], samples[i][1], 0));
-        field[pos(xy.first, xy.second)] = 20.0;
-        hasTree[pos(xy.first, xy.second)] = true;
+
+
+    srand(time(NULL));
+    for (int tr = 0; tr < trees.size(); ++tr) {
+        VAR_TYPE radius = trees[tr].widthT;
+        std::vector<Vec2f> samples = thinks::poissonDiskSampling(radius, x_min, x_max, max_sample_attempts, seed);
+        for (unsigned int i = 0; i < samples.size(); ++i) {
+            double rnd = ((double) rand() / (RAND_MAX));
+            std::pair<int, int> xy= inside(Vector3(samples[i][0], samples[i][1], 0));
+            if(hasTree[pos(xy.first, xy.second)] && rnd > 0.5 ){
+                field[pos(xy.first, xy.second)] = tr;
+            }
+            else{
+                field[pos(xy.first, xy.second)] = tr;
+                hasTree[pos(xy.first, xy.second)] = true;
+            }
+
+        }
     }
+
 }
 
 
-vegetationField::vegetationField(const HeightField & hf, double radius): ScalarField2(hf.a, hf.b, (hf.b.x-hf.a.x)/(radius/2), (hf.b.y-hf.a.y)/(radius/2), 0.0)
+vegetationField::vegetationField(const HeightField & hf): ScalarField2(hf.a, hf.b, (hf.b.x-hf.a.x)/(5.0), (hf.b.y-hf.a.y)/(5.0), 0.0)
 {
-    hasTree.resize(((b.x-a.x)*(b.y-a.y))/(radius/2));
-    field.resize(((b.x-a.x)*(b.y-a.y))/(radius/2));
+    hasTree.resize(((b.x-a.x)*(b.y-a.y))/(5.0));
+    field.resize(((b.x-a.x)*(b.y-a.y))/(5.0));
     for (unsigned int i = 0; i < hasTree.size(); ++i) hasTree[i] = false;
     Vec2f x_min;
     x_min[0] = a.x;
@@ -34,14 +47,26 @@ vegetationField::vegetationField(const HeightField & hf, double radius): ScalarF
     Vec2f x_max;
     x_max[0] = b.x;
     x_max[1] = b.y;
-    treeWidth = radius;
+
     uint32_t max_sample_attempts = 50;
     uint32_t seed = 1994;
-    std::vector<Vec2f> samples = thinks::poissonDiskSampling(radius, x_min, x_max, max_sample_attempts, seed);
-    for (unsigned int i = 0; i < samples.size(); ++i) {
-        std::pair<int, int> xy= inside(Vector3(samples[i][0], samples[i][1], 0));
-        field[pos(xy.first, xy.second)] = 20.0;
-        hasTree[pos(xy.first, xy.second)] = true;
+
+    srand(time(NULL));
+    for (int tr = 0; tr < trees.size(); ++tr) {
+        VAR_TYPE radius = trees[tr].widthT;
+        std::vector<Vec2f> samples = thinks::poissonDiskSampling(radius, x_min, x_max, max_sample_attempts, seed);
+        for (unsigned int i = 0; i < samples.size(); ++i) {
+            double rnd = ((double) rand() / (RAND_MAX));
+            std::pair<int, int> xy= inside(Vector3(samples[i][0], samples[i][1], 0));
+            if(hasTree[pos(xy.first, xy.second)] && rnd > 0.5 ){
+                field[pos(xy.first, xy.second)] = tr;
+            }
+            else{
+                field[pos(xy.first, xy.second)] = tr;
+                hasTree[pos(xy.first, xy.second)] = true;
+            }
+
+        }
     }
 }
 
@@ -67,13 +92,14 @@ ScalarField2 vegetationField::adaptVegetation(const HeightField & hf){
             illum.Bilineaire(coord, currentIllum);
             streamPower.Bilineaire(coord, currentStreamPower);
             if(hasTree[pos(i, j)]){
-                 if(!(currentSlope < 3.0 && currentWetness > 2.0 && currentIllum > 10.0 && currentStreamPower < 35.0)){
+                 if(!(currentSlope < trees[(int)field[pos(i, j)]].slopeMax && currentWetness > trees[(int)field[pos(i, j)]].wetnessMin && currentIllum > trees[(int)field[pos(i, j)]].lightMin && currentStreamPower < trees[(int)field[pos(i, j)]].streamPowerMax)){
                      hasTree[pos(i, j)] = false;
                      field[pos(i, j)] =  0.0;
                      //std::cout << "suppress tree" << std::endl;
                  }
             }
-            if((currentSlope < 3.0 && currentWetness > 2.0 && currentIllum > 10.0 && currentStreamPower < 35.0)){
+
+            if((currentSlope < trees[(int)field[pos(i, j)]].slopeMax && currentWetness > trees[(int)field[pos(i, j)]].wetnessMin && currentIllum > trees[(int)field[pos(i, j)]].lightMin && currentStreamPower < trees[(int)field[pos(i, j)]].streamPowerMax)){
                 res.field[pos(i, j)] = 25.0;
             }
         }

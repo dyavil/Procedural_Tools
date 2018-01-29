@@ -19,15 +19,15 @@ public:
     void draw(bool showTree);
     void prepareInterpol(int size);
     void setField(HeightField sf) {fields = sf;}
-    void loadTreeObj(QString path);
+    void loadTreeObj(QString path, int pos = 0);
     HeightField fields;
     std::vector<Vector3> colors;
     std::vector<Vector3> vertices;
     std::vector<Triangle> triangles;
-    std::vector<Vector3> treeVertices;
-    std::vector<Vector3> treeColors;
-    std::vector<Vector3> treeTranslations;
-    double larg;
+    std::vector<std::vector<Vector3>> treeVertices;
+    std::vector<std::vector<Vector3>> treeColors;
+    std::vector<std::vector<Vector3>> treeTranslations;
+    std::vector<double> larg;
 
 
 private:
