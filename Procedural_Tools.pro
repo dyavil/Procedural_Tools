@@ -56,10 +56,14 @@ FORMS += \
 
 heightmaps.path   = $${OUT_PWD}/heightmaps
 heightmaps.files  = heightmaps/*
-objs.path   = $${OUT_PWD}
-objs.files  = lowpolytree3.obj\
+maps.path       = $${OUT_PWD}/maps
+maps.files      = maps/*
+objs.path       = $${OUT_PWD}
+objs.files      = lowpolytree3.obj\
                 lowpolytree3.mtl
+
 INSTALLS       += heightmaps
+INSTALLS       += maps
 INSTALLS       += objs
 
 QMAKE_CXXFLAGS += -std=c++11

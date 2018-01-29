@@ -103,7 +103,7 @@ void HeightField::updateNeighborsWater(int position, ScalarField2 & waterField) 
     Vector2 vec = coord(position);
     int i = vec.x, j = vec.y;
     double somCoeff = 0.0;
-    // plop
+
     // Calcul de la somme des coefficients hello world
     if((i-1) >= 0 && field[pos(i-1, j)] < field[position]) { somCoeff += field[position] - field[pos(i-1, j)]; }
     if((j-1) >= 0 && field[pos(i, j-1)] < field[position]) { somCoeff += field[position] - field[pos(i, j-1)]; }

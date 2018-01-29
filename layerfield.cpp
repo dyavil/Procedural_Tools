@@ -55,9 +55,9 @@ HeightField LayerField::computeHeight(int nbCouches) {
 }
 
 
-void LayerField::generateThemralStress(ScalarField2 & light, double eroMax, int nbSrcLum, int nbPas) {
+void LayerField::generateThemralStress(double eroMax, int nbSrcLum, int nbPas) {
     HeightField heightMap = computeHeight();
-    light = heightMap.generateIlluminationField(nbSrcLum, nbPas);
+    ScalarField2 light = heightMap.generateIlluminationField(nbSrcLum, nbPas);
     ScalarField2 illumFieldNorm = light.sfNormalize();
 
     for (int i = 0; i < h; ++i) {
@@ -233,14 +233,13 @@ void LayerField::sedimentTransport(unsigned int nbIters, double qteTransport, do
 }
 
 
-void LayerField::generateThemralErosion(HeightField & hf, ScalarField2 & light, unsigned int nbSimu,
-                                        double eroMax, double qteSedTrans, int nbSrcLum, int nbPasLum, bool saveImg) {
+void LayerField::generateThemralErosion(HeightField & hf, unsigned int nbSimu, double eroMax, double qteSedTrans, double angleMin, int nbSrcLum, int nbPasLum, bool saveImg) {
 
     for(unsigned int i = 1; i <= nbSimu; ++i) {
         std::cout << "Erosion - passe n°" << i << std::endl;
 
-        generateThemralStress(light, eroMax, nbSrcLum, nbPasLum);
-        sedimentTransport(eroMax/qteSedTrans, qteSedTrans);
+        generateThemralStress(eroMax, nbSrcLum, nbPasLum);
+        sedimentTransport(eroMax/qteSedTrans, qteSedTrans, angleMin);
 
         if(saveImg) {
             QString path = QString("/media/emeric/DATA/Documents/Etudes/M2/Procedural/TP/images/");
