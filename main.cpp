@@ -1,6 +1,7 @@
 #include "display.h"
 #include <QApplication>
 #include <QImageWriter>
+#include <QDir>
 #include "drawfield.h"
 #include "layerfield.h"
 #include "vegetationfield.h"
@@ -9,8 +10,8 @@
 void init(LayerField &lf, Display &w, bool renderImage = false) {
     HeightField curHeight = lf.computeHeight();
     ScalarField2 slope, drain, wetness, stream, light;
-    vegetationField veget = vegetationField(curHeight);
 
+    curHeight.render().save(QString("maps/heightmap.png"));
     std::cout << "step0" <<std::endl;
     //lf.generateThemralErosion(curHeight, light, 1, 10, 1, 20, 20);
 
@@ -37,15 +38,16 @@ void init(LayerField &lf, Display &w, bool renderImage = false) {
     if(renderImage) light.render().save(QString("maps/lightField.png"));
     std::cout << "step5" <<std::endl;
 
+    vegetationField veget = vegetationField(curHeight, slope, wetness, light, stream);
     veget.render().save(QString("maps/testpoissonprev.png"));
-    ScalarField2 vegetview = veget.adaptVegetation(slope, wetness, light, stream);
-    w.setTreeZones(vegetview.render());
-    if(renderImage) vegetview.render().save(QString("maps/veget.png"));
+    //ScalarField2 vegetview = veget.adaptVegetation(slope, wetness, light, stream);
+    w.setTreeZones(veget.genImage().render());
+    //if(renderImage) vegetview.render().save(QString("maps/veget.png"));
     std::cout << "step6" <<std::endl;
 
     DrawField d;
     d.setField(curHeight);
-    std::cout << "step7" <<std::endl;
+    std::cout << "step7" << QDir::currentPath().toStdString() <<std::endl;
     d.prepare();
     std::cout << "step8" <<std::endl;
     d.loadTreeObj(trees[0].objPath);
@@ -65,7 +67,7 @@ int main(int argc, char *argv[])
     Display w;
     w.show();
 
-    HeightField hf = HeightField(Vector2(-1000, -1000), Vector2(1000, 1000), 512, 512, 250, 0);
+    HeightField hf = HeightField(Vector2(-1000, -1000), Vector2(1000, 1000), 512, 512, 280, 0);
     hf.load("heightmaps/map5.png");
     //hf.noiseMap(4, 1.0, 1994);
     LayerField lf = LayerField(hf);

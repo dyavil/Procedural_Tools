@@ -130,7 +130,7 @@ void Operation::perform()
         pd->setLabelText("Eroding step "+QString::number(steps));
         lf.generateThemralErosion(curHeight, 1, 10, 1, 40, 20, 20);
     }else if(steps == pd->maximum()-1){
-        vegetationField veget = vegetationField(curHeight);
+
         slope = curHeight.generateSlopeField();
         imgs.push_back(slope.render());
 
@@ -146,8 +146,8 @@ void Operation::perform()
         light = curHeight.generateIlluminationField();
         imgs.push_back(light.render());
 
-        ScalarField2 vegetrep = veget.adaptVegetation(slope, wetness, light, stream);
-        imgs.push_back(vegetrep.render());
+        vegetationField veget = vegetationField(curHeight, slope, wetness, light, stream);
+        imgs.push_back(veget.genImage().render());
 
         ui->glview->getDrawField()->setField(curHeight);
         ui->glview->getDrawField()->prepare();

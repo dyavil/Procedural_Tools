@@ -79,4 +79,5 @@ DISTFILES += \
     lowpolytree3.obj \
     lowpolytree3.mtl \
     lowpolytree4.mtl \
-    lowpolytree4.obj
+    lowpolytree4.obj \
+    maps/readme
