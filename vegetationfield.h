@@ -5,7 +5,7 @@
 #include "time.h"
 #include "include/thinks/poissonDiskSampling.hpp"
 
-#define divideFactor 5.0
+#define divideFactor 4.0
 
 template <typename T, std::size_t N>
 class Vec

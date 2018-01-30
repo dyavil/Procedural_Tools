@@ -5,8 +5,8 @@
 
 vegetationField::vegetationField(const HeightField & hf, const ScalarField2 & slope, const ScalarField2 & wetness, const ScalarField2 & illum, const ScalarField2 & streamPower): ScalarField2(hf.a, hf.b, (hf.b.x-hf.a.x)/(divideFactor), (hf.b.y-hf.a.y)/(divideFactor), 0.0)
 {
-    hasTree.resize(((b.x-a.x)*(b.y-a.y))/(divideFactor));
-    field.resize(((b.x-a.x)*(b.y-a.y))/(divideFactor));
+    hasTree.resize(w*h);
+    field.resize(w*h);
     for (unsigned int i = 0; i < hasTree.size(); ++i) hasTree[i] = false;
     Vec2f x_min;
     x_min[0] = a.x;
@@ -90,7 +90,7 @@ ScalarField2 vegetationField::genImage(){
     for (int i = 0; i < h; ++i) {
         for (int j = 0; j < w; ++j) {
             if(hasTree[pos(i, j)]){
-                res.field[pos(i, j)] = 25.0;
+                res.field[pos(i, j)] = 25.0 + 20*field[pos(i, j)];
             }
             else res.field[pos(i, j)] = 0.0;
         }
@@ -100,11 +100,14 @@ ScalarField2 vegetationField::genImage(){
 
 
 bool vegetationField::checkNeighbor(int i, int j, int treeId){
-    int around = ceil(trees[treeId].widthT/divideFactor/2);
+    int around = floor(trees[treeId].widthT/divideFactor/2);
     for (int l = -around; l <= around; ++l) {
         for (int k = -around; k <= around; ++k) {
-            if(((i+1) >= 0) && ((j+k) >= 0) && ((i+1) < h) && ((j+k) < w)){
-                  if(hasTree[pos(i+l, j+k)]) return true;
+            if(((i+l) >= 0) && ((j+k) >= 0) && ((i+l) < h) && ((j+k) < w) ){
+
+                if( !((k == 0) && (l == 0)) && hasTree[pos(i+l, j+k)]) {
+                    return true;
+                }
                   //std::cout << pos(i+l, j+k) << std::endl;
             }
         }
