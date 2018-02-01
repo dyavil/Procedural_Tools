@@ -39,11 +39,13 @@ Display::Display(QWidget *parent) :
     ui->maxHeightBox->setMaximum(3000.0);
     ui->seedBox->setMinimum(0);
     ui->seedBox->setMaximum(8000);
+    ui->seedBox->setValue(125);
     ui->sizeBox->setMinimum(500.0);
     ui->sizeBox->setMaximum(10000.0);
     ui->sizeNoiseBox->setMinimum(1000.0);
     ui->sizeNoiseBox->setMaximum(10000.0);
     ui->octavesBox->setMinimum(1);
+    ui->octavesBox->setValue(3);
     connect(ui->loadMapButton, SIGNAL(released()), this, SLOT(loadMap()));
     connect(ui->renderNoiseButton, SIGNAL(released()), this, SLOT(noiseMap()));
     connect(ui->exportObjBtn, SIGNAL(released()), this, SLOT(exportObj()));
