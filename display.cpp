@@ -32,7 +32,21 @@ Display::Display(QWidget *parent) :
     connect(ui->showTrees, SIGNAL(clicked(bool)), this, SLOT(switchShowTrees()));
     connect(ui->ErodeButton, SIGNAL(clicked(bool)), this, SLOT(erodeField()));
     ui->erodeSpinBox->setMinimum(1);
-    ui->erodeSpinBox->setMaximum(1000);
+    ui->erodeSpinBox->setMaximum(2000);
+    ui->ratioBox->setMaximum(6);
+    ui->ratioBox->setMinimum(1);
+    ui->maxHeightBox->setMinimum(10.0);
+    ui->maxHeightBox->setMaximum(3000.0);
+    ui->seedBox->setMinimum(0);
+    ui->seedBox->setMaximum(8000);
+    ui->sizeBox->setMinimum(500.0);
+    ui->sizeBox->setMaximum(10000.0);
+    ui->sizeNoiseBox->setMinimum(1000.0);
+    ui->sizeNoiseBox->setMaximum(10000.0);
+    ui->octavesBox->setMinimum(1);
+    connect(ui->loadMapButton, SIGNAL(released()), this, SLOT(loadMap()));
+    connect(ui->renderNoiseButton, SIGNAL(released()), this, SLOT(noiseMap()));
+    connect(ui->exportObjBtn, SIGNAL(released()), this, SLOT(exportObj()));
 }
 
 void Display::drawHFBase(DrawField & hf){
@@ -91,6 +105,90 @@ void Display::erodeField(){
 
 }
 
+void Display::loadMap() {
+    QString fileName = QFileDialog::getOpenFileName(this,
+            tr("Ouvrir image"), "",
+            tr("Jpeg (*.jpg);;Png (*.png);;All Files (*)"));
+    if(!fileName.isEmpty()){
+        double minX = -(ui->sizeBox->value()/2.0);
+        double maxX = (ui->sizeBox->value()/2.0);
+        double heigthMax = ui->maxHeightBox->value();
+        HeightField hf = HeightField(Vector2(minX, minX), Vector2(maxX, maxX), 512, 512, heigthMax, 0);
+        hf.load("heightmaps/load.png");
+        loading(hf);
+        hf.load(fileName);
+        recompute(hf);
+    }
+}
+
+void Display::loading(HeightField & hf){
+    DrawField d;
+    LayerField lf = LayerField(hf);
+    HeightField curHeight = lf.computeHeight();
+    d.setField(curHeight);
+    d.prepare();
+    ui->glview->setHFBase(d);
+    ui->glview->updateGL();
+}
+
+void Display::noiseMap(){
+    double minX = -(ui->sizeNoiseBox->value()/2.0);
+    double maxX = (ui->sizeNoiseBox->value()/2.0);
+    HeightField hf = HeightField(Vector2(minX, minX), Vector2(maxX, maxX), 512, 512, 500, 0);
+    hf.noiseMap(ui->octavesBox->value(), ui->ratioBox->value(), ui->seedBox->value());
+    recompute(hf);
+}
+
+void Display::recompute(HeightField & hf){
+    DrawField d;
+    ScalarField2 slope, drain, wetness, stream, light;
+    LayerField lf = LayerField(hf);
+    HeightField curHeight = lf.computeHeight();
+    slope = curHeight.generateSlopeField();
+    std::cout << "Loading.." << std::endl;
+
+    drain = curHeight.generateDrainageArea();
+
+    wetness = curHeight.generateWetnessField();
+
+    stream = curHeight.generateStreamPowerField();
+
+    light = curHeight.generateIlluminationField();
+    vegetationField veget = vegetationField(curHeight, slope, wetness, light, stream);
+
+    QPixmap m = m.fromImage(slope.render());
+    ui->slopeImg->setPixmap(m);
+    m = m.fromImage(drain.render());
+    ui->dareaImg->setPixmap(m);
+    m = m.fromImage(wetness.render());
+    ui->wetnessImg->setPixmap(m);
+    m = m.fromImage(stream.render());
+    ui->steamPowImg->setPixmap(m);
+    m = m.fromImage(light.render());
+    ui->lightFieldImg->setPixmap(m);
+    m = m.fromImage(veget.genImage().render());
+    ui->treeZoneImg->setPixmap(m);
+
+
+    d.setField(curHeight);
+    d.prepare();
+    for (unsigned int i = 0; i < trees.size(); ++i) {
+        d.loadTreeObj(trees[i].objPath, i);
+    }
+    d.addVeget(veget);
+    d.addRivers(drain);
+    ui->glview->setHFBase(d);
+    ui->glview->updateGL();
+}
+
+void Display::exportObj(){
+    QString fileName = QFileDialog::getSaveFileName(this,
+                        tr("Export obj"), "",
+                        tr("Obj (*.obj);;All Files (*)"));
+    if(!fileName.isEmpty()){
+        ui->glview->getDrawField()->fields.exportOBJ(fileName.toStdString());
+    }
+}
 
 Display::~Display()
 {

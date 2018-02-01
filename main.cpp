@@ -42,7 +42,7 @@ void init(LayerField &lf, Display &w, bool renderImage = false) {
     //ScalarField2 vegetview = veget.adaptVegetation(slope, wetness, light, stream);
     std::cout << "step16" <<std::endl;
     w.setTreeZones(veget.genImage().render());
-    //if(renderImage) vegetview.render().save(QString("maps/veget.png"));
+    if(renderImage) veget.genImage().render().save(QString("maps/veget.png"));
     std::cout << "step6" <<std::endl;
 
     DrawField d;
@@ -68,8 +68,8 @@ int main(int argc, char *argv[])
     w.show();
 
     HeightField hf = HeightField(Vector2(-2000, -2000), Vector2(2000, 2000), 512, 512, 480, 0);
-    //hf.load("heightmaps/map5.png");
-    hf.noiseMap(4, 1.0, 1994);
+    hf.load("heightmaps/map5.png");
+    //hf.noiseMap(4, 1.0, 1994);
     LayerField lf = LayerField(hf);
 
     init(lf, w, true);

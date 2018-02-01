@@ -80,4 +80,5 @@ DISTFILES += \
     lowpolytree3.mtl \
     lowpolytree4.mtl \
     lowpolytree4.obj \
-    maps/readme
+    maps/readme \
+    heightmaps/load.png

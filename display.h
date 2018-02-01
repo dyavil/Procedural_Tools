@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include <QProgressDialog>
 #include <QTimer>
+#include <QFileDialog>
+
 #include "drawfield.h"
 
 namespace Ui {
@@ -24,6 +26,9 @@ public:
     void setWetness(QImage im);
     void setLightField(QImage im);
     void setTreeZones(QImage im);
+    void recompute(HeightField & hf);
+    void loading(HeightField & hf);
+
 private:
     Ui::Display *ui;
     bool showTree;
@@ -31,6 +36,9 @@ private:
 public slots:
     void switchShowTrees();
     void erodeField();
+    void loadMap();
+    void noiseMap();
+    void exportObj();
 
 };
 
