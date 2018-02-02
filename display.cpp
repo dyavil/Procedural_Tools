@@ -126,8 +126,7 @@ void Display::loadMap() {
 void Display::loading(HeightField & hf){
     DrawField d;
     LayerField lf = LayerField(hf);
-    HeightField curHeight = lf.computeHeight();
-    d.setField(curHeight);
+    d.setField(lf);
     d.prepare();
     ui->glview->setHFBase(d);
     ui->glview->updateGL();

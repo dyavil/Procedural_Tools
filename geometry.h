@@ -5,6 +5,10 @@
 #include<math.h>
 #include <iostream>
 
+/**
+ * @brief The Vector2 class
+ * Classe représentant un vecteur 2D
+ */
 class Vector2 {
 public:
     Vector2(VAR_TYPE _x = 0, VAR_TYPE _y = 0) : x(_x), y(_y) {}
@@ -30,6 +34,10 @@ inline Vector2 operator /(const Vector2 & u, VAR_TYPE other) {Vector2 r; r.x=u.x
 inline static Vector2 normalize(const Vector2 & v){Vector2 r = (v/v.length()); return r;}
 
 
+/**
+ * @brief The Vector3 class
+ * Classe représentant un vecteur 3D
+ */
 class Vector3 {
 public:
     Vector3(VAR_TYPE _x = 0, VAR_TYPE _y = 0, VAR_TYPE _z = 0) : x(_x), y(_y), z(_z) {}
@@ -72,6 +80,10 @@ struct Vector3Hasher
 };
 
 
+/**
+ * @brief The Box2 class
+ * Classe représentant un plan 2D
+ */
 class Box2{
 public:
     Box2() {}
@@ -82,7 +94,10 @@ public:
     Vector2 b;
 };
 
-
+/**
+ * @brief The Box3 class
+ * Classe représentant un volume 3D
+ */
 class Box3{
 public:
     Box3(Vector3 pmi, Vector3 pma): pmin(pmi), pmax(pma) {}
@@ -93,7 +108,10 @@ public:
     Vector3 pmax;
 };
 
-
+/**
+ * @brief The Triangle class
+ * classe utilisée pour l'affichage, indexage des vertices
+ */
 class Triangle{
 public:
     Triangle() {}

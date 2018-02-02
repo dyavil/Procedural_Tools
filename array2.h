@@ -39,7 +39,8 @@ public:
     Vector2 getCenter() const;
 
     /**
-     * @brief inside
+     * @brief inside Retourne les identifiant i, j du point bas gauche
+     *        le plus proche de v3
      * @param v3
      * @return
      */

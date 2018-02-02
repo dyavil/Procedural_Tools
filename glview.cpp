@@ -54,7 +54,7 @@ void GLView::paintGL()
 
     //hg.draw();
     hg.draw(showTree);
-    std::cout << "drawing" << std::endl;
+
 }
 
 void GLView::resizeGL(int w, int h)

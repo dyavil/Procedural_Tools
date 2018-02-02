@@ -27,7 +27,15 @@ public:
 
 protected:
     virtual void mouseMoveEvent ( QMouseEvent * event );
+    /**
+     * @brief mousePressEvent clic gauche pour faire tourner la map
+     * @param event
+     */
     virtual void mousePressEvent ( QMouseEvent * event );
+    /**
+     * @brief wheelEvent zoom/dezoom pendant le scroll
+     * @param event
+     */
     virtual void wheelEvent ( QWheelEvent * event );
 
 private:
