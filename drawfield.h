@@ -17,9 +17,10 @@ public:
 
     void addVeget(vegetationField & sf);
     void draw(bool showTree);
-    void prepareInterpol(int size);
-    void setField(HeightField sf) {fields = sf;}
+
+    void setField(LayerField lf) {layerf = lf; fields=lf.computeHeight();}
     void loadTreeObj(QString path, int pos = 0);
+    LayerField layerf;
     HeightField fields;
     std::vector<Vector3> colors;
     std::vector<Vector3> vertices;
@@ -30,9 +31,6 @@ public:
     std::vector<double> larg;
 
 
-private:
-    bool testPoint(const Vector3 & v3, int size);
-    int idStartTree;
 };
 
 #endif // DRAWFIELD_H

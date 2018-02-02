@@ -36,7 +36,7 @@ public:
     QString objPath;
 };
 
-static std::vector<Tree> trees = {Tree(2.5, 12.0, 3.0, 35.0, 15.0, "lowpolytree4.obj"), Tree(2.0, 8.0, 4.0, 40.0, 10.0,"lowpolytree3.obj")};
+static std::vector<Tree> trees = {Tree(2.0, 12.0, 2.5, 12.0, 15.0, "lowpolytree4.obj"), Tree(1.8, 8.0, 4.0, 25.0, 10.0,"lowpolytree3.obj")};
 
 
 class vegetationField : public ScalarField2
@@ -45,10 +45,7 @@ public:
     vegetationField(){}
     vegetationField(const HeightField & hf, const ScalarField2 & slope, const ScalarField2 & wetness, const ScalarField2 & illum, const ScalarField2 & streamPower);
 
-    ScalarField2 adaptVegetation(const ScalarField2 & slope, const ScalarField2 & wetness, const ScalarField2 & illum, const ScalarField2 & streamPower);
-
     ScalarField2 genImage();
-
 
     std::vector<bool> hasTree;
 private:

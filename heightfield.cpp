@@ -12,26 +12,6 @@ bool HeightField::load(QString path) {
 }
 
 
-Vector3 HeightField::normalOld(int i, int j) {
-    Vector3 va, vb, vc, vd;
-    if((i+1) < h) va = Vector3(get(i+1, j), field[pos(i+1, j)]) - Vector3(get(i, j), field[pos(i, j)]);
-    if((j+1) < w) vb = Vector3(get(i, j+1), field[pos(i, j+1)]) - Vector3(get(i, j), field[pos(i, j)]);
-    if((i-1) >= 0) vc = Vector3(get(i-1, j), field[pos(i-1, j)]) - Vector3(get(i, j), field[pos(i, j)]);
-    if((j-1) >= 0) vd = Vector3(get(i, j-1), field[pos(i, j-1)]) - Vector3(get(i, j), field[pos(i, j)]);
-    Vector3 r, r2, r3, r4;
-    int n = 4;
-    if((i+1) < h && (j+1) < w) r = cross(vb, va);
-    else n--;
-    if((j+1) < w && (i-1) >= 0) r2 = cross(vc, vb);
-    else n--;
-    if((i-1) >= 0 && (j-1) >= 0)r3 = cross(vd, vc);
-    else n--;
-    if((i+1) < h && (j-1) >= 0) r4 = cross(va, vd);
-    else n--;
-    return normalize((r+r2+r3+r4)/n);
-}
-
-
 Vector3 HeightField::normal(int i, int j) {
 
     Vector3 v1, v3, v4, v5, v7, v8;

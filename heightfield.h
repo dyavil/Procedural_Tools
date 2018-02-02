@@ -16,9 +16,6 @@ public:
 
     bool load(QString path);
 
-    // Ancien calcul de normale (plus utilisé)
-    Vector3 normalOld(int i, int j);
-
     /**
      * @brief normal Calcule la normale en un point
      * @param i ligne

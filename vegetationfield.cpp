@@ -53,38 +53,6 @@ vegetationField::vegetationField(const HeightField & hf, const ScalarField2 & sl
 
 
 
-ScalarField2 vegetationField::adaptVegetation(const ScalarField2 &slope, const ScalarField2 &wetness, const ScalarField2 &illum, const ScalarField2 &streamPower){
-    ScalarField2 res = ScalarField2(a, b, w, h);
-
-    for (int i = 0; i < h; ++i) {
-        for (int j = 0; j < w; ++j) {
-            Vector2 coord = get(i, j);
-            double currentSlope = 0.0;
-            double currentWetness = 0.0;
-            double currentIllum = 0.0;
-            double currentStreamPower = 0.0;
-            slope.Bilineaire(coord, currentSlope);
-            wetness.Bilineaire(coord, currentWetness);
-            illum.Bilineaire(coord, currentIllum);
-            streamPower.Bilineaire(coord, currentStreamPower);
-            if(hasTree[pos(i, j)]){
-                 if(!(currentSlope < trees[(int)field[pos(i, j)]].slopeMax && currentWetness > trees[(int)field[pos(i, j)]].wetnessMin && currentIllum > trees[(int)field[pos(i, j)]].lightMin && currentStreamPower < trees[(int)field[pos(i, j)]].streamPowerMax)){
-                     hasTree[pos(i, j)] = false;
-                     field[pos(i, j)] =  0.0;
-                     //std::cout << "suppress tree" << std::endl;
-                 }
-            }
-
-            if((currentSlope < trees[(int)field[pos(i, j)]].slopeMax && currentWetness > trees[(int)field[pos(i, j)]].wetnessMin && currentIllum > trees[(int)field[pos(i, j)]].lightMin && currentStreamPower < trees[(int)field[pos(i, j)]].streamPowerMax)){
-                res.field[pos(i, j)] = 25.0;
-            }
-        }
-    }
-
-    return res;
-}
-
-
 ScalarField2 vegetationField::genImage(){
     ScalarField2 res = ScalarField2(a, b, w, h);
     for (int i = 0; i < h; ++i) {
@@ -114,3 +82,4 @@ bool vegetationField::checkNeighbor(int i, int j, int treeId){
     }
     return false;
 }
+

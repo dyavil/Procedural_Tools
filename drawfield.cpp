@@ -1,6 +1,6 @@
 #include "drawfield.h"
 
-DrawField::DrawField() { idStartTree = 0;}
+DrawField::DrawField() {}
 
 
 void DrawField::prepare()
@@ -58,7 +58,6 @@ void DrawField::addVeget(vegetationField &sf){
     //double zm = sqrt(*result);
 
     //double upp = 0.0;
-    idStartTree = triangles.size();
     for (int i = 0; i < sf.h; i++) {
         for (int j = 0; j < sf.w; j++) {
             if(sf.hasTree[sf.pos(i, j)]) {
@@ -136,70 +135,10 @@ void DrawField::loadTreeObj(QString path, int pos){
     //std::cout << shapes.size() << std::endl;
 }
 
-void DrawField::prepareInterpol(int size1){
-    std::vector<double>::iterator result;
-    result = std::max_element(fields.field.begin(), fields.field.end());
-    double zm = *result;
-    result = std::min_element(fields.field.begin(), fields.field.end());
-    double minn = *result;
-    for (int i = 0; i < fields.h*fields.w; ++i) {
-        fields.field[i] -= minn;
-    }
-
-    for (int i = 0; i < fields.h*fields.w; ++i) {
-        fields.field[i] /= (zm-minn);
-    }
-    //std::cout << zm << std::endl;
-    double pasX = (fields.b.x - fields.a.x)/(float)size1;
-    double pasY = (fields.b.y - fields.a.y)/(float)size1;
-    //glBegin(GL_POINTS);
-    triangles.clear();
-    int size = size1;
-    HeightField & hf = static_cast<HeightField&>(fields);
-    for (int i = 0; i < size1; ++i) {
-        for (int j = 0; j < size1; ++j) {
-            double z = 0;
-            bool ok = true;
-            Vector2 p = fields.a + Vector2(i*pasX, j*pasY);
-            Vector2 p1 = fields.a + Vector2((i+1)*pasX, j*pasY);
-            Vector2 p2 = fields.a + Vector2(i*pasX, (j+1)*pasY);
-            Vector2 p3 = fields.a + Vector2((i+1)*pasX, (j+1)*pasY);
-
-            hf.Bilineaire(p, z);
-            //hf.Barycentrique(p, z);
-
-            double wid = fields.b.x - fields.a.x;
-            double hgt = fields.b.y - fields.a.y;
-            p.x = ((p.x-fields.a.x)/wid)*2.0;
-            p.y = ((p.y-fields.a.y)/hgt)*2.0;
-            vertices.push_back(Vector3(p+Vector2(-1, -1), z));
-            //std::cout << z <<"  " << p <<std::endl;
-            colors.push_back(Vector3(z, z, z));
-            if(!testPoint(Vector3(p, 0), size1)) ok = false;
-            if(!testPoint(Vector3(p1, 0), size1)) ok = false;
-            if(!testPoint(Vector3(p2, 0), size1)) ok = false;
-            if(ok) triangles.push_back(Triangle((i*size+j), ((i+1)*size+j), (i*size+(j+1))));
-
-            if(!testPoint(Vector3(p3, 0), size1)) ok = false;
-            if(ok) triangles.push_back(Triangle((i*size+(j+1)), ((i+1)*size+j), ((i+1)*size+(j+1))));
-        }
-    }
-}
-
-
-bool DrawField::testPoint(const Vector3 &v3, int size){
-    double marginx = (fields.b.x - fields.a.x)/(float)size;
-    double marginy = (fields.b.y - fields.a.y)/(float)size;
-    if((v3.x <= fields.a.x+marginx) || v3.y <= fields.a.y+marginy || v3.x >= fields.b.x-marginx || v3.y >= fields.b.y-marginy) return false;
-    return true;
-}
-
 
 void DrawField::draw(bool showTree){
 
     unsigned int endLoop = triangles.size();
-
-    if (idStartTree != 0 && !showTree) endLoop = idStartTree;
     for (unsigned int i = 0; i < endLoop; ++i) {
         glBegin(GL_TRIANGLES);
         double z = vertices[triangles[i].vertices[0]].z;
@@ -216,7 +155,7 @@ void DrawField::draw(bool showTree){
     }
 
     if(showTree && treeTranslations.size() > 0){
-        //std::cout << triangles.size() << ", " << idStartTree << ", " << std::endl;
+
         for (unsigned int l = 0; l < treeVertices.size(); ++l) {
 
             for (unsigned int i = 0; i < treeTranslations[l].size(); ++i) {

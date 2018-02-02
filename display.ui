@@ -282,7 +282,7 @@
     </widget>
     <widget class="QWidget" name="paramTab">
      <attribute name="title">
-      <string>Paramètres</string>
+      <string>Parameters</string>
      </attribute>
      <widget class="QPushButton" name="loadMapButton">
       <property name="geometry">

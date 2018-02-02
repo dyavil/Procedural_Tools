@@ -46,7 +46,7 @@ void init(LayerField &lf, Display &w, bool renderImage = false) {
     std::cout << "step6" <<std::endl;
 
     DrawField d;
-    d.setField(curHeight);
+    d.setField(lf);
     std::cout << "step7" <<std::endl;
     d.prepare();
     std::cout << "step8" <<std::endl;
@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
     Display w;
     w.show();
 
-    HeightField hf = HeightField(Vector2(-2000, -2000), Vector2(2000, 2000), 512, 512, 480, 0);
+    HeightField hf = HeightField(Vector2(-2000, -2000), Vector2(2000, 2000), 512, 512, 580, 0);
     hf.load("heightmaps/map5.png");
     //hf.noiseMap(4, 1.0, 1994);
     LayerField lf = LayerField(hf);

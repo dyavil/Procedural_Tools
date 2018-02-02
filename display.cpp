@@ -40,7 +40,7 @@ Display::Display(QWidget *parent) :
     ui->seedBox->setMinimum(0);
     ui->seedBox->setMaximum(8000);
     ui->seedBox->setValue(125);
-    ui->sizeBox->setMinimum(500.0);
+    ui->sizeBox->setMinimum(200.0);
     ui->sizeBox->setMaximum(10000.0);
     ui->sizeNoiseBox->setMinimum(1000.0);
     ui->sizeNoiseBox->setMaximum(10000.0);
@@ -171,8 +171,7 @@ void Display::recompute(HeightField & hf){
     m = m.fromImage(veget.genImage().render());
     ui->treeZoneImg->setPixmap(m);
 
-
-    d.setField(curHeight);
+    d.setField(lf);
     d.prepare();
     for (unsigned int i = 0; i < trees.size(); ++i) {
         d.loadTreeObj(trees[i].objPath, i);
@@ -215,7 +214,7 @@ Operation::Operation(QObject *parent, Ui::Display *ui)
 
     //////////////////////////
     //init fields
-    lf = LayerField(ui->glview->getDrawField()->fields);
+    lf = ui->glview->getDrawField()->layerf;
     curHeight = lf.computeHeight();
 
     ///////////////////////////
@@ -249,7 +248,7 @@ void Operation::perform()
         vegetationField veget = vegetationField(curHeight, slope, wetness, light, stream);
         imgs.push_back(veget.genImage().render());
 
-        ui->glview->getDrawField()->setField(curHeight);
+        ui->glview->getDrawField()->setField(lf);
         ui->glview->getDrawField()->prepare();
         ui->glview->getDrawField()->addVeget(veget);
         ui->glview->getDrawField()->addRivers(drain);
