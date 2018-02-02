@@ -13,7 +13,6 @@ void init(LayerField &lf, Display &w, bool renderImage = false) {
 
     curHeight.render().save(QString("maps/heightmap.png"));
     std::cout << "step0" <<std::endl;
-    //lf.generateThemralErosion(curHeight, light, 1, 10, 1, 20, 20);
 
     slope = curHeight.generateSlopeField();
     w.setSlopeField(slope.render());

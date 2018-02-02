@@ -18,12 +18,11 @@ void GLView::setHFBase(DrawField & df){
     hg = df;
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    //glViewport(0, 0, (hg.fields.b.x-hg.fields.a.x), (hg.fields.b.y-hg.fields.a.y));
+
     glOrtho(hg.fields.a.x*zoom, hg.fields.b.x*zoom,
             hg.fields.a.y*zoom, hg.fields.b.y*zoom,
             (hg.fields.a.x)*1.3*zoom, (hg.fields.b.x)*1.3*zoom);
     glMatrixMode(GL_MODELVIEW);
-    //std::cout << "ax : " << round(hg.fields.a.x*sqrt(3)) << std::endl;
 }
 
 
@@ -46,13 +45,11 @@ void GLView::paintGL()
 
     glLoadIdentity();
 
-    //glScaled(zoom, zoom, zoom);
 
     glRotatef(angle, 1.0f, 0.0f, 0.0f);
     glRotatef(anglex, 0.0f, 1.0f, 0.0f);
     glRotatef(anglez, 0.0f, 0.0f, 1.0f);
 
-    //hg.draw();
     hg.draw(showTree);
 
 }
@@ -77,7 +74,7 @@ void GLView::mouseMoveEvent(QMouseEvent *event)
         if(event->buttons() == Qt::LeftButton) {
             angle += (pos.y() - position.y());
             anglex += (pos.x() - position.x());
-            //anglez += (angle+anglex)/2.0;
+
         }
         if(event->buttons() == Qt::RightButton) {
             anglez += (pos.x() - position.x());
@@ -105,11 +102,11 @@ void GLView::wheelEvent(QWheelEvent *event)
         else progress_zoom = 1.0;
         if(progress_zoom > 12.0) progress_zoom = 12.0;
         zoom = zoom - (event->delta()/400.0/progress_zoom);
-        //std::cout << zoom << std::endl;
+
         if (zoom < 0.1) zoom =0.1;
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
-        //glViewport(0, 0, (hg.fields.b.x-hg.fields.a.x), (hg.fields.b.y-hg.fields.a.y));
+
         glOrtho(hg.fields.a.x*zoom, hg.fields.b.x*zoom,
                 hg.fields.a.y*zoom, hg.fields.b.y*zoom,
                 (hg.fields.a.x)*1.3, (hg.fields.b.x)*1.3);

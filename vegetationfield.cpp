@@ -1,8 +1,6 @@
 #include "vegetationfield.h"
 
 
-
-
 vegetationField::vegetationField(const HeightField & hf, const ScalarField2 & slope, const ScalarField2 & wetness, const ScalarField2 & illum, const ScalarField2 & streamPower): ScalarField2(hf.a, hf.b, (hf.b.x-hf.a.x)/(divideFactor), (hf.b.y-hf.a.y)/(divideFactor), 0.0)
 {
     hasTree.resize(w*h);
@@ -19,6 +17,9 @@ vegetationField::vegetationField(const HeightField & hf, const ScalarField2 & sl
     uint32_t seed = 1994;
 
     srand(time(NULL));
+    //pour chaque type d'arbre, on tire une distribution de poisson,
+    //vérifie que les conditions minimum vitale sont respectée
+    //et fait un test de compétition
     for (unsigned int tr = 0; tr < trees.size(); ++tr) {
         VAR_TYPE radius = trees[tr].widthT;
         std::vector<Vec2f> samples = thinks::poissonDiskSampling(radius, x_min, x_max, max_sample_attempts, seed);
@@ -76,7 +77,6 @@ bool vegetationField::checkNeighbor(int i, int j, int treeId){
                 if( !((k == 0) && (l == 0)) && hasTree[pos(i+l, j+k)]) {
                     return true;
                 }
-                  //std::cout << pos(i+l, j+k) << std::endl;
             }
         }
     }

@@ -25,8 +25,7 @@ void DrawField::prepare()
     for (int i = 0; i < hg.h; i++) {
         for (int j = 0; j < hg.w; j++) {
             Vector2 pos = hg.get(i, j);
-            /*double wid = fields.b.x - fields.a.x;
-            double hgt = fields.b.y - fields.a.y;*/
+
             vertices.push_back(Vector3(pos, hg.field[hg.pos(i, j)]));
             colors.push_back(Vector3((hg.field[hg.pos(i, j)]-minn)/zm+0.1, (hg.field[hg.pos(i, j)]-minn)/zm+0.1, (hg.field[hg.pos(i, j)]-minn)/zm+0.1));
             if((j+1) < hg.w && (i+1)<hg.h) triangles.push_back(Triangle((i*hg.w+j), (i*hg.w+(j+1)), ((i+1)*hg.w+j)));
@@ -38,7 +37,7 @@ void DrawField::prepare()
 
 void DrawField::addRivers(const ScalarField2 &sf){
     std::vector<double>::const_iterator result;
-    //std::cout << colors.size() << ", " << sf.h*sf.w << std::endl;
+
     result = std::max_element(sf.field.begin(), sf.field.end());
     double zm = sqrt(*result);
     for (int i = 0; i < fields.h; i++) {
@@ -51,21 +50,13 @@ void DrawField::addRivers(const ScalarField2 &sf){
 }
 
 
-void DrawField::addVeget(vegetationField &sf){
-    std::vector<double>::const_iterator result;
-    //std::cout << colors.size() << ", " << sf.h*sf.w << std::endl;
-    //result = std::max_element(sf.field.begin(), sf.field.end());
-    //double zm = sqrt(*result);
-
-    //double upp = 0.0;
+void DrawField::addVeget(vegetationField &sf){   
     for (int i = 0; i < sf.h; i++) {
         for (int j = 0; j < sf.w; j++) {
             if(sf.hasTree[sf.pos(i, j)]) {
                 Vector2 tmpp= sf.get(i, j);
 
                 std::pair<int, int> ij = fields.inside(Vector3(tmpp, 0.0));
-                //colors[fields.pos(ij.first, ij.second)].y += (sqrt(sf.field[sf.pos(i, j)])/zm);
-
                 double tz = fields.field[fields.pos(ij.first, ij.second)];
                 treeTranslations[(int)sf.field[sf.pos(i, j)]].push_back(Vector3(tmpp.x, tmpp.y, tz));
 
@@ -85,7 +76,7 @@ void DrawField::loadTreeObj(QString path, int pos){
     std::string err;
     bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &err, inputfile.c_str());
 
-    if (!err.empty()) { // `err` may contain warning message.
+    if (!err.empty()) { // `err` si fichier non trouvé
       std::cerr << err << std::endl;
     }
 
@@ -94,7 +85,6 @@ void DrawField::loadTreeObj(QString path, int pos){
     }
 
     std::vector<tinyobj::real_t>::const_iterator result;
-    //std::cout << colors.size() << ", " << sf.h*sf.w << std::endl;
     result = std::max_element(attrib.vertices.begin(), attrib.vertices.end());
 
 
@@ -114,15 +104,7 @@ void DrawField::loadTreeObj(QString path, int pos){
           tinyobj::real_t vy = attrib.vertices[3*idx.vertex_index+1];
           tinyobj::real_t vz = attrib.vertices[3*idx.vertex_index+2];
           treeVertices[pos].push_back(Vector3(vx, vy, vz));
-          /*tinyobj::real_t nx = attrib.normals[3*idx.normal_index+0];
-          tinyobj::real_t ny = attrib.normals[3*idx.normal_index+1];
-          tinyobj::real_t nz = attrib.normals[3*idx.normal_index+2];
-          tinyobj::real_t tx = attrib.texcoords[2*idx.texcoord_index+0];
-          tinyobj::real_t ty = attrib.texcoords[2*idx.texcoord_index+1];*/
-          // Optional: vertex colors
-          /*tinyobj::real_t red = attrib.colors[3*idx.vertex_index+0];
-          tinyobj::real_t green = attrib.colors[3*idx.vertex_index+1];
-          tinyobj::real_t blue = attrib.colors[3*idx.vertex_index+2];*/
+
           if(vz > (*result - *result*0.82) )treeColors[pos].push_back(colorr);
           else treeColors[pos].push_back(Vector3(0.647059+chang, 0.164706+chang, 0.164706+chang));
         }
@@ -132,7 +114,6 @@ void DrawField::loadTreeObj(QString path, int pos){
         shapes[s].mesh.material_ids[f];
       }
     }
-    //std::cout << shapes.size() << std::endl;
 }
 
 

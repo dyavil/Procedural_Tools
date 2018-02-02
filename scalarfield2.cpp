@@ -49,7 +49,7 @@ QImage ScalarField2::render(){
     double zm = *result;
     result = std::min_element(field.begin(), field.end());
     double zmin = *result;
-    //std::cout << "min : " << zmin << ", " << zm <<std::endl;
+
     QImage res = QImage(w, h, QImage::Format_RGB32);
     QRgb val;
     for (int i = 0; i < h; ++i) {
@@ -89,9 +89,9 @@ void ScalarField2::noiseMap(int pas, float rapport, int seed){
     myNoise.SetSeed(seed);
     double tmpp = sqrt((b-a).length())*7100.0;
     double freq = (((b-a).length())/tmpp)/rapport;
-    //std::cout << freq << ", " << tmpp << std::endl;
+
     double heightFact = sqrt((b-a).length())*(1000.0/(float)h)*rapport;
-    //std::cout << freq << ", " << heightFact << std::endl;
+
     myNoise.SetFrequency(freq);
     for (int i = 0; i < h*w; ++i) {
         field[i]= 0.0;
@@ -167,7 +167,7 @@ void ScalarField2::Barycentrique(const Vector2 &p, double &res) {
         oppose = true;
         count++;
     }
-    //std::cout << p << ", " << distance(p, get(yi, xi)) << ", " << get(yi, xi) << ", " << distance(p, get(yi+1, xi+1)) << std::endl;
+
     if(pos(yi+1, xi) >= (int)field.size() || pos(yi, xi+1) >= (int)field.size() || pos(yi+1, xi+1) >= (int)field.size()) res = field[pos(yi, xi)];
     else if(!oppose) {
 
@@ -179,9 +179,7 @@ void ScalarField2::Barycentrique(const Vector2 &p, double &res) {
         a2 = a2/ar;
         a3 = a3/ar;
         res = a1*field[pos(yi+1, xi)] + a2*field[pos(yi, xi)] + a3*field[pos(yi, xi+1)];
-        /*if(a1 < 0) std::cout << "1 1 " << a1 << std::endl;
-        if(a2 < 0) std::cout << "1 2 " << a2 << std::endl;
-        if(a3 < 0) std::cout << "1 3 " << a3 << std::endl;*/
+
     } else {
         double ar = area(Vector3(get(yi+1, xi), field[pos(yi+1, xi)]), Vector3(get(yi, xi+1), field[pos(yi, xi+1)]), Vector3(get(yi+1, xi+1), field[pos(yi+1, xi+1)]));
         double a1 = area(Vector3(p, 0.0), Vector3(get(yi+1, xi), field[pos(yi+1, xi)]), Vector3(get(yi, xi+1), field[pos(yi, xi+1)]));
@@ -191,10 +189,8 @@ void ScalarField2::Barycentrique(const Vector2 &p, double &res) {
         a2 = a2/ar;
         a3 = a3/ar;
         res = a1*field[pos(yi+1, xi+1)] + a2*field[pos(yi+1, xi)] + a3*field[pos(yi, xi+1)];
-        /*if(a1 < 0) std::cout << "2 1 " << a1 << std::endl;
-        if(a2 < 0) std::cout << "2 2 " << a2 << std::endl;
-        if(a3 < 0) std::cout << "2 3 " << a3 << std::endl;*/
+
     }
-    //std::cout << count << std::endl;
+
 }
 
